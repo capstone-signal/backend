@@ -9,12 +9,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Configuration
-@EnableJpaAuditing
-public class querydslConfig {
-    @PersistenceContext
-    private EntityManager entityManager;
+public class QuerydslConfig {
+    private final EntityManager entityManager;
 
-    public querydslConfig() {
+    public QuerydslConfig(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Bean
