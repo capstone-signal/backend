@@ -1,6 +1,6 @@
 package com.hidiscuss.backend.repository;
 
-import com.hidiscuss.backend.Entity.User;
+import com.hidiscuss.backend.entity.User;
 
 import java.util.List;
 

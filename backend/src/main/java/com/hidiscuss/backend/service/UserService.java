@@ -1,6 +1,6 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.Entity.User;
+import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 

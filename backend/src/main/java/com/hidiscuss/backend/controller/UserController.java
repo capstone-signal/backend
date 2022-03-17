@@ -1,6 +1,6 @@
 package com.hidiscuss.backend.controller;
 
-import com.hidiscuss.backend.Entity.User;
+import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
