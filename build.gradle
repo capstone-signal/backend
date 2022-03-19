@@ -2,6 +2,38 @@ plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'com.google.cloud.tools.jib' version '3.1.2'
+}
+
+jib {
+	// 도커 베이스 이미지
+	from {
+		image = "khipu/openjdk17-alpine"
+		platforms {
+			platform {
+				architecture = "arm64"
+				os = "linux"
+			}
+			platform {
+				architecture = 'amd64'
+				os = 'linux'
+			}
+		}
+	}
+	/*
+	 아래 링크 참고해서 to.image 변경 후 컨테이너화하기
+	 https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin#configuration
+
+	 로컬 빌드 시 아래 명령어 사용
+	 gradle jibBuildTar
+	 */
+	to {
+		image = "jib.to.image = 'aws_account_id.dkr.ecr.region.amazonaws.com/my-app'"
+		tags = ["latest"]
+	}
+	container {
+		jvmFlags = ["-Xms128m", "-Xmx128m"]
+	}
 }
 
 group = 'com.hidiscuss'
