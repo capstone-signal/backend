@@ -30,7 +30,4 @@ public class Discussion extends BaseEntity {
 
     @Column(name = "priority")
     private Long priority;
-
-    @OneToMany(mappedBy = "discussion")
-    private List<DiscussionCode> discussionCodes = new ArrayList<>();
 }

@@ -30,7 +30,4 @@ public class User extends BaseEntity {
 
     @Column(name = "point")
     private Long point;
-
-    @OneToMany(mappedBy = "user")
-    private List<Discussion> discussions = new ArrayList<>();
 }
