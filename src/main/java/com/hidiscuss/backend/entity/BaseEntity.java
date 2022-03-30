@@ -20,7 +20,7 @@ abstract class BaseEntity {
     private Timestamp createdAt;
 
     @LastModifiedDate
-    @Column(name = "last_modified_at")
+    @Column(name = "last_modified_at", nullable = false)
     private Timestamp lastModifiedAt;
 
     @Column(name = "created_user_id")
