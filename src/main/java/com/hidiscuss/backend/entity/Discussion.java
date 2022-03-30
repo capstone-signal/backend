@@ -1,10 +1,14 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "Discussion")
 public class Discussion extends BaseEntity {
     @Id
@@ -31,4 +35,15 @@ public class Discussion extends BaseEntity {
 
     @Column(name = "priority", nullable = false)
     private Long priority;
+
+    @Builder
+    public Discussion(Long id, State state, User user, String question, Boolean liveReviewRequired, Boolean liveReviewAvailableTimes, Long priority) {
+        this.id = id;
+        this.state = state;
+        this.user = user;
+        this.question = question;
+        this.liveReviewRequired = liveReviewRequired;
+        this.liveReviewAvailableTimes = liveReviewAvailableTimes;
+        this.priority = priority;
+    }
 }

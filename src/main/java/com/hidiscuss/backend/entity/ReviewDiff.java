@@ -1,9 +1,14 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.security.spec.ECField;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "ReviewDiff")
 public class ReviewDiff extends BaseEntity {
     @Id
@@ -24,4 +29,13 @@ public class ReviewDiff extends BaseEntity {
 
     @Column(name = "updated_code", nullable = false)
     private String updatedCode;
+
+    @Builder
+    public ReviewDiff(Long id, Review review, DiscussionCode discussionCode, String comment, String updatedCode) {
+        this.id = id;
+        this.review = review;
+        this.discussionCode = discussionCode;
+        this.comment = comment;
+        this.updatedCode = updatedCode;
+    }
 }

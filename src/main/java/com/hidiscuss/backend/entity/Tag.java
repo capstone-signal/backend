@@ -1,8 +1,14 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "Tag")
 public class Tag {
     @Id
@@ -12,4 +18,10 @@ public class Tag {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Builder
+    public Tag(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

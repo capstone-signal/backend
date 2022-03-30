@@ -1,15 +1,14 @@
 package com.hidiscuss.backend.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "User")
 public class User extends BaseEntity {
     @Id
@@ -31,4 +30,14 @@ public class User extends BaseEntity {
 
     @Column(name = "point", nullable = false)
     private Long point;
+
+    @Builder
+    public User(Long id, String name, String email, String accessToken, String refresh_token, Long point) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.accessToken = accessToken;
+        this.refresh_token = refresh_token;
+        this.point = point;
+    }
 }

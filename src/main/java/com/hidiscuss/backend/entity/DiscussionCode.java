@@ -1,8 +1,14 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "DiscussionCode")
 public class DiscussionCode extends BaseEntity {
     @Id
@@ -36,4 +42,16 @@ public class DiscussionCode extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Builder
+    public DiscussionCode(Long id, Discussion discussion, String sha, String filename, Status status, Long additions, Long deletions, Long changes, String content) {
+        this.id = id;
+        this.discussion = discussion;
+        this.sha = sha;
+        this.filename = filename;
+        this.status = status;
+        this.additions = additions;
+        this.deletions = deletions;
+        this.changes = changes;
+        this.content = content;
+    }
 }

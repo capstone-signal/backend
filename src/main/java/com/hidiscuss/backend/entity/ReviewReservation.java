@@ -1,9 +1,15 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "ReviewReservation")
 public class ReviewReservation extends BaseEntity {
     @Id
@@ -35,4 +41,15 @@ public class ReviewReservation extends BaseEntity {
     @Column(name = "progressed", nullable = false)
     private Boolean progressed;
 
+    @Builder
+    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, Timestamp reviewDate, Boolean reviwerParticipated, Boolean reviweeParticipated, Boolean progressed) {
+        this.id = id;
+        this.reviewer = reviewer;
+        this.review = review;
+        this.discussion = discussion;
+        this.reviewDate = reviewDate;
+        this.reviwerParticipated = reviwerParticipated;
+        this.reviweeParticipated = reviweeParticipated;
+        this.progressed = progressed;
+    }
 }

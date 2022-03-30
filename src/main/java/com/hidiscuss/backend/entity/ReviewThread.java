@@ -1,8 +1,14 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "ReviewThread")
 public class ReviewThread extends BaseEntity {
     @Id
@@ -20,4 +26,12 @@ public class ReviewThread extends BaseEntity {
 
     @Column(name = "content", nullable = false)
     private String content;
+
+    @Builder
+    public ReviewThread(Long id, User user, Review review, String content) {
+        this.id = id;
+        this.user = user;
+        this.review = review;
+        this.content = content;
+    }
 }

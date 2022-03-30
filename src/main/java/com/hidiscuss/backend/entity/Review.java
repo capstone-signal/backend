@@ -1,8 +1,14 @@
 package com.hidiscuss.backend.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(
         name = "Review",
         uniqueConstraints = @UniqueConstraint(
@@ -31,4 +37,14 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private Type type;
+
+    @Builder
+    public Review(Long id, User reviewer, Discussion discussion, Boolean accepted, String content, Type type) {
+        this.id = id;
+        this.reviewer = reviewer;
+        this.discussion = discussion;
+        this.accepted = accepted;
+        this.content = content;
+        this.type = type;
+    }
 }
