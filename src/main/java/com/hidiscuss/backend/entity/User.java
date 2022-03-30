@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "User")
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,5 +32,5 @@ public class User {
     private Long point;
 
     @OneToMany(mappedBy = "user")
-    private List<Discussion> discussion = new ArrayList<>();
+    private List<Discussion> discussions = new ArrayList<>();
 }
