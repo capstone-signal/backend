@@ -31,13 +31,13 @@ public class Discussion extends BaseEntity {
     private Boolean liveReviewRequired;
 
     @Column(name = "live_review_available_times")
-    private Boolean liveReviewAvailableTimes;
+    private String liveReviewAvailableTimes;
 
     @Column(name = "priority", nullable = false)
     private Long priority;
 
     @Builder
-    public Discussion(Long id, State state, User user, String question, Boolean liveReviewRequired, Boolean liveReviewAvailableTimes, Long priority) {
+    public Discussion(Long id, State state, User user, String question, Boolean liveReviewRequired, String liveReviewAvailableTimes, Long priority) {
         this.id = id;
         this.state = state;
         this.user = user;
