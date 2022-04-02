@@ -1,11 +1,11 @@
 package com.hidiscuss.backend.entity;
 
-public enum State {
+public enum DiscussionState {
     NOT_REVIEWED(0), REVIEWING(1), COMPLETED(2);
 
     private int id;
 
-    State(int id) {
+    DiscussionState(int id) {
         this.id = id;
     }
 

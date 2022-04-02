@@ -17,8 +17,8 @@ public class Discussion extends BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false)
-    private State state;
+    @Column(columnDefinition = "enum('NOT_REVIEWED', 'REVIEWING', 'COMPLETED') default 'NOT_REVIEWED'", name = "state", nullable = false)
+    private DiscussionState state;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,17 +27,17 @@ public class Discussion extends BaseEntity {
     @Column(name = "question", nullable = false)
     private String question;
 
-    @Column(name = "live_review_required", nullable = false)
+    @Column(columnDefinition = "boolean default false", name = "live_review_required", nullable = false)
     private Boolean liveReviewRequired;
 
     @Column(name = "live_review_available_times")
     private String liveReviewAvailableTimes;
 
-    @Column(name = "priority", nullable = false)
+    @Column(columnDefinition = "bigint default 0", name = "priority", nullable = false)
     private Long priority;
 
     @Builder
-    public Discussion(Long id, State state, User user, String question, Boolean liveReviewRequired, String liveReviewAvailableTimes, Long priority) {
+    public Discussion(Long id, DiscussionState state, User user, String question, Boolean liveReviewRequired, String liveReviewAvailableTimes, Long priority) {
         this.id = id;
         this.state = state;
         this.user = user;

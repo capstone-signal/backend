@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Table(
         name = "Review",
         uniqueConstraints = @UniqueConstraint(
-                columnNames = {"reviewer_id", "discussion_id", "reviwe_type"})
+                columnNames = {"reviewer_id", "discussion_id", "review_type"})
 )
 public class Review extends BaseEntity {
     @Id
@@ -28,23 +28,23 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
-    @Column(name = "accepted", nullable = false)
+    @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
     private Boolean accepted;
 
     @Column(name = "content", nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "reviwe_type", nullable = false)
-    private ReviewType reviweType;
+    @Column(name = "review_type", nullable = false)
+    private ReviewType reviewType;
 
     @Builder
-    public Review(Long id, User reviewer, Discussion discussion, Boolean accepted, String content, ReviewType reviweType) {
+    public Review(Long id, User reviewer, Discussion discussion, Boolean accepted, String content, ReviewType reviewType) {
         this.id = id;
         this.reviewer = reviewer;
         this.discussion = discussion;
         this.accepted = accepted;
         this.content = content;
-        this.reviweType = reviweType;
+        this.reviewType = reviewType;
     }
 }

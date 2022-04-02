@@ -39,7 +39,7 @@ public class DiscussionCode extends BaseEntity {
     @Column(name = "changes", nullable = false)
     private Long changes;
 
-    @Column(name = "content", nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", name = "content", nullable = false)
     private String content;
 
     @Builder

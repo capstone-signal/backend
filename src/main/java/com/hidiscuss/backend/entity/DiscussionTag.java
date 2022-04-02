@@ -9,7 +9,10 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "DiscussionTag")
+@Table(name = "DiscussionTag",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"discussion_id", "tag_id"})
+)
 public class DiscussionTag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,7 +22,7 @@ public class ReviewReservation extends BaseEntity {
     private User reviewer;
 
     @ManyToOne
-    @JoinColumn(name = "reviwe_id", nullable = false)
+    @JoinColumn(name = "review_id", nullable = true)
     private Review review;
 
     @ManyToOne
@@ -30,26 +30,26 @@ public class ReviewReservation extends BaseEntity {
     private Discussion discussion;
 
     @Column(name = "review_date", nullable = false)
-    private Timestamp reviewDate;
+    private LocalDateTime reviewDate;
 
-    @Column(name = "reviwer_participated", nullable = false)
-    private Boolean reviwerParticipated;
+    @Column(columnDefinition ="boolean default false", name = "reviewer_participated", nullable = false)
+    private Boolean reviewerParticipated;
 
-    @Column(name = "reviwee_participated", nullable = false)
-    private Boolean reviweeParticipated;
+    @Column(columnDefinition ="boolean default false", name = "reviewee_participated", nullable = false)
+    private Boolean revieweeParticipated;
 
-    @Column(name = "progressed", nullable = false)
-    private Boolean progressed;
+    @Column(columnDefinition ="boolean default false", name = "isdone", nullable = false)
+    private Boolean isdone;
 
     @Builder
-    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, Timestamp reviewDate, Boolean reviwerParticipated, Boolean reviweeParticipated, Boolean progressed) {
+    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, LocalDateTime reviewDate, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone) {
         this.id = id;
         this.reviewer = reviewer;
         this.review = review;
         this.discussion = discussion;
         this.reviewDate = reviewDate;
-        this.reviwerParticipated = reviwerParticipated;
-        this.reviweeParticipated = reviweeParticipated;
-        this.progressed = progressed;
+        this.reviewerParticipated = reviewerParticipated;
+        this.revieweeParticipated = revieweeParticipated;
+        this.isdone = isdone;
     }
 }
