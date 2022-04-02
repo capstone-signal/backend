@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public class UserRepositoryImpl implements UserRepositoryCustom {
-
     private final JPAQueryFactory queryFactory;
 
     public UserRepositoryImpl(JPAQueryFactory queryFactory) {
