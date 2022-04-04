@@ -82,6 +82,10 @@ jib {
 		tags = ["latest", "${getGitHash()}"]
 	}
 	container {
-		jvmFlags = ["-Xms128m", "-Xmx128m"]
+		appRoot = "/app"
+		jvmFlags = ["-Xms128m", "-Xmx128m", "-Dspring.profiles.active=prod"]
+		creationTime = "USE_CURRENT_TIMESTAMP"
+		ports = ['8080']
+		environment = [SPRING_CONFIG_LOCATION:"file:/app/config/*/application.yml"]
 	}
 }
