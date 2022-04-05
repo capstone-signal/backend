@@ -4,10 +4,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ReviewDiffRepositoryImpl {
+public class CommentReviewDiffRepositoryImpl {
     private final JPAQueryFactory queryFactory;
 
-    public ReviewDiffRepositoryImpl(JPAQueryFactory queryFactory) {
+    public CommentReviewDiffRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 }
