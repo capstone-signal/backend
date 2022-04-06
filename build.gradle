@@ -69,6 +69,9 @@ dependencies {
 	// Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+	// Github REST API Client
+	implementation 'org.kohsuke:github-api:1.303'
 }
 
 tasks.named('test') {
