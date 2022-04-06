@@ -1,2 +1,4 @@
-package com.hidiscuss.backend.controller;public class DiscussionController {
+package com.hidiscuss.backend.controller;
+
+public class DiscussionController {
 }

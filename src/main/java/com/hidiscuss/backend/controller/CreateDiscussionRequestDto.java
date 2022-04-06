@@ -1,2 +1,4 @@
-package com.hidiscuss.backend.controller;public class CreateDiscussionRequestDto {
+package com.hidiscuss.backend.controller;
+
+public class CreateDiscussionRequestDto {
 }
