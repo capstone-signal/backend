@@ -22,6 +22,8 @@ public class CreateDiscussionRequestDto {
     public String discussionType;
 
     @Nullable
+    public String gitRepositoryId;
+    @Nullable
     public String gitNodeId;
 
     @NotNull
