@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.lang.reflect.Member;
 
 @Entity
 @Getter
@@ -17,27 +18,42 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "access_token", nullable = false)
+    @Column(name = "access_token")
     private String accessToken;
 
-    @Column(name = "refresh_token", nullable = false)
+    @Column(name = "refresh_token")
     private String refresh_token;
 
-    @Column(name = "point", nullable = false)
+    @Column(name = "point")
     private Long point;
 
+    @Column(name = "role")
+    private UserRole role;
+
     @Builder
-    public User(Long id, String name, String email, String accessToken, String refresh_token, Long point) {
-        this.id = id;
+    public User(String username, String name, String email, String accessToken, String refresh_token, Long point, UserRole role) {
+        this.username = username;
         this.name = name;
         this.email = email;
         this.accessToken = accessToken;
         this.refresh_token = refresh_token;
         this.point = point;
+        this.role = role;
     }
+
+    public User update(User user){
+        this.name = user.getName();
+        this.username =user.getUsername();
+        return this;
+    }
+
+    public String getRole() { return this.role.getRole(); }
 }
