@@ -47,4 +47,8 @@ public class Discussion extends BaseEntity {
         this.liveReviewAvailableTimes = liveReviewAvailableTimes;
         this.priority = priority;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

@@ -26,7 +26,7 @@ public class CreateDiscussionRequestDto {
     @Nullable
     public String gitNodeId;
 
-    @NotNull
+    @Nullable
     public LiveReviewAvailableTimes liveReviewAvailableTimes;
 
     @Nullable
