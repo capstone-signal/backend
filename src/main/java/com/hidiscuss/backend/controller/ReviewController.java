@@ -24,7 +24,6 @@ public class ReviewController {
 //        this.reviewService = reviewService;
 //    }
 
-    // 사용자 정보 추가, api response 예제 찾아보기, responseEntity, dao 어떻게 사용하는지?
     @ApiOperation(value="comment review 저장", notes="이 api는 comment review를 저장합니다. requestBody로 온 comment review diff도 개수만큼 테이블에 저장합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "새로운 comment review 생성 성공"),
