@@ -38,11 +38,13 @@ public class DiscussionService {
         switch(dto.discussionType) { // case가 PR or COMMIT이면 Controller에서 검증
             case "PR":
                 GHPullRequest pr = githubService.getPullRequestById(Long.parseLong(dto.gitRepositoryId), Integer.parseInt(dto.gitNodeId));
-                //discussionCodes = discussionCodeService.createFromPR(discussion, pr);
+                discussionCodes = discussionCodeService.createFromPR(discussion, pr);
                 break;
             case "COMMIT":
+                System.out.println("COMMIT");
                 GHCommit commit = githubService.getCommitById(Long.parseLong(dto.gitRepositoryId), dto.gitNodeId);
-                discussionCodes = discussionCodeService.createFromCommit(discussion, commit, null);
+                List<GHCommit.File> files = githubService.getFilesByCommit(commit);
+                discussionCodes = discussionCodeService.createFromCommit(discussion, commit, files);
                 break;
             case "DIRECT":
                 discussionCodes = discussionCodeService.createFromDirect(discussion, dto.codes);
