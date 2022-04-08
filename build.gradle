@@ -61,7 +61,7 @@ def getGitHash = { ->
 jib {
 	// 도커 베이스 이미지
 	from {
-		image = "khipu/openjdk17-alpine"
+		image = "gcr.io/distroless/java11-debian11"
 		platforms {
 			platform {
 				architecture = "arm64"
