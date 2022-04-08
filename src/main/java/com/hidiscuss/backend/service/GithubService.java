@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.exception.GithubException;
 import com.hidiscuss.backend.utils.GithubContext;
 import org.kohsuke.github.*;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,7 @@ public class GithubService {
         try {
             return getGitHub().getUser("capstone-signal").getRepositories().values(); // TODO : get user from session
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new GithubException("Failed to get repositories", e);
         }
     }
 
@@ -28,8 +28,7 @@ public class GithubService {
         try {
             return getGitHub().getRepositoryById(repoId).listCommits().toList();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new GithubException("Failed to get commits", e);
         }
     }
 
@@ -37,8 +36,7 @@ public class GithubService {
         try {
             return getGitHub().getRepositoryById(repoId).queryPullRequests().state(GHIssueState.ALL).list().toList();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new GithubException("Failed to get pull requests", e);
         }
     }
 
@@ -46,8 +44,7 @@ public class GithubService {
         try {
             return getGitHub().getRepositoryById(repoId).getPullRequest(pullRequestId);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new GithubException("Failed to get pull request", e);
         }
     }
 
@@ -55,8 +52,7 @@ public class GithubService {
         try {
             return getGitHub().getRepositoryById(repoId).getCommit(sha);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new GithubException("Failed to get commit", e);
         }
     }
 
@@ -64,8 +60,15 @@ public class GithubService {
         try {
             return commit.getFiles();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new GithubException("Failed to get files", e);
+        }
+    }
+
+    public List<GHPullRequestFileDetail> getFilesByPullRequest(GHPullRequest pr) {
+        try {
+            return pr.listFiles().toList();
+        } catch (IOException e) {
+            throw new GithubException("Failed to get files", e);
         }
     }
 }

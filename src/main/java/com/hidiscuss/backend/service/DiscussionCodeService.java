@@ -4,10 +4,12 @@ import com.hidiscuss.backend.controller.dto.CreateDiscussionCodeRequestDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.Status;
+import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequest;
+import org.kohsuke.github.GHPullRequestFileDetail;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,10 +37,13 @@ public class DiscussionCodeService {
                     .build();
             codes.add(code);
         });
+        if (codes.size() == 0) {
+           throw new EmptyDiscussionCodeException("No codes found");
+        }
         return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
     }
 
-    public List<DiscussionCode> createFromCommit(Discussion discussion, GHCommit commit, List<GHCommit.File> files) {
+    public List<DiscussionCode> createFromCommit(Discussion discussion, List<GHCommit.File> files) {
         List<DiscussionCode> codes = new ArrayList<>();
         files.forEach(f -> {
             if (f.getPatch() == null) {
@@ -56,13 +61,16 @@ public class DiscussionCodeService {
                     .build();
             codes.add(code);
         });
+        if (codes.size() == 0) {
+            throw new EmptyDiscussionCodeException("No codes found");
+        }
         return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
     }
 
 
-    public List<DiscussionCode> createFromPR(Discussion discussion, GHPullRequest pr) {
+    public List<DiscussionCode> createFromPR(Discussion discussion, List<GHPullRequestFileDetail> files) {
         List<DiscussionCode> codes = new ArrayList<>();
-        pr.listFiles().forEach(f -> {
+        files.forEach(f -> {
             if (f.getPatch() == null) {
                 return;
             }
@@ -78,6 +86,9 @@ public class DiscussionCodeService {
                     .build();
             codes.add(code);
         });
+        if (codes.size() == 0) {
+            throw new EmptyDiscussionCodeException("No codes found");
+        }
         return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
     }
 }
