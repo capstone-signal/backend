@@ -3,6 +3,7 @@ package com.hidiscuss.backend.controller.dto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionState;
 import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
+import com.hidiscuss.backend.entity.User;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
@@ -38,9 +39,10 @@ public class CreateDiscussionRequestDto {
     @Nullable
     public List<CreateDiscussionCodeRequestDto> codes;
 
-    public static Discussion toEntity(CreateDiscussionRequestDto dto) {
+    public static Discussion toEntity(CreateDiscussionRequestDto dto, User user) {
         return Discussion.builder()
                 .question(dto.question)
+                .user(user)
                 .liveReviewRequired(dto.liveReviewRequired)
                 .liveReviewAvailableTimes(dto.liveReviewAvailableTimes)
                 .priority(dto.usePriority ? 255L : 0L)
