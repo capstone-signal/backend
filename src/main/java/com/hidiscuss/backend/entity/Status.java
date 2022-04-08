@@ -11,14 +11,12 @@ public enum Status {
 
     public static Status convertFromGithubStatus(String status) {
         switch (status) {
-            case "added":
-                return ADDED;
             case "modified":
                 return MODIFIED;
             case "removed":
                 return REMOVED;
-            default:
-                return null;
+            default: // "added" or other
+                return ADDED;
         }
     }
 
