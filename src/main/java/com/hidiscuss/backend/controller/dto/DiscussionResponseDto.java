@@ -15,7 +15,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
     private LiveReviewAvailableTimes liveReviewAvailableTimes;
     private Long priority;
     private int state;
-    private UserResponseDto user;
+//    private UserResponseDto user;
     private List<TagResponseDto> tags;
     public static DiscussionResponseDto fromEntity(Discussion entity) {
         DiscussionResponseDto dto = new DiscussionResponseDto();
