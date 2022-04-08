@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Configuration
-@EnableWebMvc
 public class SwaggerConfig {
 
     private ApiInfo swaggerInfo() {
