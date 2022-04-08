@@ -7,11 +7,11 @@ import java.time.LocalDateTime;
 
 @Getter
 public class BaseResponseDto {
-    private LocalDateTime created_at;
-    private LocalDateTime last_modified_at;
+    private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
 
     public void setBaseResponse(BaseEntity entity) {
-        this.created_at = entity.getCreatedAt();
-        this.last_modified_at = entity.getLastModifiedAt();
+        this.createdAt = entity.getCreatedAt();
+        this.lastModifiedAt = entity.getLastModifiedAt();
     }
 }
