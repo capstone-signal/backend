@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.controller;
 
+public class DiscussionController {
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
 import com.hidiscuss.backend.controller.dto.DiscussionResponseDto;
 import io.swagger.annotations.*;
