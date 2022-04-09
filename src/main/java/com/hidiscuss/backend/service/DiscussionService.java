@@ -37,12 +37,12 @@ public class DiscussionService {
             case "PR":
                 GHPullRequest pr = githubService.getPullRequestById(Long.parseLong(dto.gitRepositoryId), Integer.parseInt(dto.gitNodeId));
                 List<GHPullRequestFileDetail> prFiles = githubService.getFilesByPullRequest(pr);
-                discussionCodeService.createFromPR(discussion, prFiles);
+                discussionCodeService.createFromFiles(discussion, prFiles);
                 break;
             case "COMMIT":
                 GHCommit commit = githubService.getCommitById(Long.parseLong(dto.gitRepositoryId), dto.gitNodeId);
                 List<GHCommit.File> commitFiles = githubService.getFilesByCommit(commit);
-                discussionCodeService.createFromCommit(discussion, commitFiles);
+                discussionCodeService.createFromFiles(discussion, commitFiles);
                 break;
             case "DIRECT":
                 discussionCodeService.createFromDirect(discussion, dto.codes);

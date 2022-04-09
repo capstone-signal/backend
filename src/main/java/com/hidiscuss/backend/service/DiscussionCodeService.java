@@ -43,53 +43,41 @@ public class DiscussionCodeService {
         return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
     }
 
-    public List<DiscussionCode> createFromCommit(Discussion discussion, List<GHCommit.File> files) {
+    public List<DiscussionCode> createFromFiles(Discussion discussion, List<?> files) {
         List<DiscussionCode> codes = new ArrayList<>();
         files.forEach(f -> {
-            if (f.getPatch() == null) {
-                return;
+            DiscussionCode.DiscussionCodeBuilder builder = DiscussionCode.builder().discussion(discussion);
+            if (f instanceof GHPullRequestFileDetail) {
+                GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
+                builder.filename(file.getFilename())
+                        .content(file.getPatch())
+                        .sha(file.getSha())
+                        .status(Status.convertFromGithubStatus(file.getStatus()))
+                        .additions((long) file.getAdditions())
+                        .deletions((long) file.getDeletions())
+                        .changes((long) file.getChanges());
+
+            } else if (f instanceof GHCommit.File) {
+                GHCommit.File file = (GHCommit.File) f;
+                builder.filename(file.getFileName())
+                        .content(file.getPatch())
+                        .sha(file.getSha())
+                        .status(Status.convertFromGithubStatus(file.getStatus()))
+                        .additions((long) file.getLinesAdded())
+                        .deletions((long) file.getLinesDeleted())
+                        .changes((long) file.getLinesChanged());
+            } else {
+                throw new IllegalArgumentException("Unknown file type");
             }
-            DiscussionCode code = DiscussionCode.builder()
-                    .discussion(discussion)
-                    .filename(f.getFileName())
-                    .content(f.getPatch()) // CONTENT TODO : 이거 어떻게 가져오는지 확인해보기
-                    .sha(f.getSha())
-                    .status(Status.convertFromGithubStatus(f.getStatus()))
-                    .additions((long) f.getLinesAdded())
-                    .deletions((long) f.getLinesDeleted())
-                    .changes((long) f.getLinesChanged())
-                    .build();
-            codes.add(code);
+            DiscussionCode discussionCode = builder.build();
+            if (discussionCode.getContent() != null) {
+                codes.add(discussionCode);
+            }
         });
         if (codes.size() == 0) {
             throw new EmptyDiscussionCodeException("No codes found");
         }
-        return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
-    }
-
-
-    public List<DiscussionCode> createFromPR(Discussion discussion, List<GHPullRequestFileDetail> files) {
-        List<DiscussionCode> codes = new ArrayList<>();
-        files.forEach(f -> {
-            if (f.getPatch() == null) {
-                return;
-            }
-            DiscussionCode code = DiscussionCode.builder()
-                    .discussion(discussion)
-                    .filename(f.getFilename())
-                    .content(f.getPatch())
-                    .sha(f.getSha())
-                    .status(Status.convertFromGithubStatus(f.getStatus()))
-                    .additions((long) f.getAdditions())
-                    .deletions((long) f.getDeletions())
-                    .changes((long) f.getChanges())
-                    .build();
-            codes.add(code);
-        });
-        if (codes.size() == 0) {
-            throw new EmptyDiscussionCodeException("No codes found");
-        }
-        return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
+        return discussionCodeRepository.saveAll(codes);
     }
 }
 

@@ -55,19 +55,20 @@ public class DiscussionCodeServiceTest {
     }
 
     @Test
-    public void createFromCommit_withNoPatch() {
+    public void createFromFiles_withNoPatchFile() {
         List<GHCommit.File> files = new ArrayList<>();
         GHCommit.File file = Mockito.mock(GHCommit.File.class);
         when(file.getPatch()).thenReturn(null);
+        when(file.getStatus()).thenReturn("added");
         files.add(file);
 
-        Exception ex = assertThrows(EmptyDiscussionCodeException.class, () -> discussionCodeService.createFromCommit(discussion, files));
+        Exception ex = assertThrows(EmptyDiscussionCodeException.class, () -> discussionCodeService.createFromFiles(discussion, files));
 
         assertThat(ex).isNotNull();
     }
 
     @Test
-    public void createFromCommit() {
+    public void createFromFiles() {
         List<GHCommit.File> files = new ArrayList<>();
         GHCommit.File file = Mockito.mock(GHCommit.File.class);
         when(file.getFileName()).thenReturn("test.java");
@@ -75,35 +76,7 @@ public class DiscussionCodeServiceTest {
         when(file.getStatus()).thenReturn("added");
         files.add(file);
 
-        List<DiscussionCode> discussionCodes = discussionCodeService.createFromCommit(discussion, files);
-
-        assertThat(discussionCodes).isNotNull();
-        assertThat(discussionCodes.size()).isEqualTo(files.size());
-    }
-
-    @Test
-    public void createFromPR_withNoPatch() {
-        GHPullRequest pr = Mockito.mock(GHPullRequest.class);
-        GHPullRequestFileDetail file = Mockito.mock(GHPullRequestFileDetail.class);
-        List<GHPullRequestFileDetail> files = List.of(file);
-
-
-        Exception ex = assertThrows(EmptyDiscussionCodeException.class, () -> discussionCodeService.createFromPR(discussion, files));
-
-        assertThat(ex).isNotNull();
-    }
-
-    @Test
-    public void createFromPullRequest() {
-        GHPullRequest pr = Mockito.mock(GHPullRequest.class);
-        GHPullRequestFileDetail file = Mockito.mock(GHPullRequestFileDetail.class);
-        List<GHPullRequestFileDetail> files = List.of(file);
-        when(file.getFilename()).thenReturn("test.java");
-        when(file.getPatch()).thenReturn("test");
-        when(file.getStatus()).thenReturn("added");
-
-
-        List<DiscussionCode> discussionCodes = discussionCodeService.createFromPR(discussion, files);
+        List<DiscussionCode> discussionCodes = discussionCodeService.createFromFiles(discussion, files);
 
         assertThat(discussionCodes).isNotNull();
         assertThat(discussionCodes.size()).isEqualTo(files.size());
