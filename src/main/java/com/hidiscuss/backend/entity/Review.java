@@ -31,20 +31,16 @@ public class Review extends BaseEntity {
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
     private Boolean accepted;
 
-    @Column(name = "content", nullable = false)
-    private String content;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "review_type", nullable = false)
     private ReviewType reviewType;
 
     @Builder
-    public Review(Long id, User reviewer, Discussion discussion, Boolean accepted, String content, ReviewType reviewType) {
+    public Review(Long id, User reviewer, Discussion discussion, Boolean accepted, ReviewType reviewType) {
         this.id = id;
         this.reviewer = reviewer;
         this.discussion = discussion;
         this.accepted = accepted;
-        this.content = content;
         this.reviewType = reviewType;
     }
 }

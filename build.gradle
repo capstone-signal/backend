@@ -5,37 +5,6 @@ plugins {
 	id 'com.google.cloud.tools.jib' version '3.1.2'
 }
 
-jib {
-	// 도커 베이스 이미지
-	from {
-		image = "khipu/openjdk17-alpine"
-		platforms {
-			platform {
-				architecture = "arm64"
-				os = "linux"
-			}
-			platform {
-				architecture = 'amd64'
-				os = 'linux'
-			}
-		}
-	}
-	/*
-	 아래 링크 참고해서 to.image 변경 후 컨테이너화하기
-	 https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin#configuration
-
-	 로컬 빌드 시 아래 명령어 사용
-	 gradle jibBuildTar
-	 */
-	to {
-		image = "jib.to.image = 'aws_account_id.dkr.ecr.region.amazonaws.com/my-app'"
-		tags = ["latest"]
-	}
-	container {
-		jvmFlags = ["-Xms128m", "-Xmx128m"]
-	}
-}
-
 group = 'com.hidiscuss'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -70,6 +39,11 @@ dependencies {
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
+	//spring security oauth2
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+  
 	// Github REST API Client
 	implementation 'org.kohsuke:github-api:1.303'
 
@@ -86,4 +60,46 @@ tasks.named('test') {
 // clean task 실행시 QClass 삭제
 clean {
 	delete file('src/main/generated')
+}
+
+
+def getGitHash = { ->
+	def stdout = new ByteArrayOutputStream()
+	exec {
+		commandLine 'git', 'rev-parse', '--short', 'HEAD'
+		standardOutput = stdout
+	}
+	return stdout.toString().trim()
+}
+
+jib {
+	// 도커 베이스 이미지
+	from {
+		image = "gcr.io/distroless/java11-debian11"
+		platforms {
+			platform {
+				architecture = "arm64"
+				os = "linux"
+			}
+			platform {
+				architecture = 'amd64'
+				os = 'linux'
+			}
+		}
+	}
+	/*
+	 로컬 빌드 시 아래 명령어 사용
+	 gradle jibBuildTar
+	 */
+	to {
+		image = "075730933478.dkr.ecr.ap-northeast-2.amazonaws.com/backend-spring"
+		tags = ["latest", "${getGitHash()}"]
+	}
+	container {
+		appRoot = "/app"
+		jvmFlags = ["-Xms128m", "-Xmx128m", "-Dspring.profiles.active=prod"]
+		creationTime = "USE_CURRENT_TIMESTAMP"
+		ports = ['8080']
+		environment = [SPRING_CONFIG_LOCATION:"file:/app/config/*/application.yml"]
+	}
 }

@@ -6,11 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
-@NoArgsConstructor
-@Table(name = "ReviewDiff")
-public class ReviewDiff extends BaseEntity {
+@MappedSuperclass
+abstract class ReviewDiff extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -24,18 +22,7 @@ public class ReviewDiff extends BaseEntity {
     @JoinColumn(name = "discussion_code_id", nullable = false)
     private DiscussionCode discussionCode;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "code_after", nullable = false)
+    private String codeAfter;
 
-    @Column(name = "updated_code", nullable = false)
-    private String updatedCode;
-
-    @Builder
-    public ReviewDiff(Long id, Review review, DiscussionCode discussionCode, String comment, String updatedCode) {
-        this.id = id;
-        this.review = review;
-        this.discussionCode = discussionCode;
-        this.comment = comment;
-        this.updatedCode = updatedCode;
-    }
 }
