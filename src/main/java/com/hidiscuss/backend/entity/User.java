@@ -35,18 +35,15 @@ public class User extends BaseEntity {
     @Column(name = "point")
     private Long point;
 
-    @Column(name = "role")
-    private UserRole role;
 
     @Builder
-    public User(String username, String name, String email, String accessToken, String refresh_token, Long point, UserRole role) {
+    public User(String username, String name, String email, String accessToken, String refresh_token, Long point) {
         this.username = username;
         this.name = name;
         this.email = email;
         this.accessToken = accessToken;
         this.refresh_token = refresh_token;
         this.point = point;
-        this.role = role;
     }
 
     public User update(User user){
@@ -54,6 +51,4 @@ public class User extends BaseEntity {
         this.username =user.getUsername();
         return this;
     }
-
-    public String getRole() { return this.role.getRole(); }
 }

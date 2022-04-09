@@ -2,7 +2,6 @@ package com.hidiscuss.backend.security;
 
 
 import com.hidiscuss.backend.entity.User;
-import com.hidiscuss.backend.entity.UserRole;
 import com.hidiscuss.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +18,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2MemberService implements OAuth2UserService{
+public class CustomOAuth2UserService implements OAuth2UserService{
 
     private final UserRepository userRepository;
     private final HttpSession session;
@@ -40,15 +39,15 @@ public class CustomOAuth2MemberService implements OAuth2UserService{
     }
 
     public User saveOrUpdate(OAuth2User oAuth2User) {
-        User oAuthMember = User.builder()
+        User oAuthUser = User.builder()
                 .username(oAuth2User.getAttribute("login"))
                 .name(oAuth2User.getAttribute("name"))
                 .role(UserRole.USER)
                 .build();
 
-        User user = userRepository.findByUsername(oAuthMember.getUsername())
-                .map(entity -> entity.update(oAuthMember))
-                .orElse(oAuthMember);
+        User user = userRepository.findByUsername(oAuthUser.getUsername())
+                .map(entity -> entity.update(oAuthUser))
+                .orElse(oAuthUser);
         return userRepository.save(user);
     }
 }
