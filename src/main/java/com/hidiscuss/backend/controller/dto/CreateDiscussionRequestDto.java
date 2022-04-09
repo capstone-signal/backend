@@ -46,7 +46,6 @@ public class CreateDiscussionRequestDto {
                 .liveReviewRequired(dto.liveReviewRequired)
                 .liveReviewAvailableTimes(dto.liveReviewAvailableTimes)
                 .priority(dto.usePriority ? 255L : 0L)
-                .state(DiscussionState.NOT_REVIEWED)
                 .build();
     }
 
