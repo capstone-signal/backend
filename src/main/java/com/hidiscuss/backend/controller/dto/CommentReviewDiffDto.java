@@ -3,11 +3,13 @@ package com.hidiscuss.backend.controller.dto;
 import com.hidiscuss.backend.entity.CommentReviewDiff;
 import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.Review;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
+@AllArgsConstructor
 public class CommentReviewDiffDto {
 
     @NotNull

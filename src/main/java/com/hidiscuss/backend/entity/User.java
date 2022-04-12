@@ -26,18 +26,18 @@ public class User extends BaseEntity {
     private String accessToken;
 
     @Column(name = "refresh_token", nullable = false)
-    private String refresh_token;
+    private String refreshToken;
 
     @Column(name = "point", nullable = false)
     private Long point;
 
     @Builder
-    public User(Long id, String name, String email, String accessToken, String refresh_token, Long point) {
+    public User(Long id, String name, String email, String accessToken, String refreshToken, Long point) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.accessToken = accessToken;
-        this.refresh_token = refresh_token;
+        this.refreshToken = refreshToken;
         this.point = point;
     }
 }

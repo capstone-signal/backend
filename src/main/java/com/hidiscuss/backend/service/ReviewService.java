@@ -4,10 +4,7 @@ import com.hidiscuss.backend.controller.dto.CommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.entity.*;
-import com.hidiscuss.backend.repository.CommentReviewDiffRepository;
-import com.hidiscuss.backend.repository.DiscussionCodeRepository;
-import com.hidiscuss.backend.repository.DiscussionRepository;
-import com.hidiscuss.backend.repository.ReviewRepository;
+import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +15,7 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
     private final CommentReviewDiffRepository commentReviewDiffRepository;
     private final DiscussionCodeRepository discussionCodeRepository;
@@ -52,10 +50,12 @@ public class ReviewService {
         Review review = reviewRepository
                 .findById(reviewId)
                 .orElseThrow(() -> new NoSuchElementException("reviewId가 없습니다."));
-        return ReviewThread.builder()
+        ReviewThread reviewThread = ReviewThread.builder()
                 .user(user)
                 .review(review)
                 .content(dto.content)
                 .build();
+        reviewThreadRepository.save(reviewThread);
+        return reviewThread;
     }
 }
