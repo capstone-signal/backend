@@ -38,13 +38,16 @@ public class Discussion extends BaseEntity {
     private Long priority;
 
     @Builder
-    public Discussion(Long id, DiscussionState state, User user, String question, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority) {
-        this.id = id;
-        this.state = state;
+    public Discussion(User user, String question, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority) {
+        this.state = DiscussionState.NOT_REVIEWED;
         this.user = user;
         this.question = question;
         this.liveReviewRequired = liveReviewRequired;
         this.liveReviewAvailableTimes = liveReviewAvailableTimes;
         this.priority = priority;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

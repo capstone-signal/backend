@@ -18,7 +18,7 @@ public class GHPullRequestResponseDto {
     }
     public static GHPullRequestResponseDto fromGHPullRequest(GHPullRequest pullRequest) {
         return new GHPullRequestResponseDto(
-                pullRequest.getId(),
+                (long) pullRequest.getNumber(), // ;pullRequest.getId(), memo: getId() return globally unique id
                 pullRequest.getTitle(),
                 pullRequest.getHtmlUrl().toString()
         );
