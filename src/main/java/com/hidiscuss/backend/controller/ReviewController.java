@@ -33,6 +33,7 @@ public class ReviewController {
     public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType, @RequestBody @Valid CreateCommentReviewRequestDto requestDto) {
         User user = User.builder().id(1111L).build();
         Review review = reviewService.saveReview(user, requestDto, reviewType);
+        review = reviewService.saveCommentReviewDiff(requestDto, review);
         return CommentReviewResponseDto.fromEntity(review);
     }
 

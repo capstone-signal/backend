@@ -5,15 +5,17 @@ import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class CommentReviewDiffDto {
 
     @NotNull
-    public Long discussionCodeId;
+    public DiscussionCodeDto discussionCode;
 
     @NotNull
     public String codeAfter;
@@ -32,6 +34,16 @@ public class CommentReviewDiffDto {
                 .codeLocate(dto.getCodeLocate())
                 .comment(dto.getComment())
                 .build();
+    }
+
+    public static CommentReviewDiffDto fromEntity(CommentReviewDiff entity) {
+        CommentReviewDiffDto dto = new CommentReviewDiffDto();
+        dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
+        dto.codeAfter = entity.getCodeAfter();
+        dto.codeLocate = entity.getCodeLocate();
+        dto.comment = entity.getComment();
+
+        return dto;
     }
 
 }

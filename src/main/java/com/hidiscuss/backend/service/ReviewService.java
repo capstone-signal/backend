@@ -30,20 +30,20 @@ public class ReviewService {
                 .reviewType(reviewType)
                 .build();
         review = reviewRepository.save(review);
-        saveCommentReviewDiff(dto, review);
-        review = reviewRepository.findById(review.getId()).get();
         return review;
     }
 
-    public void saveCommentReviewDiff(CreateCommentReviewRequestDto dto, Review review) {
+    public Review saveCommentReviewDiff(CreateCommentReviewRequestDto dto, Review review) {
         List<CommentReviewDiffDto> list = dto.diffList;
-        for(CommentReviewDiffDto diff : list) {
+        for(CommentReviewDiffDto item : list) {
             DiscussionCode code = discussionCodeRepository
-                    .findById(diff.discussionCodeId)
+                    .findById(item.getDiscussionCode().getId())
                     .orElseThrow(() -> new NoSuchElementException("discussionCodeId가 없습니다."));
-            CommentReviewDiff commentReviewDiff = CommentReviewDiffDto.toEntity(diff, review, code);
+            CommentReviewDiff commentReviewDiff = CommentReviewDiffDto.toEntity(item, review, code);
             commentReviewDiffRepository.save(commentReviewDiff);
         }
+        review = reviewRepository.findById(review.getId()).get();
+        return review;
     }
 
     public ReviewThread saveThread(User user, CreateThreadRequestDto dto, Long reviewId) {

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +30,9 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
+    @OneToMany(mappedBy = "review")
+    private List<CommentReviewDiff> diffList = new ArrayList<>();
+
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
     private Boolean accepted;
 
@@ -36,10 +41,11 @@ public class Review extends BaseEntity {
     private ReviewType reviewType;
 
     @Builder
-    public Review(Long id, User reviewer, Discussion discussion, Boolean accepted, ReviewType reviewType) {
+    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> diffList, Boolean accepted, ReviewType reviewType) {
         this.id = id;
         this.reviewer = reviewer;
         this.discussion = discussion;
+        this.diffList = diffList;
         this.accepted = accepted;
         this.reviewType = reviewType;
     }
