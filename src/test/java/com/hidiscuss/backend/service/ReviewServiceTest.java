@@ -3,11 +3,10 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
+import com.hidiscuss.backend.controller.dto.DiscussionCodeDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,7 +20,6 @@ import static org.assertj.core.api.BDDAssertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
@@ -42,33 +40,24 @@ public class ReviewServiceTest {
 
     private ReviewType reviewType = ReviewType.COMMENT;
 
+    private List<CommentReviewDiffDto> diffList;
 
     @BeforeEach
     void setUp() {
-        user = User.builder()
-                .id(1L)
-                .name("name")
-                .email("email@uos.ac.kr")
-                .accessToken("accessToken")
-                .refreshToken("refreshToken")
-                .point(100L)
-                .build();
+        user = new User();
+        diffList = List.of(
+                getCommentReviewDiffDto(1L),
+                getCommentReviewDiffDto(2L)
+        );
     }
 
     @Test
     @DisplayName("saveReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
     void saveReview_common() {
-        List<CommentReviewDiffDto> diffList = List.of(
-                getCommentReviewDiffDto(),
-                getCommentReviewDiffDto()
-        );
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         Discussion discussion = new Discussion();
-        DiscussionCode discussionCode = new DiscussionCode();
-        given(discussionRepository.findById(any())).willReturn(Optional.of(discussion));
-        given(discussionCodeRepository.findById(any())).willReturn(Optional.of(discussionCode));
-        when(reviewRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-        when(reviewRepository.findById(any())).thenAnswer(i -> i.getArgument(0));
+        given(discussionRepository.findById(any(Long.class))).willReturn(Optional.of(discussion));
+        given(reviewRepository.save(any(Review.class))).willAnswer(i -> i.getArgument(0));
 
         Review review = reviewService.saveReview(user, dto, reviewType);
 
@@ -76,25 +65,47 @@ public class ReviewServiceTest {
         then(review.getReviewer()).isEqualTo(user);
         then(review.getDiscussion()).isEqualTo(discussion);
         then(review.getReviewType()).isEqualTo(reviewType);
-
     }
-//    @Test
-//    void saveReview_withNoDiscussion() {
-//
-//    }
-//
-//    void saveReview_withNoDiscussionCode() {
-//
-//    }
-//
-    @Test
-    @DisplayName("saveThread_review가 없을 경우 thread가 저장되지 않고 예외를 반환한다")
-    void saveThread_withNoReview() {
-        CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
 
-        Throwable throwable = catchThrowable(() -> reviewService.saveThread(user, dto, 1L));
+    @Test
+    @DisplayName("saveReview_discussion이 없을 경우 예외를 반환한다.")
+    void saveReview_withNoDiscussion() {
+        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
+        given(discussionRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+        Throwable throwable = catchThrowable(() -> reviewService.saveReview(user, dto, reviewType));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("saveCommentReviewDiff_commentReviewDiff가 저장된다.")
+    void saveCommentReviewDiff_common() {
+        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
+        DiscussionCode discussionCode = new DiscussionCode();
+        Review review = new Review();
+        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.of(discussionCode));
+        given(commentReviewDiffRepository.save(any(CommentReviewDiff.class))).willAnswer(i -> i.getArgument(0));
+        given(reviewRepository.findById(any(Long.class))).willAnswer(i -> i.getArgument(0));
+
+        review = reviewService.saveCommentReviewDiff(dto, review);
+
+        then(review.getDiffList()).isEqualTo(diffList);
+        then(review.getDiffList().size()).isEqualTo(diffList.size());
+    }
+
+    @Test
+    @DisplayName("saveCommentReviewDiff_discussionCode가 없을 경우 예외를 반환한다.")
+    void saveCommentReviewDiff_withNoDiscussionCode() {
+        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
+        DiscussionCode discussionCode = new DiscussionCode();
+        Review review = new Review();
+        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+        Throwable throwable = catchThrowable(() -> reviewService.saveCommentReviewDiff(dto, review));
+
+        then(throwable).isInstanceOf(NoSuchElementException.class);
+
     }
 
     @Test
@@ -102,7 +113,7 @@ public class ReviewServiceTest {
     void saveThread_common() {
         CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
         Review review = Review.builder().id(1L).build();
-        given(reviewRepository.findById(any())).willReturn(Optional.ofNullable(review));
+        given(reviewRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(review));
 
         ReviewThread reviewThread = reviewService.saveThread(user, dto, 1L);
 
@@ -111,7 +122,18 @@ public class ReviewServiceTest {
         then(reviewThread.getContent()).isEqualTo(dto.content);
     }
 
-    private CommentReviewDiffDto getCommentReviewDiffDto() {
-        return new CommentReviewDiffDto(1L, "codeAfter", "codeLocate", "comment");
+    @Test
+    @DisplayName("saveThread_review가 없을 경우 예외를 반환한다")
+    void saveThread_withNoReview() {
+        CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
+
+        Throwable throwable = catchThrowable(() -> reviewService.saveThread(user, dto, 1L));
+
+        then(throwable).isInstanceOf(NoSuchElementException.class);
+    }
+
+    private CommentReviewDiffDto getCommentReviewDiffDto(Long id) {
+        DiscussionCodeDto dto = new DiscussionCodeDto(id, "filename", "content");
+        return new CommentReviewDiffDto(dto, "codeAfter", "codeLocate", "comment");
     }
 }
