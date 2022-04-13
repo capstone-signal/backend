@@ -28,19 +28,14 @@ public class  CustomOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuth2Attribute oAuth2Attribute =
-                OAuth2Attribute.ofGitHub(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+                OAuth2Attribute.ofGitHub(oAuth2User.getAttributes());
 
-        //log.info("{}", oAuth2Attribute);
+        log.info(oAuth2Attribute.getName() +  oAuth2Attribute.getEmail());
 
         var memberAttribute = oAuth2Attribute.convertToMap();
 
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                memberAttribute, "login");
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")) ,memberAttribute, "login");
     }
 }

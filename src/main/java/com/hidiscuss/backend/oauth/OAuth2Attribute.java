@@ -17,13 +17,12 @@ class OAuth2Attribute {
     private String email;
     private String name;
 
-    static OAuth2Attribute ofGitHub(String provider, String attributeKey,
+    static OAuth2Attribute ofGitHub(
                                     Map<String, Object> attributes) {
-        System.out.println("++++++++++=+++++++++" + attributeKey+ attributes.get("login"));
         return OAuth2Attribute.builder()
                 .name((String) attributes.get("login"))
+                .email((String) attributes.get("email"))
                 .attributes(attributes)
-                .attributeKey(attributeKey)
                 .build();
     }
 

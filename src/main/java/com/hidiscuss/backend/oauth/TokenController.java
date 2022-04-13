@@ -12,19 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 public class TokenController {
     private final TokenService tokenService;
 
-    @GetMapping("/token/expired")
-    public String auth() {
-        System.out.println("토큰이 만료되었습니다.");
-        throw new RuntimeException();
-    }
-
     @GetMapping("/token/refresh")
     public String refreshAuth(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("Refresh");
 
         if (token != null && tokenService.verifyToken(token)) {
             String email = tokenService.getUid(token);
-            Token newToken = tokenService.generateToken(email, "USER");
+            Token newToken = tokenService.generateToken(email);
 
             response.addHeader("Auth", newToken.getToken());
             response.addHeader("Refresh", newToken.getRefreshToken());

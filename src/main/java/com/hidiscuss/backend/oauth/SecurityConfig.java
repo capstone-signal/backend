@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/token/**").permitAll()
                 .anyRequest().authenticated()
             .and()
-                .oauth2Login().loginPage("/token/expired")
+                .oauth2Login().loginPage("/oauth2/authorization/github")
                 .successHandler(successHandler)
                 .userInfoEndpoint().userService(oAuth2UserService);
 

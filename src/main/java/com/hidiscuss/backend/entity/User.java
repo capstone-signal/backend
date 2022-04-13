@@ -20,9 +20,6 @@ public class User extends BaseEntity {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "name")
-    private String name;
-
     @Column(name = "email")
     private String email;
 
@@ -37,9 +34,8 @@ public class User extends BaseEntity {
 
 
     @Builder
-    public User(String username, String name, String email, String accessToken, String refresh_token, Long point) {
+    public User(String username, String email, String accessToken, String refresh_token, Long point) {
         this.username = username;
-        this.name = name;
         this.email = email;
         this.accessToken = accessToken;
         this.refresh_token = refresh_token;
@@ -47,7 +43,7 @@ public class User extends BaseEntity {
     }
 
     public User update(User user){
-        this.name = user.getName();
+        this.username = user.getUsername();
         this.username =user.getUsername();
         return this;
     }

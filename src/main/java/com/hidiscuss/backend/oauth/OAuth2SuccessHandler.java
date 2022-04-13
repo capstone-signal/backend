@@ -1,6 +1,9 @@
 package com.hidiscuss.backend.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.repository.UserRepository;
+import com.hidiscuss.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,16 +23,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final TokenService tokenService;
     private final UserRequestMapper userRequestMapper;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
 
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
-        UserDto userDto = userRequestMapper.toDto(oAuth2User);
 
         // 최초 로그인이라면 회원가입 처리를 한다.
-        Token token = tokenService.generateToken(userDto.getName(), "USER");
+        Token token = tokenService.generateToken(oAuth2User.getName());
+        User user = userRequestMapper.toUser(oAuth2User,token);
+        userRepository.save(user);
         log.info("{}", token);
 
         writeTokenResponse(response, token);
@@ -38,6 +43,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private void writeTokenResponse(HttpServletResponse response, Token token)
             throws IOException {
         response.setContentType("text/html;charset=UTF-8");
+        System.out.println(token.getToken()+ token.getRefreshToken());
 
         response.addHeader("Auth", token.getToken());
         response.addHeader("Refresh", token.getRefreshToken());

@@ -20,3 +20,6 @@ spring:
           github:
             client-id: 29c5a8f5ca9d173267c4
             client-secret: bdc54f75e0d8c01a641336e5d564e28e15802ec4
+
+
+            #scope 관리
