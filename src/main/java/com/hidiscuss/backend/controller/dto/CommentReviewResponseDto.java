@@ -6,6 +6,7 @@ import com.hidiscuss.backend.entity.ReviewType;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public class CommentReviewResponseDto extends BaseResponseDto {
@@ -27,8 +28,11 @@ public class CommentReviewResponseDto extends BaseResponseDto {
         dto.id = entity.getId();
         dto.reviewer = UserResponseDto.fromEntity(entity.getReviewer());
         dto.discussion = DiscussionResponseDto.fromEntity(entity.getDiscussion());
-        for(CommentReviewDiff item: entity.getDiffList()) {
-            dto.diffList.add(CommentReviewDiffDto.fromEntity(item));
+        Optional<List<CommentReviewDiff>> list = Optional.ofNullable(entity.getDiffList());
+        if (list.isPresent()) {
+            for(CommentReviewDiff item: entity.getDiffList()) {
+                dto.diffList.add(CommentReviewDiffDto.fromEntity(item));
+            }
         }
         dto.accepted = entity.getAccepted();
         dto.reviewType = entity.getReviewType();

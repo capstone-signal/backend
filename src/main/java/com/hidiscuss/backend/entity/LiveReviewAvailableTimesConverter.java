@@ -15,6 +15,9 @@ public class LiveReviewAvailableTimesConverter implements AttributeConverter<Liv
     @Override
     public String convertToDatabaseColumn(LiveReviewAvailableTimes attribute) {
         String stringified = null;
+        if (attribute == null) {
+            return null;
+        }
         try {
             stringified = objectMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
@@ -27,6 +30,9 @@ public class LiveReviewAvailableTimesConverter implements AttributeConverter<Liv
     @Override
     public LiveReviewAvailableTimes convertToEntityAttribute(String dbData) {
         LiveReviewAvailableTimes attribute = null;
+        if (dbData == null) {
+            return null;
+        }
         try {
             attribute = objectMapper.readValue(dbData, LiveReviewAvailableTimes.class);
         } catch (JsonProcessingException e) {

@@ -28,6 +28,8 @@ public class ReviewService {
                 .reviewer(user)
                 .discussion(discussion)
                 .reviewType(reviewType)
+                .accepted(false)
+                .reviewer(user)
                 .build();
         review = reviewRepository.save(review);
         return review;
