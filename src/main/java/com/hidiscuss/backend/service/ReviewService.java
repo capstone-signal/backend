@@ -44,7 +44,9 @@ public class ReviewService {
             CommentReviewDiff commentReviewDiff = CommentReviewDiffDto.toEntity(item, review, code);
             commentReviewDiffRepository.save(commentReviewDiff);
         }
-        review = reviewRepository.findById(review.getId()).get();
+        List<CommentReviewDiff> entityList = commentReviewDiffRepository.findByReviewId(review.getId());
+        review.setDiffList(entityList);
+        review = reviewRepository.save(review);
         return review;
     }
 

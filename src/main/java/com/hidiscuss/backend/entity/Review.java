@@ -49,4 +49,8 @@ public class Review extends BaseEntity {
         this.accepted = accepted;
         this.reviewType = reviewType;
     }
+
+    public void setDiffList(List<CommentReviewDiff> diffList) {
+        this.diffList = diffList;
+    }
 }

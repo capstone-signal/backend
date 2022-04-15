@@ -2,16 +2,17 @@ package com.hidiscuss.backend.controller.dto;
 
 import com.hidiscuss.backend.entity.User;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Builder
 public class UserResponseDto {
-    private String name;
+    public String name;
 
-    private String email;
+    public String email;
 
-    private Long point;
+    public Long point;
 
-    private String accessToken;
+    public String accessToken;
 
     public static UserResponseDto fromEntity(User entity) {
         return UserResponseDto.builder()

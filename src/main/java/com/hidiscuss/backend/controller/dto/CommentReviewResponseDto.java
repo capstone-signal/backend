@@ -5,6 +5,7 @@ import com.hidiscuss.backend.entity.Review;
 import com.hidiscuss.backend.entity.ReviewType;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class CommentReviewResponseDto extends BaseResponseDto {
 
     private DiscussionResponseDto discussion;
 
-    private List<CommentReviewDiffDto> diffList;
+    private List<CommentReviewDiffDto> diffList = new ArrayList<>();
 
     private Boolean accepted;
 
