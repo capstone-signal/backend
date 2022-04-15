@@ -9,6 +9,17 @@ public enum Status {
         this.id = id;
     }
 
+    public static Status convertFromGithubStatus(String status) {
+        switch (status) {
+            case "modified":
+                return MODIFIED;
+            case "removed":
+                return REMOVED;
+            default: // "added" or other
+                return ADDED;
+        }
+    }
+
     public int getId() {
         return id;
     }

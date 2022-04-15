@@ -1,14 +1,15 @@
 package com.hidiscuss.backend.controller;
 
+import com.hidiscuss.backend.exception.GithubException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,7 +19,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleException(MethodArgumentNotValidException e) {
         logger.warn(e.getMessage());
-        return e.getBindingResult().getFieldError().getDefaultMessage(); // TODO : return proper error message
+        ObjectError error = e.getBindingResult().getAllErrors().get(0);
+        return error.getDefaultMessage();
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -32,6 +34,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleException(MissingServletRequestParameterException e) {
         logger.warn(e.getMessage());
+        return e.getMessage();
+    }
+  
+    @ExceptionHandler(GithubException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleException(GithubException e) {
+        logger.error(e.getMessage());
         return e.getMessage();
     }
 

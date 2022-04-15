@@ -2,7 +2,11 @@ package com.hidiscuss.backend.controller;
 
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
 import com.hidiscuss.backend.controller.dto.DiscussionResponseDto;
+import com.hidiscuss.backend.entity.Discussion;
+import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.service.DiscussionService;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,12 +14,10 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/discussion")
+@AllArgsConstructor
 public class DiscussionController {
-    //private final DiscussionService discussionService;
+    private final DiscussionService discussionService;
 
-    //public DiscussionController(DiscussionService discussionService) {
-    //    this.discussionService = discussionService;
-    //}
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,12 +34,24 @@ public class DiscussionController {
                 throw new IllegalArgumentException("코드가 없습니다.");
             }
         } else {
-            if (createDiscussionRequestDto.gitNodeId == null) {
-                throw new IllegalArgumentException("gitNodeId가 없습니다.");
+            if (createDiscussionRequestDto.gitNodeId == null || createDiscussionRequestDto.gitRepositoryId == null) {
+                throw new IllegalArgumentException("gitNodeId 또는 gitRepositoryId가 없습니다.");
             }
         }
-        return DiscussionResponseDto.fromEntity(CreateDiscussionRequestDto.toEntity(createDiscussionRequestDto));
-        //discussionService.createDiscussion(createDiscussionRequestDto);
+
+        if (createDiscussionRequestDto.liveReviewRequired) {
+            if (createDiscussionRequestDto.liveReviewAvailableTimes == null) {
+                throw new IllegalArgumentException("liveReviewAvailableTimes가 없습니다.");
+            }
+        }
+
+        if (createDiscussionRequestDto.usePriority) {
+            // rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
+        }
+        // TODO : Inject the Authenticated User
+        User user = User.builder().id(9999L).build();
+        Discussion discussion = discussionService.create(createDiscussionRequestDto, user);
+        return DiscussionResponseDto.fromEntity(discussion);
     }
 }
 
