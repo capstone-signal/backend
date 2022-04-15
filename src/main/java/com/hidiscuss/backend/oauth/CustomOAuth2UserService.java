@@ -28,7 +28,6 @@ public class  CustomOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
-
         OAuth2Attribute oAuth2Attribute =
                 OAuth2Attribute.ofGitHub(oAuth2User.getAttributes());
 

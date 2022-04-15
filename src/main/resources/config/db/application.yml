@@ -1,4 +1,7 @@
 # DataSource
+#logging:
+#  level:
+#    root: debug
 spring:
   profile:
     include: oauth
@@ -10,7 +13,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      # ddl-auto: none
       ddl-auto: create
     generate-ddl: true
   security:

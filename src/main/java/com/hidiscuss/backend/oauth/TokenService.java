@@ -25,6 +25,7 @@ public class TokenService {
         long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
 
         Claims claims = Jwts.claims().setSubject(uid);
+        claims.put("role", "USER");
 
         Date now = new Date();
         return new Token(

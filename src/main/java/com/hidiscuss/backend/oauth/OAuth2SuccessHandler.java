@@ -52,6 +52,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         var writer = response.getWriter();
         writer.println(objectMapper.writeValueAsString(token));
         writer.flush();
-
     }
 }

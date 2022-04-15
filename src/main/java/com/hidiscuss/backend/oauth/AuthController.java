@@ -15,10 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthController {
 
     @GetMapping("/auth/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("refresh", "1");
         response.setHeader("auth", "1");
         System.out.printf("============"+response.getHeader("refresh")
                 + response.getHeader("auth"));
+        return "AAA";
     }
 }
