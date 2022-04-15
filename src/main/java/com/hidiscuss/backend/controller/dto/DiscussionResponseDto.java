@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @Getter
 public class DiscussionResponseDto extends BaseResponseDto {
     private Long id;
+    private String title;
     private String question;
     private Boolean liveReviewRequired;
     private LiveReviewAvailableTimes liveReviewAvailableTimes;
@@ -21,6 +22,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
         DiscussionResponseDto dto = new DiscussionResponseDto();
         dto.setBaseResponse(entity);
         dto.id = entity.getId();
+        dto.title = entity.getTitle();
         dto.question = entity.getQuestion();
         dto.liveReviewRequired = entity.getLiveReviewRequired();
         dto.liveReviewAvailableTimes = entity.getLiveReviewAvailableTimes();

@@ -12,6 +12,9 @@ import java.util.List;
 
 public class CreateDiscussionRequestDto {
     @NotNull
+    public String title;
+
+    @NotNull
 //    @Size(min = 1, max = 1234)
     public String question;
 
@@ -43,6 +46,7 @@ public class CreateDiscussionRequestDto {
         return Discussion.builder()
                 .question(dto.question)
                 .user(user)
+                .title(dto.title)
                 .liveReviewRequired(dto.liveReviewRequired)
                 .liveReviewAvailableTimes(dto.liveReviewAvailableTimes)
                 .priority(dto.usePriority ? 255L : 0L)
