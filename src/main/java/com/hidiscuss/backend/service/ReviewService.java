@@ -21,7 +21,7 @@ public class ReviewService {
 
     public Review saveReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Discussion discussion = discussionRepository
-                .findById(dto.discussionId)
+                .findByIdFetchJoin(dto.discussionId)
                 .orElseThrow(() -> new NoSuchElementException("discussionId가 없습니다."));
         Review review = Review.builder()
                 .reviewer(user)
@@ -36,7 +36,7 @@ public class ReviewService {
 
     public ReviewThread saveThread(User user, CreateThreadRequestDto dto, Long reviewId) {
         Review review = reviewRepository
-                .findById(reviewId)
+                .findByIdFetchJoin(reviewId)
                 .orElseThrow(() -> new NoSuchElementException("reviewId가 없습니다."));
         ReviewThread reviewThread = ReviewThread.builder()
                 .user(user)

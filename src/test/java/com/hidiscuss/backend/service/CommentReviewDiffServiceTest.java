@@ -68,8 +68,8 @@ public class CommentReviewDiffServiceTest {
     void saveCommentReviewDiff_common() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
 
-        given(discussionCodeRepository.findById(discussionCode_1.getId())).willReturn(Optional.of(discussionCode_1));
-        given(discussionCodeRepository.findById(discussionCode_2.getId())).willReturn(Optional.of(discussionCode_2));
+        given(discussionCodeRepository.findByIdFetchJoin(discussionCode_1.getId())).willReturn(Optional.of(discussionCode_1));
+        given(discussionCodeRepository.findByIdFetchJoin(discussionCode_2.getId())).willReturn(Optional.of(discussionCode_2));
         given(commentReviewDiffRepository.save(any(CommentReviewDiff.class))).willAnswer(i -> i.getArgument(0));
 
         review = commentReviewDiffService.saveCommentReviewDiff(dto, review);
@@ -84,7 +84,7 @@ public class CommentReviewDiffServiceTest {
     void saveCommentReviewDiff_withNoDiscussionCode() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         Review review = new Review();
-        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.empty());
+        given(discussionCodeRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.empty());
 
         Throwable throwable = catchThrowable(() -> commentReviewDiffService.saveCommentReviewDiff(dto, review));
 

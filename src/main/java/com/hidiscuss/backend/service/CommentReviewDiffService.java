@@ -25,7 +25,7 @@ public class CommentReviewDiffService {
         List<CommentReviewDiffDto> list = dto.diffList;
         for(CommentReviewDiffDto item : list) {
             DiscussionCode code = discussionCodeRepository
-                    .findById(item.getDiscussionCode().getId())
+                    .findByIdFetchJoin(item.getDiscussionCode().getId())
                     .orElseThrow(() -> new NoSuchElementException("discussionCodeId가 없습니다."));
             CommentReviewDiff commentReviewDiff = CommentReviewDiffDto.toEntity(item, review, code);
             commentReviewDiff.setReview(review);

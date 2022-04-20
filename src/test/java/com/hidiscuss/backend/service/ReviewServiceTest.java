@@ -49,7 +49,7 @@ public class ReviewServiceTest {
     void saveReview_common() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         Discussion discussion = new Discussion();
-        given(discussionRepository.findById(any(Long.class))).willReturn(Optional.of(discussion));
+        given(discussionRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.of(discussion));
         given(reviewRepository.save(any(Review.class))).willAnswer(i -> i.getArgument(0));
 
         Review review = reviewService.saveReview(user, dto, reviewType);
@@ -64,7 +64,7 @@ public class ReviewServiceTest {
     @DisplayName("saveReview_discussion이 없을 경우 예외를 반환한다.")
     void saveReview_withNoDiscussion() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        given(discussionRepository.findById(any(Long.class))).willReturn(Optional.empty());
+        given(discussionRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.empty());
 
         Throwable throwable = catchThrowable(() -> reviewService.saveReview(user, dto, reviewType));
 
