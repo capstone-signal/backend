@@ -76,7 +76,7 @@ public class ReviewServiceTest {
     void saveThread_common() {
         CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
         Review review = Review.builder().id(1L).build();
-        given(reviewRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(review));
+        given(reviewRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.ofNullable(review));
         given(reviewThreadRepository.save(any(ReviewThread.class))).willAnswer(i -> i.getArgument(0));
 
         ReviewThread reviewThread = reviewService.saveThread(user, dto, 1L);
