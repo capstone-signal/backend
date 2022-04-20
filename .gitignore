@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+###OAuth####
+**/src/main/resources/config/oauth/
