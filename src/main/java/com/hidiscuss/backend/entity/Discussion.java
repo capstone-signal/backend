@@ -41,7 +41,8 @@ public class Discussion extends BaseEntity {
     private Long priority;
 
     @Builder
-    public Discussion(User user, String question, String title, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority) {
+    public Discussion(Long id, User user, String question, String title, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority) {
+        this.id = id;
         this.state = DiscussionState.NOT_REVIEWED;
         this.user = user;
         this.title = title;

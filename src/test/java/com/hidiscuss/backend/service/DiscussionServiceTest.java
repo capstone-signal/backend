@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -37,7 +38,7 @@ class DiscussionServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(discussionRepository.save(Mockito.any(Discussion.class))).thenAnswer(i -> i.getArgument(0));
+        Mockito.lenient().when(discussionRepository.save(Mockito.any(Discussion.class))).thenAnswer(i -> i.getArgument(0));
     }
     @Test
     void serviceIsDefined() {
@@ -73,7 +74,7 @@ class DiscussionServiceTest {
     void createDiscussion_withLiveReview() {
         CreateDiscussionRequestDto dto = getCreateDiscussionRequestDto();
         dto.liveReviewRequired = true;
-        dto.liveReviewAvailableTimes = new LiveReviewAvailableTimes();
+        dto.liveReviewAvailableTimes = new LiveReviewAvailableTimes(List.of());
         User user = new User();
 
         Discussion discussion = discussionService.create(dto, user);
@@ -81,6 +82,15 @@ class DiscussionServiceTest {
         assertThat(discussion.getLiveReviewRequired()).isTrue();
         assertThat(discussion.getLiveReviewAvailableTimes()).isNotNull();
         assertThat(discussion).isNotNull();
+    }
+
+    @Test
+    void findById_Nullable() {
+        when(discussionRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+
+        Discussion discussion = discussionService.findByIdOrNull(1L);
+
+        assertThat(discussion).isNull();
     }
 
     private CreateDiscussionRequestDto getCreateDiscussionRequestDto() {
