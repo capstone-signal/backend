@@ -2,16 +2,23 @@ package com.hidiscuss.backend.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class LiveReviewAvailableTimesConverter implements AttributeConverter<LiveReviewAvailableTimes, String> {
-    private static final Logger logger = LoggerFactory.getLogger(LiveReviewAvailableTimesConverter.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final ObjectMapper objectMapper;
+
     @Override
     public String convertToDatabaseColumn(LiveReviewAvailableTimes attribute) {
         String stringified = null;
@@ -21,7 +28,7 @@ public class LiveReviewAvailableTimesConverter implements AttributeConverter<Liv
         try {
             stringified = objectMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
-            logger.error("Convert error", e);
+            log.error("Convert error", e);
             throw new RuntimeException(e); // TODO : change to custom exception
         }
         return stringified;
@@ -36,7 +43,7 @@ public class LiveReviewAvailableTimesConverter implements AttributeConverter<Liv
         try {
             attribute = objectMapper.readValue(dbData, LiveReviewAvailableTimes.class);
         } catch (JsonProcessingException e) {
-            logger.error("Convert error", e);
+            log.error("Convert error", e);
             throw new RuntimeException(e); // TODO : change to custom exception
         }
         return attribute;
