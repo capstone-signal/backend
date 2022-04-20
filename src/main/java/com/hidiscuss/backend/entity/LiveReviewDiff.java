@@ -15,7 +15,7 @@ public class LiveReviewDiff extends ReviewDiff {
     private String codeLocate;
 
     @Builder
-    public LiveReviewDiff(Long id, Review review, DiscussionCode discussionCode, String codeAfter, String codeLocate, String comment) {
+    public LiveReviewDiff(Long id, Review review, DiscussionCode discussionCode, String codeAfter, String codeLocate) {
         super(id, review, discussionCode, codeAfter);
         this.codeLocate = codeLocate;
     }

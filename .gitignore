@@ -38,4 +38,4 @@ out/
 .vscode/
 
 ###OAuth####
-**/src/main/resources/config/oauth/
+**/src/main/resources/config/oauth/*

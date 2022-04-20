@@ -2,6 +2,7 @@ package com.hidiscuss.backend.controller;
 
 import com.hidiscuss.backend.controller.dto.CommentReviewResponseDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
+import com.hidiscuss.backend.controller.dto.CreateLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.LiveReviewResponseDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.ReviewService;
@@ -29,9 +30,9 @@ public class LiveReviewController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     @PostMapping("")
-    public LiveReviewResponseDto saveLiveReview(@RequestParam("type") ReviewType reviewType, @RequestBody @Valid CreateCommentReviewRequestDto requestDto) {
+    public LiveReviewResponseDto saveLiveReview(@RequestParam("type") ReviewType reviewType, @RequestBody @Valid CreateLiveReviewRequestDto requestDto) {
         User user = User.builder().id(1111L).build();
-        Review review = reviewService.saveReview(user, requestDto, reviewType);
+        Review review = reviewService.saveLiveReview(user, requestDto, reviewType);
         review = reviewService.saveLiveReviewDiff(requestDto, review);
         return LiveReviewResponseDto.fromEntity(review);
     }

@@ -27,12 +27,7 @@ public class LiveReviewResponseDto {
         dto.id = entity.getId();
         dto.reviewer = UserResponseDto.fromEntity(entity.getReviewer());
         dto.discussion = DiscussionResponseDto.fromEntity(entity.getDiscussion());
-        Optional<List<LiveReviewDiff>> list = Optional.ofNullable(entity.getLiveDiffList());
-        if (list.isPresent()) {
-            for(LiveReviewDiff item: entity.getLiveDiffList()) {
-                dto.diffList.add(LiveReviewDiffDto.fromEntity(item));
-            }
-        }
+
         dto.accepted = entity.getAccepted();
         dto.reviewType = entity.getReviewType();
         return dto;

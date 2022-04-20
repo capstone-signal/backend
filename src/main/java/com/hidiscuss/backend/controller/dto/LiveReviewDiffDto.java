@@ -23,7 +23,7 @@ public class LiveReviewDiffDto {
         @NotNull
         public String codeLocate;
 
-        public static LiveReviewDiff toEntity(com.hidiscuss.backend.controller.dto.CommentReviewDiffDto dto, Review review, DiscussionCode code) {
+        public static LiveReviewDiff toEntity(com.hidiscuss.backend.controller.dto.LiveReviewDiffDto dto, Review review, DiscussionCode code) {
             return LiveReviewDiff.builder()
                     .review(review)
                     .discussionCode(code)
