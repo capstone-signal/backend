@@ -1,7 +1,6 @@
-package com.hidiscuss.backend.oauth;
+package com.hidiscuss.backend.oauth.util;
 
 import com.hidiscuss.backend.entity.User;
-import com.hidiscuss.backend.oauth.UserDto;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 

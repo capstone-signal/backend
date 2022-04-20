@@ -1,5 +1,7 @@
-package com.hidiscuss.backend.oauth;
+package com.hidiscuss.backend.oauth.controller;
 
+import com.hidiscuss.backend.oauth.token.Token;
+import com.hidiscuss.backend.oauth.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

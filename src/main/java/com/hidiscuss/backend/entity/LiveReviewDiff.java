@@ -8,8 +8,19 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @Table(name = "LiveReviewDiff")
 public class LiveReviewDiff extends ReviewDiff {
 
+    @Column(name = "code_locate", nullable = false)
+    private String codeLocate;
+
+    @Builder
+    public LiveReviewDiff(Long id, Review review, DiscussionCode discussionCode, String codeAfter, String codeLocate, String comment) {
+        super(id, review, discussionCode, codeAfter);
+        this.codeLocate = codeLocate;
+    }
+
+    public LiveReviewDiff() {
+        super();
+    }
 }

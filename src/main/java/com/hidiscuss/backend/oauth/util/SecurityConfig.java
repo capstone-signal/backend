@@ -1,5 +1,9 @@
-package com.hidiscuss.backend.oauth;
+package com.hidiscuss.backend.oauth.util;
 
+import com.hidiscuss.backend.oauth.CustomOAuth2UserService;
+import com.hidiscuss.backend.oauth.OAuth2SuccessHandler;
+import com.hidiscuss.backend.oauth.token.JwtAuthFilter;
+import com.hidiscuss.backend.oauth.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,10 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor

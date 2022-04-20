@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.entity;
 
+import com.hidiscuss.backend.controller.dto.LiveReviewDiffDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +31,11 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "comment_review")
     private List<CommentReviewDiff> diffList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "live_review")
+    private List<LiveReviewDiff> liveDiffList = new ArrayList<>();
 
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
     private Boolean accepted;

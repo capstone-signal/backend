@@ -19,16 +19,17 @@ public class User extends BaseEntity {
     @Column(name = "username", nullable = false)
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "access_token", nullable = false)
+    @Column(name = "access_token")
     private String accessToken;
 
-    @Column(name = "refresh_token", nullable = false)
+    @Column(name = "refresh_token")
     private String refreshToken;
 
-    @Column(name = "point", nullable = false)
+    @Column(name = "point"
+    )
     private Long point;
 
     @Builder

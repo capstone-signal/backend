@@ -1,12 +1,11 @@
-package com.hidiscuss.backend.oauth;
+package com.hidiscuss.backend.oauth.token;
 
-import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.oauth.util.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
