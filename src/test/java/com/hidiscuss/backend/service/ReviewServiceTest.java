@@ -25,15 +25,8 @@ import static org.mockito.BDDMockito.given;
 public class ReviewServiceTest {
 
     @Mock private ReviewRepository reviewRepository;
-
     @Mock private DiscussionRepository discussionRepository;
-
-    @Mock private CommentReviewDiffRepository commentReviewDiffRepository;
-
-    @Mock private DiscussionCodeRepository discussionCodeRepository;
-
     @Mock private ReviewThreadRepository reviewThreadRepository;
-
     @InjectMocks private ReviewService reviewService;
 
     private User user;
@@ -79,41 +72,12 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveCommentReviewDiff_commentReviewDiff가 저장된다.")
-    void saveCommentReviewDiff_common() {
-        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        DiscussionCode discussionCode = new DiscussionCode();
-        Review review = new Review();
-        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.of(discussionCode));
-        given(commentReviewDiffRepository.save(any(CommentReviewDiff.class))).willAnswer(i -> i.getArgument(0));
-        given(reviewRepository.findById(any(Long.class))).willAnswer(i -> i.getArgument(0));
-
-        review = reviewService.saveCommentReviewDiff(dto, review);
-
-        then(review.getDiffList()).isEqualTo(diffList);
-        then(review.getDiffList().size()).isEqualTo(diffList.size());
-    }
-
-    @Test
-    @DisplayName("saveCommentReviewDiff_discussionCode가 없을 경우 예외를 반환한다.")
-    void saveCommentReviewDiff_withNoDiscussionCode() {
-        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        DiscussionCode discussionCode = new DiscussionCode();
-        Review review = new Review();
-        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.empty());
-
-        Throwable throwable = catchThrowable(() -> reviewService.saveCommentReviewDiff(dto, review));
-
-        then(throwable).isInstanceOf(NoSuchElementException.class);
-
-    }
-
-    @Test
     @DisplayName("saveThread_thread가 저장된다")
     void saveThread_common() {
         CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
         Review review = Review.builder().id(1L).build();
         given(reviewRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(review));
+        given(reviewThreadRepository.save(any(ReviewThread.class))).willAnswer(i -> i.getArgument(0));
 
         ReviewThread reviewThread = reviewService.saveThread(user, dto, 1L);
 

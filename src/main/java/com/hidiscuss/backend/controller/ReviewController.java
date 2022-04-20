@@ -23,7 +23,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @ApiOperation(value="comment review 저장", notes="이 api는 comment review를 저장합니다. requestBody로 온 comment review diff도 개수만큼 테이블에 저장합니다.")
+    @ApiOperation(value="comment review 생성", notes="이 api는 comment review를 생성합니다. requestBody로 온 comment review diff도 개수만큼 테이블에 저장합니다.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "새로운 comment review 생성 성공"),
             @ApiResponse(code = 400, message = "잘못된 요청"),
@@ -31,9 +31,8 @@ public class ReviewController {
     })
     @PostMapping("")
     public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType, @RequestBody @Valid CreateCommentReviewRequestDto requestDto) {
-        User user = User.builder().id(1111L).build();
-        Review review = reviewService.saveReview(user, requestDto, reviewType);
-        review = reviewService.saveCommentReviewDiff(requestDto, review);
+        User user = User.builder().id(7000L).build();
+        Review review = reviewService.saveReviewAndCommentDiffList(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
     }
 
@@ -45,7 +44,7 @@ public class ReviewController {
     })
     @PostMapping("{reviewId}/thread")
     public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId, @RequestBody @Valid CreateThreadRequestDto requestDto) {
-        User user = User.builder().id(1111L).build();
+        User user = User.builder().id(7000L).build();
         ReviewThread reviewThread = reviewService.saveThread(user, requestDto, reviewId);
         return ThreadResponseDto.fromEntity(reviewThread);
     }

@@ -1,14 +1,14 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.CommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 @Service
@@ -17,8 +17,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
-    private final CommentReviewDiffRepository commentReviewDiffRepository;
-    private final DiscussionCodeRepository discussionCodeRepository;
+    private final CommentReviewDiffService commentReviewDiffService;
 
     public Review saveReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Discussion discussion = discussionRepository
@@ -27,25 +26,10 @@ public class ReviewService {
         Review review = Review.builder()
                 .reviewer(user)
                 .discussion(discussion)
+                .diffList(new ArrayList<>())
                 .reviewType(reviewType)
                 .accepted(false)
-                .reviewer(user)
                 .build();
-        review = reviewRepository.save(review);
-        return review;
-    }
-
-    public Review saveCommentReviewDiff(CreateCommentReviewRequestDto dto, Review review) {
-        List<CommentReviewDiffDto> list = dto.diffList;
-        for(CommentReviewDiffDto item : list) {
-            DiscussionCode code = discussionCodeRepository
-                    .findById(item.getDiscussionCode().getId())
-                    .orElseThrow(() -> new NoSuchElementException("discussionCodeId가 없습니다."));
-            CommentReviewDiff commentReviewDiff = CommentReviewDiffDto.toEntity(item, review, code);
-            commentReviewDiffRepository.save(commentReviewDiff);
-        }
-        List<CommentReviewDiff> entityList = commentReviewDiffRepository.findByReviewId(review.getId());
-        review.setDiffList(entityList);
         review = reviewRepository.save(review);
         return review;
     }
@@ -61,5 +45,12 @@ public class ReviewService {
                 .build();
         reviewThreadRepository.save(reviewThread);
         return reviewThread;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Review saveReviewAndCommentDiffList(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
+        Review review = saveReview(user, dto, reviewType);
+        review = commentReviewDiffService.saveCommentReviewDiff(dto, review);
+        return review;
     }
 }

@@ -27,4 +27,17 @@ public class CommentReviewDiff extends ReviewDiff {
     public CommentReviewDiff() {
         super();
     }
+
+    public void setReview(Review review) {
+        super.review = review;
+        review.getDiffList().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "CommentReviewDiff{" +
+                "codeLocate='" + codeLocate + '\'' +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }

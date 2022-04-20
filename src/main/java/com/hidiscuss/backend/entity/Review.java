@@ -50,7 +50,15 @@ public class Review extends BaseEntity {
         this.reviewType = reviewType;
     }
 
-    public void setDiffList(List<CommentReviewDiff> diffList) {
-        this.diffList = diffList;
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", reviewer=" + reviewer +
+                ", discussion=" + discussion +
+                ", diffList=" + diffList +
+                ", accepted=" + accepted +
+                ", reviewType=" + reviewType +
+                '}';
     }
 }
