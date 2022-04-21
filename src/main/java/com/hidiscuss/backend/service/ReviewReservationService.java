@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.controller.dto.SendEmailDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
 import com.hidiscuss.backend.entity.ReviewReservation;
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -18,6 +22,7 @@ public class ReviewReservationService {
     public static int REVIEW_SESSION_DURATION_IN_HOURS = 1;
 
     private final ReviewReservationRepository reviewReservationRepository;
+    private final EmailService emailService;
 
     public List<ReviewReservation> findByDiscussionId(Long discussionId) {
         return reviewReservationRepository.findByDiscussionId(discussionId);
@@ -54,13 +59,28 @@ public class ReviewReservationService {
                 .reviewer(discussion.getUser()) // TODO IMPLEMENT : get Context User
                 .build();
 
-//        String revieweeEmail = discussion.getUser().getEmail();
-//        String reviewerEmail = reviewReservation.getReviewer().getEmail();
+        String revieweeEmail = discussion.getUser().getEmail();
+        String reviewerEmail = reviewReservation.getReviewer().getEmail();
 
-        //emailService.send(revieweeEmail, "예약 알림", "예약이 완료되었습니다.");
-        //emailService.send(reviewerEmail, "예약 알림", "예약이 완료되었습니다.");
+        emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
+        emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
         return reviewReservationRepository.save(reviewReservation);
+    }
+
+    private String getSubject() {
+        return "[Hidiscuss] 라이브 리뷰 예약 완료";
+    }
+
+    private String getContent(LocalDateTime reviewStartTime) {
+        StringBuilder sb = new StringBuilder();
+        // utc to asia/seoul
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(reviewStartTime, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        String reviewStartTimeStr = zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH시 mm분"));
+        sb.append("<h1>예약이 완료되었습니다.</h1>");
+        sb.append("<p>예약이 완료되었습니다.</p>");
+        sb.append("<p>예약 시간 : ").append(reviewStartTimeStr).append("</p>");
+        return sb.toString();
     }
 
     private boolean isDuplicatedReviewReservation(LocalDateTime startTime, ReviewReservation reviewReservation) {
