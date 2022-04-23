@@ -9,6 +9,7 @@ import com.hidiscuss.backend.service.ReviewService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,10 +30,11 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType, @RequestBody @Valid CreateCommentReviewRequestDto requestDto) {
         User user = User.builder().id(7000L).build();
-        Review review = reviewService.saveReviewAndCommentDiffList(user, requestDto, reviewType);
+        Review review = reviewService.createCommentReview(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
     }
 
@@ -42,10 +44,11 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("{reviewId}/thread")
     public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId, @RequestBody @Valid CreateThreadRequestDto requestDto) {
         User user = User.builder().id(7000L).build();
-        ReviewThread reviewThread = reviewService.saveThread(user, requestDto, reviewId);
+        ReviewThread reviewThread = reviewService.createThread(user, requestDto, reviewId);
         return ThreadResponseDto.fromEntity(reviewThread);
     }
 }

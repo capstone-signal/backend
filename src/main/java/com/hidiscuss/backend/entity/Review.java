@@ -31,7 +31,10 @@ public class Review extends BaseEntity {
     private Discussion discussion;
 
     @OneToMany(mappedBy = "review")
-    private List<CommentReviewDiff> diffList = new ArrayList<>();
+    private List<CommentReviewDiff> commentDiffList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review")
+    private List<LiveReviewDiff> liveDiffList = new ArrayList<>();
 
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
     private Boolean accepted;
@@ -41,11 +44,12 @@ public class Review extends BaseEntity {
     private ReviewType reviewType;
 
     @Builder
-    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> diffList, Boolean accepted, ReviewType reviewType) {
+    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> commentDiffList, List<LiveReviewDiff> liveDiffList, Boolean accepted, ReviewType reviewType) {
         this.id = id;
         this.reviewer = reviewer;
         this.discussion = discussion;
-        this.diffList = diffList;
+        this.commentDiffList = commentDiffList;
+        this.liveDiffList = liveDiffList;
         this.accepted = accepted;
         this.reviewType = reviewType;
     }
@@ -56,9 +60,14 @@ public class Review extends BaseEntity {
                 "id=" + id +
                 ", reviewer=" + reviewer +
                 ", discussion=" + discussion +
-                ", diffList=" + diffList +
+                ", commentDiffList=" + commentDiffList +
+                ", liveDiffList=" + liveDiffList +
                 ", accepted=" + accepted +
                 ", reviewType=" + reviewType +
                 '}';
+    }
+
+    public void setCommentDiffList(List<CommentReviewDiff> commentDiffList) {
+        this.commentDiffList = commentDiffList;
     }
 }

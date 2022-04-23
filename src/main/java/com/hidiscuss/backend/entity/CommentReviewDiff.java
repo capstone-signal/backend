@@ -30,7 +30,7 @@ public class CommentReviewDiff extends ReviewDiff {
 
     public void setReview(Review review) {
         super.review = review;
-        review.getDiffList().add(this);
+        review.getCommentDiffList().add(this);
     }
 
     @Override
