@@ -23,7 +23,7 @@ public class ReviewService {
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Review review = createReview(user, dto, reviewType);
-        List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
+        List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto);
         review.setCommentDiffList(diffList);
         return review;
     }
@@ -31,8 +31,9 @@ public class ReviewService {
     //TODO: commentDiffList로만 만들어지는 것 liveDiffList로도 적용되도록 일반화
     public Review createReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Discussion discussion = discussionRepository
-                .findByIdFetchJoin(dto.discussionId)
-                .orElseThrow(() -> new NoSuchElementException("discussionId가 없습니다."));
+                .findByIdFetchOrNull(dto.discussionId);
+        if (discussion == null)
+            throw new NoSuchElementException("Discussion not found");
         Review review = Review.builder()
                 .reviewer(user)
                 .discussion(discussion)
@@ -44,10 +45,7 @@ public class ReviewService {
         return review;
     }
 
-    public ReviewThread createThread(User user, CreateThreadRequestDto dto, Long reviewId) {
-        Review review = reviewRepository
-                .findByIdFetchJoin(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("reviewId가 없습니다."));
+    public ReviewThread createThread(User user, CreateThreadRequestDto dto, Review review) {
         ReviewThread reviewThread = ReviewThread.builder()
                 .user(user)
                 .review(review)
@@ -55,5 +53,12 @@ public class ReviewService {
                 .build();
         reviewThreadRepository.save(reviewThread);
         return reviewThread;
+    }
+
+    //fetch 필요한지 확인 후 테스트코드 작성
+    public Review findByIdFetchOrNull(Long id) {
+        Review review = reviewRepository.findByIdFetchOrNull(id);
+        if (review == null) throw new NoSuchElementException("Review not found");
+        return review;
     }
 }

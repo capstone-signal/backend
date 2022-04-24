@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/review")
@@ -48,7 +49,8 @@ public class ReviewController {
     @PostMapping("{reviewId}/thread")
     public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId, @RequestBody @Valid CreateThreadRequestDto requestDto) {
         User user = User.builder().id(7000L).build();
-        ReviewThread reviewThread = reviewService.createThread(user, requestDto, reviewId);
+        Review review = reviewService.findByIdFetchOrNull(reviewId);
+        ReviewThread reviewThread = reviewService.createThread(user, requestDto, review);
         return ThreadResponseDto.fromEntity(reviewThread);
     }
 }

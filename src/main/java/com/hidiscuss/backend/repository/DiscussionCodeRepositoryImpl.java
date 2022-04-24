@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class DiscussionCodeRepositoryImpl implements DiscussionRepositoryCustom{
+public class DiscussionCodeRepositoryImpl implements DiscussionCodeRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private final QDiscussionCode qDiscussionCode = QDiscussionCode.discussionCode;
 
@@ -18,11 +18,9 @@ public class DiscussionCodeRepositoryImpl implements DiscussionRepositoryCustom{
     }
 
     @Override
-    public List<DiscussionCode> findByIdListFetchJoin(List<Long> list) {
-        List<DiscussionCode> result = queryFactory.selectFrom(qDiscussionCode)
+    public List<DiscussionCode> findByIdListFetch(List<Long> list) {
+        return queryFactory.selectFrom(qDiscussionCode)
                 .where(qDiscussionCode.id.in(list))
                 .fetch();
-        return result;
     }
-
 }

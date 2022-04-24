@@ -9,6 +9,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface DiscussionRepository extends JpaRepository<Discussion, Long>, DiscussionRepositoryCustom {
-    @Query("select d from Discussion d left join fetch d.user where d.id = :id")
-    Optional<Discussion> findByIdFetchJoin(@Param("id") Long id);
+
 }

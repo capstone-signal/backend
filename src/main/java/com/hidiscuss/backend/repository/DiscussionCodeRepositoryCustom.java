@@ -5,5 +5,5 @@ import com.hidiscuss.backend.entity.DiscussionCode;
 import java.util.List;
 
 public interface DiscussionCodeRepositoryCustom {
-    List<DiscussionCode> findByIdListFetchJoin(List<Long> list);
+    List<DiscussionCode> findByIdListFetch(List<Long> list);
 }

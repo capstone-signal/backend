@@ -14,12 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.assertj.core.api.BDDAssertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
@@ -46,13 +46,13 @@ public class ReviewServiceTest {
 
     @Test
     @DisplayName("saveReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
-    void saveReview_common() {
+    void createReview_common() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         Discussion discussion = new Discussion();
-        given(discussionRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.of(discussion));
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(discussion);
         given(reviewRepository.save(any(Review.class))).willAnswer(i -> i.getArgument(0));
 
-        Review review = reviewService.saveReview(user, dto, reviewType);
+        Review review = reviewService.createReview(user, dto, reviewType);
 
         then(review).isNotNull();
         then(review.getReviewer()).isEqualTo(user);
@@ -62,24 +62,23 @@ public class ReviewServiceTest {
 
     @Test
     @DisplayName("saveReview_discussion이 없을 경우 예외를 반환한다.")
-    void saveReview_withNoDiscussion() {
+    void createReview_withNoDiscussion() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        given(discussionRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.empty());
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
 
-        Throwable throwable = catchThrowable(() -> reviewService.saveReview(user, dto, reviewType));
+        Throwable throwable = catchThrowable(() -> reviewService.createReview(user, dto, reviewType));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     @DisplayName("saveThread_thread가 저장된다")
-    void saveThread_common() {
+    void createThread_common() {
         CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
         Review review = Review.builder().id(1L).build();
-        given(reviewRepository.findByIdFetchJoin(any(Long.class))).willReturn(Optional.ofNullable(review));
         given(reviewThreadRepository.save(any(ReviewThread.class))).willAnswer(i -> i.getArgument(0));
 
-        ReviewThread reviewThread = reviewService.saveThread(user, dto, 1L);
+        ReviewThread reviewThread = reviewService.createThread(user, dto, review);
 
         then(reviewThread).isNotNull();
         then(reviewThread.getUser()).isEqualTo(user);
@@ -87,11 +86,21 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveThread_review가 없을 경우 예외를 반환한다")
-    void saveThread_withNoReview() {
-        CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
+    @DisplayName("findById_id로 review를 찾는다")
+    void findByIdFetchOrNull_common() {
+        given(reviewRepository.findByIdFetchOrNull(any(Long.class))).willReturn(mock(Review.class));
 
-        Throwable throwable = catchThrowable(() -> reviewService.saveThread(user, dto, 1L));
+        Review review = reviewService.findByIdFetchOrNull(0L);
+
+        then(review).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findById_review가 없을 경우 예외를 반환한다")
+    void findByIdFetchOrNull_withNoReview() {
+        given(reviewRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
+
+        Throwable throwable = catchThrowable(() -> reviewService.findByIdFetchOrNull(0L));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
     }

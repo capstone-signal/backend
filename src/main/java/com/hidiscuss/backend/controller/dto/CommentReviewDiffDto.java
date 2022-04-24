@@ -6,6 +6,7 @@ import com.hidiscuss.backend.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 
@@ -23,7 +24,7 @@ public class CommentReviewDiffDto {
     @NotNull
     public String codeLocate;
 
-    @NotNull
+    @Nullable
     public String comment;
 
     public static CommentReviewDiff toEntity(CommentReviewDiffDto dto, Review review, DiscussionCode code) {
