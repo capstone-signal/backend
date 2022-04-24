@@ -32,7 +32,7 @@ public class CommentReviewDiffService {
         if (codeList.size() != 0) {
             for (int i = 0; i < list.size(); i++) {
                 for (int j = 0; j < codeList.size(); j++) {
-                    if (list.get(i).getDiscussionCode().getId() == codeList.get(j).getId()) {
+                    if (list.get(i).getDiscussionCode().getId().equals(codeList.get(j).getId())) {
                         CommentReviewDiffDto tmpDto = list.get(i);
                         diffList.add(
                                 CommentReviewDiff.builder()
