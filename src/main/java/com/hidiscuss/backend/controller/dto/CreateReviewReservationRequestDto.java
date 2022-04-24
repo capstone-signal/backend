@@ -12,5 +12,6 @@ public class CreateReviewReservationRequestDto {
 
     @NotNull
     @Future
-    public LocalDateTime reviewDate;
+    public LocalDateTime reviewStartDateTime;
+
 }
