@@ -23,7 +23,7 @@ public class ReviewService {
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Review review = createReview(user, dto, reviewType);
-        List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto);
+        List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
         return review;
     }

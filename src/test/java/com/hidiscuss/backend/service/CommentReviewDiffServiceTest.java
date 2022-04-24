@@ -68,24 +68,24 @@ public class CommentReviewDiffServiceTest {
 
     @Test
     @DisplayName("saveCommentReviewDiff_commentReviewDiff가 저장된다.")
-    void saveCommentReviewDiff_common() {
+    void createCommentReviewDiff_common() {
         given(discussionCodeRepository.findByIdListFetch(idList)).willReturn(codeList);
         given(commentReviewDiffRepository.saveAll(anyList())).willAnswer(i -> i.getArgument(0));
 
-        List<CommentReviewDiff> entityList = commentReviewDiffService.createCommentReviewDiff(review, dto);
+        List<CommentReviewDiff> entityList = commentReviewDiffService.createCommentReviewDiff(review, dtoList);
 
         then(entityList.get(0).getDiscussionCode().getId()).isEqualTo(discussionCode_1.getId());
         then(entityList.get(1).getDiscussionCode().getId()).isEqualTo(discussionCode_2.getId());
-        then(entityList.size()).isEqualTo(dto.getDiffList().size());
+        then(entityList.size()).isEqualTo(dtoList.size());
     }
 
     @Test
     @DisplayName("saveCommentReviewDiff_discussionCode 개수만큼 만들어지지 않은 경우 예외를 반환한다.")
-    void saveCommentReviewDiff_withNoDiscussionCode() {
+    void createCommentReviewDiff_withNoDiscussionCode() {
         Review review = new Review();
         given(discussionCodeRepository.findByIdListFetch(idList)).willReturn(new ArrayList<>());
 
-        Throwable throwable = catchThrowable(() -> commentReviewDiffService.createCommentReviewDiff(review, dto));
+        Throwable throwable = catchThrowable(() -> commentReviewDiffService.createCommentReviewDiff(review, dtoList));
 
         then(throwable).isInstanceOf(EmptyDiscussionCodeException.class);
     }

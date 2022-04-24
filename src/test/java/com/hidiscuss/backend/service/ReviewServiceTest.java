@@ -49,7 +49,7 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
+    @DisplayName("createReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
     void createReview_common() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         Discussion discussion = new Discussion();
@@ -65,7 +65,7 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveReview_discussion이 없을 경우 예외를 반환한다.")
+    @DisplayName("createReview_discussion이 없을 경우 예외를 반환한다.")
     void createReview_withNoDiscussion() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
@@ -76,7 +76,7 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveThread_thread가 저장된다")
+    @DisplayName("createThread_thread가 저장된다")
     void createThread_common() {
         CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
         Review review = Review.builder().id(1L).build();
@@ -90,7 +90,7 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("findById_id로 review를 찾는다")
+    @DisplayName("findByIdFetchOrNull_id로 review를 찾는다")
     void findByIdFetchOrNull_common() {
         given(reviewRepository.findByIdFetchOrNull(any(Long.class))).willReturn(mock(Review.class));
 
@@ -100,7 +100,7 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("findById_review가 없을 경우 예외를 반환한다")
+    @DisplayName("findByIdFetchOrNull_review가 없을 경우 예외를 반환한다")
     void findByIdFetchOrNull_withNoReview() {
         given(reviewRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
 

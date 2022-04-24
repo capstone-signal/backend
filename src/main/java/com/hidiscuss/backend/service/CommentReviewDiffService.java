@@ -20,8 +20,7 @@ public class CommentReviewDiffService {
     private final CommentReviewDiffRepository commentReviewDiffRepository;
     private final DiscussionCodeRepository discussionCodeRepository;
 
-    public List<CommentReviewDiff> createCommentReviewDiff(Review review, CreateCommentReviewRequestDto dto) {
-        List<CommentReviewDiffDto> list = dto.getDiffList();
+    public List<CommentReviewDiff> createCommentReviewDiff(Review review, List<CommentReviewDiffDto> list) {
         List<CommentReviewDiff> diffList = new ArrayList<>();
         List<Long> idList = new ArrayList<>();
 
@@ -47,7 +46,7 @@ public class CommentReviewDiffService {
                 }
             }
         }
-        if (dto.getDiffList().size() != diffList.size() || codeList.size() == 0)
+        if (list.size() != diffList.size() || codeList.size() == 0)
             throw new EmptyDiscussionCodeException("Some discussion code is missing");
         return commentReviewDiffRepository.saveAll(diffList);
     }
