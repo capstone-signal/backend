@@ -1,13 +1,14 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.CommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -17,43 +18,34 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
-    private final CommentReviewDiffRepository commentReviewDiffRepository;
-    private final DiscussionCodeRepository discussionCodeRepository;
+    private final CommentReviewDiffService commentReviewDiffService;
 
-    public Review saveReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
+    @Transactional
+    public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
+        Review review = createReview(user, dto, reviewType);
+        List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
+        review.setCommentDiffList(diffList);
+        return review;
+    }
+
+    //TODO: commentDiffList로만 만들어지는 것 liveDiffList로도 적용되도록 일반화
+    public Review createReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Discussion discussion = discussionRepository
-                .findById(dto.discussionId)
-                .orElseThrow(() -> new NoSuchElementException("discussionId가 없습니다."));
+                .findByIdFetchOrNull(dto.discussionId);
+        if (discussion == null)
+            throw new NoSuchElementException("Discussion not found");
         Review review = Review.builder()
                 .reviewer(user)
                 .discussion(discussion)
+                .commentDiffList(new ArrayList<>())
                 .reviewType(reviewType)
                 .accepted(false)
-                .reviewer(user)
                 .build();
         review = reviewRepository.save(review);
         return review;
     }
 
-    public Review saveCommentReviewDiff(CreateCommentReviewRequestDto dto, Review review) {
-        List<CommentReviewDiffDto> list = dto.diffList;
-        for(CommentReviewDiffDto item : list) {
-            DiscussionCode code = discussionCodeRepository
-                    .findById(item.getDiscussionCode().getId())
-                    .orElseThrow(() -> new NoSuchElementException("discussionCodeId가 없습니다."));
-            CommentReviewDiff commentReviewDiff = CommentReviewDiffDto.toEntity(item, review, code);
-            commentReviewDiffRepository.save(commentReviewDiff);
-        }
-        List<CommentReviewDiff> entityList = commentReviewDiffRepository.findByReviewId(review.getId());
-        review.setDiffList(entityList);
-        review = reviewRepository.save(review);
-        return review;
-    }
-
-    public ReviewThread saveThread(User user, CreateThreadRequestDto dto, Long reviewId) {
-        Review review = reviewRepository
-                .findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("reviewId가 없습니다."));
+    public ReviewThread createThread(User user, CreateThreadRequestDto dto, Review review) {
         ReviewThread reviewThread = ReviewThread.builder()
                 .user(user)
                 .review(review)
@@ -61,5 +53,11 @@ public class ReviewService {
                 .build();
         reviewThreadRepository.save(reviewThread);
         return reviewThread;
+    }
+
+    public Review findByIdFetchOrNull(Long id) {
+        Review review = reviewRepository.findByIdFetchOrNull(id);
+        if (review == null) throw new NoSuchElementException("Review not found");
+        return review;
     }
 }

@@ -14,27 +14,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.assertj.core.api.BDDAssertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
 
-    @Mock private ReviewRepository reviewRepository;
-
-    @Mock private DiscussionRepository discussionRepository;
-
-    @Mock private CommentReviewDiffRepository commentReviewDiffRepository;
-
-    @Mock private DiscussionCodeRepository discussionCodeRepository;
-
-    @Mock private ReviewThreadRepository reviewThreadRepository;
-
-    @InjectMocks private ReviewService reviewService;
+    @Mock
+    private ReviewRepository reviewRepository;
+    @Mock
+    private DiscussionRepository discussionRepository;
+    @Mock
+    private ReviewThreadRepository reviewThreadRepository;
+    @InjectMocks
+    private ReviewService reviewService;
 
     private User user;
 
@@ -52,14 +49,14 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
-    void saveReview_common() {
+    @DisplayName("createReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
+    void createReview_common() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
         Discussion discussion = new Discussion();
-        given(discussionRepository.findById(any(Long.class))).willReturn(Optional.of(discussion));
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(discussion);
         given(reviewRepository.save(any(Review.class))).willAnswer(i -> i.getArgument(0));
 
-        Review review = reviewService.saveReview(user, dto, reviewType);
+        Review review = reviewService.createReview(user, dto, reviewType);
 
         then(review).isNotNull();
         then(review.getReviewer()).isEqualTo(user);
@@ -68,54 +65,24 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveReview_discussion이 없을 경우 예외를 반환한다.")
-    void saveReview_withNoDiscussion() {
+    @DisplayName("createReview_discussion이 없을 경우 예외를 반환한다.")
+    void createReview_withNoDiscussion() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        given(discussionRepository.findById(any(Long.class))).willReturn(Optional.empty());
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
 
-        Throwable throwable = catchThrowable(() -> reviewService.saveReview(user, dto, reviewType));
+        Throwable throwable = catchThrowable(() -> reviewService.createReview(user, dto, reviewType));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
-    @DisplayName("saveCommentReviewDiff_commentReviewDiff가 저장된다.")
-    void saveCommentReviewDiff_common() {
-        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        DiscussionCode discussionCode = new DiscussionCode();
-        Review review = new Review();
-        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.of(discussionCode));
-        given(commentReviewDiffRepository.save(any(CommentReviewDiff.class))).willAnswer(i -> i.getArgument(0));
-        given(reviewRepository.findById(any(Long.class))).willAnswer(i -> i.getArgument(0));
-
-        review = reviewService.saveCommentReviewDiff(dto, review);
-
-        then(review.getDiffList()).isEqualTo(diffList);
-        then(review.getDiffList().size()).isEqualTo(diffList.size());
-    }
-
-    @Test
-    @DisplayName("saveCommentReviewDiff_discussionCode가 없을 경우 예외를 반환한다.")
-    void saveCommentReviewDiff_withNoDiscussionCode() {
-        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        DiscussionCode discussionCode = new DiscussionCode();
-        Review review = new Review();
-        given(discussionCodeRepository.findById(any(Long.class))).willReturn(Optional.empty());
-
-        Throwable throwable = catchThrowable(() -> reviewService.saveCommentReviewDiff(dto, review));
-
-        then(throwable).isInstanceOf(NoSuchElementException.class);
-
-    }
-
-    @Test
-    @DisplayName("saveThread_thread가 저장된다")
-    void saveThread_common() {
+    @DisplayName("createThread_thread가 저장된다")
+    void createThread_common() {
         CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
         Review review = Review.builder().id(1L).build();
-        given(reviewRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(review));
+        given(reviewThreadRepository.save(any(ReviewThread.class))).willAnswer(i -> i.getArgument(0));
 
-        ReviewThread reviewThread = reviewService.saveThread(user, dto, 1L);
+        ReviewThread reviewThread = reviewService.createThread(user, dto, review);
 
         then(reviewThread).isNotNull();
         then(reviewThread.getUser()).isEqualTo(user);
@@ -123,11 +90,21 @@ public class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("saveThread_review가 없을 경우 예외를 반환한다")
-    void saveThread_withNoReview() {
-        CreateThreadRequestDto dto = new CreateThreadRequestDto("comment");
+    @DisplayName("findByIdFetchOrNull_id로 review를 찾는다")
+    void findByIdFetchOrNull_common() {
+        given(reviewRepository.findByIdFetchOrNull(any(Long.class))).willReturn(mock(Review.class));
 
-        Throwable throwable = catchThrowable(() -> reviewService.saveThread(user, dto, 1L));
+        Review review = reviewService.findByIdFetchOrNull(0L);
+
+        then(review).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findByIdFetchOrNull_review가 없을 경우 예외를 반환한다")
+    void findByIdFetchOrNull_withNoReview() {
+        given(reviewRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
+
+        Throwable throwable = catchThrowable(() -> reviewService.findByIdFetchOrNull(0L));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
     }
