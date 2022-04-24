@@ -8,6 +8,9 @@ import com.hidiscuss.backend.oauth.util.UserRequestMapper;
 import com.hidiscuss.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.kohsuke.github.GHEmail;
+import org.kohsuke.github.GitHub;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -19,6 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +33,9 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
 
+    @Value("${environments.url.homeurl}")
+    private String homeurl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
@@ -36,24 +43,24 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
         String gitaccessToken = oAuth2User.getAttribute("accessToken");
         // 최초 로그인이라면 회원가입 처리를 한다.
-        Token token = tokenService.generateToken(oAuth2User.getName());
+        Token token = tokenService.generateToken(oAuth2User.getName(),gitaccessToken);
         User user1 =userRepository.getByName(oAuth2User.getName());
         if (user1 == null) {
-            User user = userRequestMapper.toUser(oAuth2User, gitaccessToken);
+            GitHub gitHub = GitHub.connectUsingOAuth(gitaccessToken);
+            List<GHEmail>  ghEmails2 = gitHub.getMyself().getEmails2();
+
+            User user = userRequestMapper.toUser(oAuth2User, gitaccessToken, ghEmails2.get(2).getEmail());
             userRepository.save(user);
         }
-        Cookie gitAccessToken = new Cookie("gitAccessToken", gitaccessToken);
         Cookie accessToken = new Cookie("accessToken", token.getToken());
         Cookie refreshToken = new Cookie("refreshToken", token.getRefreshToken());
 
-        gitAccessToken.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
         accessToken.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
         refreshToken.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
 
-        response.addCookie(gitAccessToken);
         response.addCookie(accessToken);
         response.addCookie(refreshToken);
 
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000");
+        getRedirectStrategy().sendRedirect(request, response, homeurl );
     }
 }

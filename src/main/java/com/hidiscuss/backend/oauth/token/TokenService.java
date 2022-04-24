@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -12,16 +13,21 @@ import java.util.Date;
 
 @Service
 public class TokenService {
-    private String secretKey = "token-secret-key-for-hyun-backend-spring-boot-login";
+
+    @Value("${environments.key.secretKey}")
+    private String secretKey;
 
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public Token generateToken(String uid) {
+    public Token generateToken(String uid, String gitAccessToken) {
+        System.out.println(secretKey);
         long tokenPeriod = 1000L * 60L * 10L;
         long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
+
+        System.out.println(uid + gitAccessToken);
 
         Claims claims = Jwts.claims().setSubject(uid);
         claims.put("role", "USER");
@@ -33,6 +39,7 @@ public class TokenService {
                         .setIssuedAt(now)
                         .setExpiration(new Date(now.getTime() + tokenPeriod))
                         .signWith(SignatureAlgorithm.HS256, secretKey)
+                        .claim("gitAccessToken",gitAccessToken)
                         .compact(),
                 Jwts.builder()
                         .setClaims(claims)
@@ -58,6 +65,14 @@ public class TokenService {
 
     public String getUid(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Claims parseJwtToken(String authorizationHeader) {
+
+        return Jwts.parser()
+                .setSigningKey(secretKey) // (3)
+                .parseClaimsJws(authorizationHeader) // (4)
+                .getBody();
     }
 
 

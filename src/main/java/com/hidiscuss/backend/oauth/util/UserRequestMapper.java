@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserRequestMapper {
-    public User toUser(OAuth2User oAuth2User, String  access_token) {
+    public User toUser(OAuth2User oAuth2User, String  access_token, String user_email) {
         var attributes = oAuth2User.getAttributes();
 
         return User.builder()
                 .name((String) attributes.get("login"))
-                .email((String) attributes.get("email"))
+                .email(user_email)
                 .accessToken(access_token)
                 .build();
     }

@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginPage("/oauth2/authorization/github")
                     .defaultSuccessUrl("/")
                     .successHandler(successHandler)
+                    .failureUrl("/auth/fail")
                     .userInfoEndpoint()
                     .userService(oAuth2UserService);
 

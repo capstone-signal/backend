@@ -1,6 +1,7 @@
 package com.hidiscuss.backend.oauth.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RestController
 public class AuthController  extends SavedRequestAwareAuthenticationSuccessHandler {
+
+    @Value("${environments.url.homeurl}")
+    private String homeurl;
 
     @GetMapping("/auth/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -32,7 +36,7 @@ public class AuthController  extends SavedRequestAwareAuthenticationSuccessHandl
         response.addCookie(refreshToken);
 
         try {
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000");
+            getRedirectStrategy().sendRedirect(request, response, homeurl);
         } catch (IOException e) {
             e.printStackTrace();
         }

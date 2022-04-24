@@ -1,7 +1,5 @@
 package com.hidiscuss.backend.controller;
 
-import com.hidiscuss.backend.controller.dto.CommentReviewResponseDto;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.LiveReviewResponseDto;
 import com.hidiscuss.backend.entity.*;
@@ -36,4 +34,6 @@ public class LiveReviewController {
         review = reviewService.saveLiveReviewDiff(requestDto, review);
         return LiveReviewResponseDto.fromEntity(review);
     }
+    // open 기본적으로 만들고 주기적 업데이트
+    // 기본생성.
 }
