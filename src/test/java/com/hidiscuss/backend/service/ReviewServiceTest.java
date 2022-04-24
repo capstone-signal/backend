@@ -24,10 +24,14 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
 
-    @Mock private ReviewRepository reviewRepository;
-    @Mock private DiscussionRepository discussionRepository;
-    @Mock private ReviewThreadRepository reviewThreadRepository;
-    @InjectMocks private ReviewService reviewService;
+    @Mock
+    private ReviewRepository reviewRepository;
+    @Mock
+    private DiscussionRepository discussionRepository;
+    @Mock
+    private ReviewThreadRepository reviewThreadRepository;
+    @InjectMocks
+    private ReviewService reviewService;
 
     private User user;
 

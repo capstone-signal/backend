@@ -24,9 +24,11 @@ public class CommentReviewDiffService {
         List<CommentReviewDiffDto> list = dto.getDiffList();
         List<CommentReviewDiff> diffList = new ArrayList<>();
         List<Long> idList = new ArrayList<>();
+
         for (int i = 0; i < list.size(); i++)
             idList.add(list.get(i).getDiscussionCode().getId());
         List<DiscussionCode> codeList = discussionCodeRepository.findByIdListFetch(idList);
+
         if (codeList.size() != 0) {
             for (int i = 0; i < list.size(); i++) {
                 for (int j = 0; j < codeList.size(); j++) {

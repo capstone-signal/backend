@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.BDDAssertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -27,9 +26,12 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class CommentReviewDiffServiceTest {
 
-    @Mock private CommentReviewDiffRepository commentReviewDiffRepository;
-    @Mock private DiscussionCodeRepository discussionCodeRepository;
-    @InjectMocks private CommentReviewDiffService commentReviewDiffService;
+    @Mock
+    private CommentReviewDiffRepository commentReviewDiffRepository;
+    @Mock
+    private DiscussionCodeRepository discussionCodeRepository;
+    @InjectMocks
+    private CommentReviewDiffService commentReviewDiffService;
 
     private User user;
     private Review review;

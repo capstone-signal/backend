@@ -55,7 +55,6 @@ public class ReviewService {
         return reviewThread;
     }
 
-    //fetch 필요한지 확인 후 테스트코드 작성
     public Review findByIdFetchOrNull(Long id) {
         Review review = reviewRepository.findByIdFetchOrNull(id);
         if (review == null) throw new NoSuchElementException("Review not found");
