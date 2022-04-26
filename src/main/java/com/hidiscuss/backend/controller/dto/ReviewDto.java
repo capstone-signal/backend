@@ -1,8 +1,11 @@
 package com.hidiscuss.backend.controller.dto;
 
+import com.hidiscuss.backend.entity.CommentReviewDiff;
+import com.hidiscuss.backend.entity.LiveReviewDiff;
 import com.hidiscuss.backend.entity.Review;
 import com.hidiscuss.backend.entity.ReviewType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -10,7 +13,8 @@ public class ReviewDto extends BaseResponseDto {
     private Long id;
     private UserResponseDto reviewer;
     private DiscussionResponseDto discussion;
-    private List<ReviewDiffDto> diffList;
+    private List<CommentReviewDiffDto> commentDiffList = new ArrayList<>();
+    private List<LiveReviewDiffDto> liveDiffList = new ArrayList<>();
     private Boolean accepted;
     private ReviewType reviewType;
 
@@ -22,9 +26,13 @@ public class ReviewDto extends BaseResponseDto {
         dto.accepted = review.getAccepted();
         dto.reviewType = review.getReviewType();
         if (dto.reviewType == ReviewType.COMMENT) {
-            dto.diffList = ReviewDiffDto.fromEntity(review.getCommentDiffList());
+            List<CommentReviewDiff> entityList = review.getCommentDiffList();
+            for (CommentReviewDiff item : entityList)
+                dto.commentDiffList.add(CommentReviewDiffDto.fromEntity(item));
         } else if (dto.reviewType == ReviewType.LIVE) {
-            dto.diffList = ReviewDiffDto.fromEntity(review.getLiveDiffList());
+            List<LiveReviewDiff> entityList = review.getLiveDiffList();
+            for (LiveReviewDiff item : entityList)
+                dto.liveDiffList.add(LiveReviewDiffDto.fromEntity(item));
         }
         return dto;
     }

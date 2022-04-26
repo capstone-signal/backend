@@ -16,12 +16,6 @@ import javax.validation.constraints.NotNull;
 public class CommentReviewDiffDto extends ReviewDiffDto {
 
     @NotNull
-    public DiscussionCodeDto discussionCode;
-
-    @NotNull
-    public String codeAfter;
-
-    @NotNull
     public String codeLocate;
 
     @Nullable
@@ -46,5 +40,4 @@ public class CommentReviewDiffDto extends ReviewDiffDto {
 
         return dto;
     }
-
 }

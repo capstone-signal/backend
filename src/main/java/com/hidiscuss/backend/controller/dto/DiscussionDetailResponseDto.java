@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 @Getter
-public class DiscussionDetailResponseDto extends BaseResponseDto {
+public class DiscussionDetailResponseDto {
     private DiscussionResponseDto discussionResponseDto;
     private Page<ReviewDto> reviewResponseDtoPage;
 

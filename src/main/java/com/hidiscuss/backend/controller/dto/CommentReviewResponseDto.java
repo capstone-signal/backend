@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
-public class CommentReviewResponseDto extends BaseResponseDto {
+public class CommentReviewResponseDto {
 
     private Long id;
 
