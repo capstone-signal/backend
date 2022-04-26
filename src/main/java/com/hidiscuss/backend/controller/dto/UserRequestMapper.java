@@ -1,4 +1,4 @@
-package com.hidiscuss.backend.oauth.util;
+package com.hidiscuss.backend.controller.dto;
 
 import com.hidiscuss.backend.entity.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;

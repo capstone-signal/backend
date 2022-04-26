@@ -1,10 +1,10 @@
-package com.hidiscuss.backend.oauth;
+package com.hidiscuss.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hidiscuss.backend.entity.User;
-import com.hidiscuss.backend.oauth.token.Token;
-import com.hidiscuss.backend.oauth.token.TokenService;
-import com.hidiscuss.backend.oauth.util.UserRequestMapper;
+import com.hidiscuss.backend.entity.Token;
+import com.hidiscuss.backend.service.TokenService;
+import com.hidiscuss.backend.controller.dto.UserRequestMapper;
 import com.hidiscuss.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,6 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
         if (user1 == null) {
             GitHub gitHub = GitHub.connectUsingOAuth(gitaccessToken);
             List<GHEmail>  ghEmails2 = gitHub.getMyself().getEmails2();
-
             User user = userRequestMapper.toUser(oAuth2User, gitaccessToken, ghEmails2.get(2).getEmail());
             userRepository.save(user);
         }

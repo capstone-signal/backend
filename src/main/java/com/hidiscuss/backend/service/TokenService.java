@@ -1,5 +1,6 @@
-package com.hidiscuss.backend.oauth.token;
+package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.entity.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -23,11 +24,9 @@ public class TokenService {
     }
 
     public Token generateToken(String uid, String gitAccessToken) {
-        System.out.println(secretKey);
         long tokenPeriod = 1000L * 60L * 10L;
         long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
 
-        System.out.println(uid + gitAccessToken);
 
         Claims claims = Jwts.claims().setSubject(uid);
         claims.put("role", "USER");

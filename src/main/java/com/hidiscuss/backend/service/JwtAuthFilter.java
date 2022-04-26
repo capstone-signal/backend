@@ -1,6 +1,7 @@
-package com.hidiscuss.backend.oauth.token;
+package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.oauth.util.UserDto;
+import com.hidiscuss.backend.controller.dto.UserDto;
+import com.hidiscuss.backend.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

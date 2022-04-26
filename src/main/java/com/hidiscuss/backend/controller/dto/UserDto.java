@@ -1,4 +1,4 @@
-package com.hidiscuss.backend.oauth.util;
+package com.hidiscuss.backend.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
 @Service
 @AllArgsConstructor
 public class ReviewService {
+
     private final ReviewRepository reviewRepository;
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;

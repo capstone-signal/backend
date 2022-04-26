@@ -1,4 +1,4 @@
-package com.hidiscuss.backend.oauth.token;
+package com.hidiscuss.backend.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

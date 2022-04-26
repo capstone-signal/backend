@@ -1,9 +1,9 @@
-package com.hidiscuss.backend.oauth.util;
+package com.hidiscuss.backend.config;
 
-import com.hidiscuss.backend.oauth.CustomOAuth2UserService;
-import com.hidiscuss.backend.oauth.OAuth2SuccessHandler;
-import com.hidiscuss.backend.oauth.token.JwtAuthFilter;
-import com.hidiscuss.backend.oauth.token.TokenService;
+import com.hidiscuss.backend.service.CustomOAuth2UserService;
+import com.hidiscuss.backend.service.OAuth2SuccessHandler;
+import com.hidiscuss.backend.service.JwtAuthFilter;
+import com.hidiscuss.backend.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

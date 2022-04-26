@@ -1,4 +1,4 @@
-package com.hidiscuss.backend.oauth.controller;
+package com.hidiscuss.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
