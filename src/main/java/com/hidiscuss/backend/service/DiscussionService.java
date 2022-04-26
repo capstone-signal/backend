@@ -50,4 +50,8 @@ public class DiscussionService {
         }
         return discussion;
     }
+
+    public Discussion findByIdOrNull(Long discussionId) {
+        return discussionRepository.findById(discussionId).orElse(null);
+    }
 }

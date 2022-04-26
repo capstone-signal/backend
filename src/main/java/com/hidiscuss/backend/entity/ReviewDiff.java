@@ -19,7 +19,7 @@ abstract class ReviewDiff extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "review_id", nullable = false)
-    private Review review;
+    Review review;
 
     @ManyToOne
     @JoinColumn(name = "discussion_code_id", nullable = false)

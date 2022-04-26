@@ -23,6 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -38,7 +39,7 @@ dependencies {
 	// Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
-
+	implementation 'io.springfox:springfox-bean-validators:3.0.0'
 	//spring security oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -54,6 +55,7 @@ dependencies {
 
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.1'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.1'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
 }
 
@@ -91,10 +93,6 @@ jib {
 			}
 		}
 	}
-	/*
-	 로컬 빌드 시 아래 명령어 사용
-	 gradle jibBuildTar
-	 */
 	to {
 		image = "075730933478.dkr.ecr.ap-northeast-2.amazonaws.com/backend-spring"
 		tags = ["latest", "${getGitHash()}"]
@@ -104,6 +102,5 @@ jib {
 		jvmFlags = ["-Xms128m", "-Xmx128m", "-Dspring.profiles.active=prod"]
 		creationTime = "USE_CURRENT_TIMESTAMP"
 		ports = ['8080']
-		environment = [SPRING_CONFIG_LOCATION:"file:/app/config/*/application.yml"]
 	}
 }

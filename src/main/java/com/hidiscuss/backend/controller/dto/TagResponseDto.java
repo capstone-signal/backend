@@ -12,7 +12,7 @@ public class TagResponseDto {
         this.id = id;
         this.name = name;
     }
-    static TagResponseDto fromEntity(Tag tag) {
+    public static TagResponseDto fromEntity(Tag tag) {
         TagResponseDto dto = new TagResponseDto(tag.getId(), tag.getName());
         return dto;
     }

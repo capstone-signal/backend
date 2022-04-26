@@ -12,15 +12,15 @@ public class ReviewReservationResponseDto {
     //private UserResponseDto user;
     //private ReviewResponseDto review;
     private DiscussionResponseDto discussion;
-    private LocalDateTime reviewDate;
+    private LocalDateTime reviewStartDateTime;
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;
     private Boolean isdone;
 
-    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewDate, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone) {
+    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone) {
         this.id = id;
         this.discussion = discussion;
-        this.reviewDate = reviewDate;
+        this.reviewStartDateTime = reviewStartDateTime;
         this.reviewerParticipated = reviewerParticipated;
         this.revieweeParticipated = revieweeParticipated;
         this.isdone = isdone;
@@ -32,7 +32,7 @@ public class ReviewReservationResponseDto {
         return new ReviewReservationResponseDto(
                 reviewReservation.getId(),
                 DiscussionResponseDto.fromEntity(reviewReservation.getDiscussion()),
-                reviewReservation.getReviewDate(),
+                reviewReservation.getReviewStartDateTime(),
                 reviewReservation.getReviewerParticipated(),
                 reviewReservation.getRevieweeParticipated(),
                 reviewReservation.getIsdone()

@@ -29,8 +29,8 @@ public class ReviewReservation extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
-    @Column(name = "review_date", nullable = false)
-    private LocalDateTime reviewDate;
+    @Column(name = "review_start_date", nullable = false)
+    private LocalDateTime reviewStartDateTime;
 
     @Column(columnDefinition ="boolean default false", name = "reviewer_participated", nullable = false)
     private Boolean reviewerParticipated;
@@ -42,14 +42,14 @@ public class ReviewReservation extends BaseEntity {
     private Boolean isdone;
 
     @Builder
-    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, LocalDateTime reviewDate, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone) {
+    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, LocalDateTime reviewStartDateTime) {
         this.id = id;
         this.reviewer = reviewer;
         this.review = review;
         this.discussion = discussion;
-        this.reviewDate = reviewDate;
-        this.reviewerParticipated = reviewerParticipated;
-        this.revieweeParticipated = revieweeParticipated;
-        this.isdone = isdone;
+        this.reviewStartDateTime = reviewStartDateTime;
+        this.reviewerParticipated = false;
+        this.revieweeParticipated = false;
+        this.isdone = false;
     }
 }

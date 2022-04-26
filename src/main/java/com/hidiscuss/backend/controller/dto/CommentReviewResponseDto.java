@@ -29,9 +29,9 @@ public class CommentReviewResponseDto extends BaseResponseDto {
         dto.id = entity.getId();
         dto.reviewer = UserResponseDto.fromEntity(entity.getReviewer());
         dto.discussion = DiscussionResponseDto.fromEntity(entity.getDiscussion());
-        Optional<List<CommentReviewDiff>> list = Optional.ofNullable(entity.getDiffList());
+        Optional<List<CommentReviewDiff>> list = Optional.ofNullable(entity.getCommentDiffList());
         if (list.isPresent()) {
-            for(CommentReviewDiff item: entity.getDiffList()) {
+            for(CommentReviewDiff item: entity.getCommentDiffList()) {
                 dto.diffList.add(CommentReviewDiffDto.fromEntity(item));
             }
         }

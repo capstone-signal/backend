@@ -43,7 +43,8 @@ public class DiscussionCode extends BaseEntity {
     private String content;
 
     @Builder
-    public DiscussionCode(Discussion discussion, String sha, String filename, Status status, Long additions, Long deletions, Long changes, String content) {
+    public DiscussionCode(Long id, Discussion discussion, String sha, String filename, Status status, Long additions, Long deletions, Long changes, String content) {
+        this.id = id;
         this.discussion = discussion;
         this.sha = sha;
         this.filename = filename;
