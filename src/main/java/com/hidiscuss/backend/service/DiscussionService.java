@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -53,5 +54,11 @@ public class DiscussionService {
 
     public Discussion findByIdOrNull(Long discussionId) {
         return discussionRepository.findById(discussionId).orElse(null);
+    }
+
+    public Discussion findByIdFetchOrNull(Long id) {
+        Discussion discussion = discussionRepository.findByIdFetchOrNull(id);
+        if (discussion == null) throw new NoSuchElementException("Discussion not found");
+        return discussion;
     }
 }

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentReviewDiffDto {
+public class CommentReviewDiffDto extends ReviewDiffDto {
 
     @NotNull
     public DiscussionCodeDto discussionCode;
