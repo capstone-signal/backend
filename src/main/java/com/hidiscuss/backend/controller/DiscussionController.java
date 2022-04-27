@@ -68,12 +68,14 @@ public class DiscussionController {
     })
     @GetMapping("/{discussionId}")
     public DiscussionDetailResponseDto getDiscussion(@PathVariable("discussionId") Long discussionId, Pageable pageable) {
+        // UserAuthority: 어떤 유저인지에 따라 다르게 동작해야 하는 페이지
+            //0: 로그인 X (예약 버튼도 안보임)
+            //1: 로그인 O, 라이브 리뷰 예약 안했거나 시간이 안됨 (picker 보임)
+            //2: 로그인 O, 라이브 리뷰 예약 했으며 시간이 됨
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         Page<ReviewDto> reviewResponseDtoPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageable);
-        DiscussionDetailResponseDto result = new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), reviewResponseDtoPage);
+        DiscussionDetailResponseDto result = new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), reviewResponseDtoPage, 0L);
         return result;
-            // user 정보
-                // 어떤 유저인지에 따라 다르게 동작해야 하는 페이지
     }
 }
 

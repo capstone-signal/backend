@@ -10,4 +10,5 @@ import org.springframework.data.domain.Page;
 public class DiscussionDetailResponseDto {
     private DiscussionResponseDto discussionResponseDto;
     private Page<ReviewDto> reviewResponseDtoPage;
+    private Long userAuthority;
 }
