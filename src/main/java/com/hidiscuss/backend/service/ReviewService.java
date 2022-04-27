@@ -66,6 +66,7 @@ public class ReviewService {
 
     public Page<ReviewDto> findAllByDiscussionIdFetch(Long id, Pageable pageable) {
         Page<Review> entityPage = reviewRepository.findAllByDiscussionIdFetch(id, pageable);
-        return entityPage.map(ReviewDto::fromEntity);
+        Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
+        return dtoPage;
     }
 }

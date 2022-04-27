@@ -4,15 +4,15 @@ import com.hidiscuss.backend.entity.CommentReviewDiff;
 import com.hidiscuss.backend.entity.LiveReviewDiff;
 import com.hidiscuss.backend.entity.Review;
 import com.hidiscuss.backend.entity.ReviewType;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Getter
 public class ReviewDto extends BaseResponseDto {
     private Long id;
     private UserResponseDto reviewer;
-    private DiscussionResponseDto discussion;
     private List<CommentReviewDiffResponseDto> commentDiffList = new ArrayList<>();
     private List<LiveReviewDiffResponseDto> liveDiffList = new ArrayList<>();
     private Boolean accepted;
@@ -20,9 +20,9 @@ public class ReviewDto extends BaseResponseDto {
 
     public static ReviewDto fromEntity(Review review) {
         ReviewDto dto = new ReviewDto();
+        dto.setBaseResponse(review);
         dto.id = review.getId();
         dto.reviewer = UserResponseDto.fromEntity(review.getReviewer());
-        dto.discussion = DiscussionResponseDto.fromEntity(review.getDiscussion());
         dto.accepted = review.getAccepted();
         dto.reviewType = review.getReviewType();
         if (dto.reviewType == ReviewType.COMMENT) {

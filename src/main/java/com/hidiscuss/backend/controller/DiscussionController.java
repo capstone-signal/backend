@@ -70,18 +70,8 @@ public class DiscussionController {
     public DiscussionDetailResponseDto getDiscussion(@PathVariable("discussionId") Long discussionId, Pageable pageable) {
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         Page<ReviewDto> reviewResponseDtoPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageable);
-        return DiscussionDetailResponseDto.builder()
-                .discussionResponseDto(DiscussionResponseDto.fromEntity(discussion))
-                .reviewResponseDtoPage(reviewResponseDtoPage)
-                .build();
-        // pageUtil 만들기
-        // dto 만들기
-            // discussion 정보 -> discussionService
-                // liveReview 예약 기능 구현 (reserved, disabled, available 상태는 구분)
-            // review page -> reviewService, reviewDiffService
-                // commentReviewDiff
-                // liveReviewDiff
-                // 새 리뷰 페이지 불러오는 api는 따로 reviewService에 만들기
+        DiscussionDetailResponseDto result = new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), reviewResponseDtoPage);
+        return result;
             // user 정보
                 // 어떤 유저인지에 따라 다르게 동작해야 하는 페이지
     }

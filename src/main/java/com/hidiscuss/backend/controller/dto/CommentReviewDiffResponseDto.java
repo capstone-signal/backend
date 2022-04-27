@@ -14,6 +14,7 @@ public class CommentReviewDiffResponseDto extends ReviewDiffResponseDto {
 
     public static CommentReviewDiffResponseDto fromEntity(CommentReviewDiff entity) {
         CommentReviewDiffResponseDto dto = new CommentReviewDiffResponseDto();
+        dto.setBaseResponse(entity);
         dto.id = entity.getId();
         dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
         dto.codeAfter = entity.getCodeAfter();
