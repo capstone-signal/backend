@@ -1,7 +1,7 @@
 package com.hidiscuss.backend.config;
 
 import com.hidiscuss.backend.service.CustomOAuth2UserService;
-import com.hidiscuss.backend.service.OAuth2SuccessHandler;
+import com.hidiscuss.backend.controller.OAuth2SuccessHandler;
 import com.hidiscuss.backend.service.JwtAuthFilter;
 import com.hidiscuss.backend.service.TokenService;
 import lombok.RequiredArgsConstructor;

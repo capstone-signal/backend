@@ -1,4 +1,4 @@
-package com.hidiscuss.backend.service;
+package com.hidiscuss.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hidiscuss.backend.entity.User;
@@ -48,8 +48,9 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
         if (user1 == null) {
             GitHub gitHub = GitHub.connectUsingOAuth(gitaccessToken);
             List<GHEmail>  ghEmails2 = gitHub.getMyself().getEmails2();
-            User user = userRequestMapper.toUser(oAuth2User, gitaccessToken, ghEmails2.get(2).getEmail());
+            User user = userRequestMapper.toUser(oAuth2User, gitaccessToken, ghEmails2.get(ghEmails2.size()- 1).getEmail());
             userRepository.save(user);
+            System.out.println(ghEmails2.get(ghEmails2.size() - 1));
         }
         Cookie accessToken = new Cookie("accessToken", token.getToken());
         Cookie refreshToken = new Cookie("refreshToken", token.getRefreshToken());
