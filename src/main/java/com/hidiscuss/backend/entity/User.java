@@ -19,14 +19,8 @@ public class User extends BaseEntity {
     @Column(name = "username", nullable = false)
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
-
-    @Column(name = "access_token")
-    private String accessToken;
-
-    @Column(name = "refresh_token")
-    private String refreshToken;
 
     @Column(name = "point"
     )
@@ -37,8 +31,6 @@ public class User extends BaseEntity {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
         this.point = point;
     }
 }

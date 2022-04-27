@@ -19,7 +19,6 @@ public class UserResponseDto {
                 .name(entity.getName())
                 .email(entity.getEmail())
                 .point(entity.getPoint())
-                .accessToken(entity.getAccessToken())
                 .build();
     }
 }
