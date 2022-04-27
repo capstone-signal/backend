@@ -18,7 +18,7 @@ public class CommentReviewResponseDto {
 
     private DiscussionResponseDto discussion;
 
-    private List<CommentReviewDiffDto> diffList = new ArrayList<>();
+    private List<CreateCommentReviewDiffDto> diffList = new ArrayList<>();
 
     private Boolean accepted;
 
@@ -32,7 +32,7 @@ public class CommentReviewResponseDto {
         Optional<List<CommentReviewDiff>> list = Optional.ofNullable(entity.getCommentDiffList());
         if (list.isPresent()) {
             for(CommentReviewDiff item: entity.getCommentDiffList()) {
-                dto.diffList.add(CommentReviewDiffDto.fromEntity(item));
+                dto.diffList.add(CreateCommentReviewDiffDto.fromEntity(item));
             }
         }
         dto.accepted = entity.getAccepted();

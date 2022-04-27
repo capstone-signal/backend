@@ -1,12 +1,14 @@
 package com.hidiscuss.backend.controller.dto;
 
 import lombok.Getter;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class ReviewDiffDto extends BaseResponseDto {
+public class ReviewDiffResponseDto extends BaseResponseDto {
+
+    @NotNull
+    public Long id;
 
     @NotNull
     public DiscussionCodeDto discussionCode;

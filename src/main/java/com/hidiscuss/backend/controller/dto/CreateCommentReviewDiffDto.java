@@ -13,7 +13,13 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentReviewDiffDto extends ReviewDiffDto {
+public class CreateCommentReviewDiffDto {
+
+    @NotNull
+    public DiscussionCodeDto discussionCode;
+
+    @NotNull
+    public String codeAfter;
 
     @NotNull
     public String codeLocate;
@@ -21,7 +27,7 @@ public class CommentReviewDiffDto extends ReviewDiffDto {
     @Nullable
     public String comment;
 
-    public static CommentReviewDiff toEntity(CommentReviewDiffDto dto, Review review, DiscussionCode code) {
+    public static CommentReviewDiff toEntity(CreateCommentReviewDiffDto dto, Review review, DiscussionCode code) {
         return CommentReviewDiff.builder()
                 .review(review)
                 .discussionCode(code)
@@ -31,8 +37,8 @@ public class CommentReviewDiffDto extends ReviewDiffDto {
                 .build();
     }
 
-    public static CommentReviewDiffDto fromEntity(CommentReviewDiff entity) {
-        CommentReviewDiffDto dto = new CommentReviewDiffDto();
+    public static CreateCommentReviewDiffDto fromEntity(CommentReviewDiff entity) {
+        CreateCommentReviewDiffDto dto = new CreateCommentReviewDiffDto();
         dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
         dto.codeAfter = entity.getCodeAfter();
         dto.codeLocate = entity.getCodeLocate();

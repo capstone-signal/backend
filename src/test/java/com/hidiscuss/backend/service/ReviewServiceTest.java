@@ -1,6 +1,6 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.CommentReviewDiffDto;
+import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.controller.dto.DiscussionCodeDto;
@@ -37,7 +37,7 @@ public class ReviewServiceTest {
 
     private ReviewType reviewType = ReviewType.COMMENT;
 
-    private List<CommentReviewDiffDto> diffList;
+    private List<CreateCommentReviewDiffDto> diffList;
 
     @BeforeEach
     void setUp() {
@@ -109,8 +109,8 @@ public class ReviewServiceTest {
         then(throwable).isInstanceOf(NoSuchElementException.class);
     }
 
-    private CommentReviewDiffDto getCommentReviewDiffDto(Long id) {
+    private CreateCommentReviewDiffDto getCommentReviewDiffDto(Long id) {
         DiscussionCodeDto dto = new DiscussionCodeDto(id, "filename", "content");
-        return new CommentReviewDiffDto(dto, "codeAfter", "codeLocate", "comment");
+        return new CreateCommentReviewDiffDto(dto, "codeAfter", "codeLocate", "comment");
     }
 }

@@ -13,8 +13,8 @@ public class ReviewDto extends BaseResponseDto {
     private Long id;
     private UserResponseDto reviewer;
     private DiscussionResponseDto discussion;
-    private List<CommentReviewDiffDto> commentDiffList = new ArrayList<>();
-    private List<LiveReviewDiffDto> liveDiffList = new ArrayList<>();
+    private List<CommentReviewDiffResponseDto> commentDiffList = new ArrayList<>();
+    private List<LiveReviewDiffResponseDto> liveDiffList = new ArrayList<>();
     private Boolean accepted;
     private ReviewType reviewType;
 
@@ -28,11 +28,11 @@ public class ReviewDto extends BaseResponseDto {
         if (dto.reviewType == ReviewType.COMMENT) {
             List<CommentReviewDiff> entityList = review.getCommentDiffList();
             for (CommentReviewDiff item : entityList)
-                dto.commentDiffList.add(CommentReviewDiffDto.fromEntity(item));
+                dto.commentDiffList.add(CommentReviewDiffResponseDto.fromEntity(item));
         } else if (dto.reviewType == ReviewType.LIVE) {
             List<LiveReviewDiff> entityList = review.getLiveDiffList();
             for (LiveReviewDiff item : entityList)
-                dto.liveDiffList.add(LiveReviewDiffDto.fromEntity(item));
+                dto.liveDiffList.add(LiveReviewDiffResponseDto.fromEntity(item));
         }
         return dto;
     }
