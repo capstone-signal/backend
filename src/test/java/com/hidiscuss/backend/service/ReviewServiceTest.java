@@ -1,17 +1,18 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
-import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
-import com.hidiscuss.backend.controller.dto.DiscussionCodeDto;
+import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.*;
+import com.hidiscuss.backend.utils.PageRequest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -107,6 +108,21 @@ public class ReviewServiceTest {
         Throwable throwable = catchThrowable(() -> reviewService.findByIdFetchOrNull(0L));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("findAllByDiscussionIdFetch_discussionId로 리뷰를 모두 가져온다")
+    void findAllByDiscussionIdFetch_common() {
+        PageRequest pageRequest = new PageRequest(0);
+        Review review_1 = Review.builder().id(1L).build();
+        Review review_2 = Review.builder().id(2L).build();
+        Page<Review> entities = new PageImpl<>(List.of(review_1, review_2));
+//        given(reviewRepository.findAllByDiscussionIdFetch(any(Long.class), any(pageRequest.of().getClass())))
+//                .willReturn(entities);
+
+//        Page<ReviewDto> reviewDtos = reviewService.findAllByDiscussionIdFetch(0L, pageRequest.of());
+
+//        then(reviewDtos.getContent().size()).isEqualTo(entities.getContent().size());
     }
 
     private CreateCommentReviewDiffDto getCommentReviewDiffDto(Long id) {
