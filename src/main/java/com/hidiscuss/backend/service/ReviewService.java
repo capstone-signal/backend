@@ -7,6 +7,7 @@ import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +65,8 @@ public class ReviewService {
         return review;
     }
 
-    public Page<ReviewDto> findAllByDiscussionIdFetch(Long id, Pageable pageable) {
-        Page<Review> entityPage = reviewRepository.findAllByDiscussionIdFetch(id, pageable);
+    public Page<ReviewDto> findAllByDiscussionIdFetch(Long id, PageRequest pageRequest) {
+        Page<Review> entityPage = reviewRepository.findAllByDiscussionIdFetch(id, pageRequest);
         Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
         return dtoPage;
     }

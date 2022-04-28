@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class DiscussionDetailResponseDto {
     private DiscussionResponseDto discussionResponseDto;
-    private Page<ReviewDto> reviewResponseDtoPage;
+    private List<DiscussionCodeDto> discussionCodeDtoList;
     private Long userAuthority;
 }

@@ -1,11 +1,10 @@
 package com.hidiscuss.backend.controller;
 
-import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
-import com.hidiscuss.backend.controller.dto.DiscussionDetailResponseDto;
-import com.hidiscuss.backend.controller.dto.DiscussionResponseDto;
-import com.hidiscuss.backend.controller.dto.ReviewDto;
+import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.Discussion;
+import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.service.DiscussionCodeService;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewService;
 import io.swagger.annotations.*;
@@ -16,13 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/discussion")
 @AllArgsConstructor
 public class DiscussionController {
     private final DiscussionService discussionService;
-    private final ReviewService reviewService;
+    private final DiscussionCodeService discussionCodeService;
 
 
     @PostMapping("/")
@@ -67,15 +67,14 @@ public class DiscussionController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     @GetMapping("/{discussionId}")
-    public DiscussionDetailResponseDto getDiscussion(@PathVariable("discussionId") Long discussionId, Pageable pageable) {
+    public DiscussionDetailResponseDto getDiscussion(@PathVariable("discussionId") Long discussionId) {
         // UserAuthority: 어떤 유저인지에 따라 다르게 동작해야 하는 페이지
-            //0: 로그인 X (예약 버튼도 안보임)
-            //1: 로그인 O, 라이브 리뷰 예약 안했거나 시간이 안됨 (picker 보임)
-            //2: 로그인 O, 라이브 리뷰 예약 했으며 시간이 됨
+        //0: 로그인 X (예약 버튼도 안보임)
+        //1: 로그인 O, 라이브 리뷰 예약 안했거나 시간이 안됨 (picker 보임)
+        //2: 로그인 O, 라이브 리뷰 예약 했으며 시간이 됨
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
-        Page<ReviewDto> reviewResponseDtoPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageable);
-        DiscussionDetailResponseDto result = new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), reviewResponseDtoPage, 0L);
-        return result;
+        List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(discussion);
+        return new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), DiscussionCodeDto.fromEntityList(discussionCodeList), 0L);
     }
 }
 

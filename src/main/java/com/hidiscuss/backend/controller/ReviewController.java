@@ -1,14 +1,13 @@
 package com.hidiscuss.backend.controller;
 
-import com.hidiscuss.backend.controller.dto.CommentReviewResponseDto;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
-import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
-import com.hidiscuss.backend.controller.dto.ThreadResponseDto;
+import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.ReviewService;
+import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,5 +51,17 @@ public class ReviewController {
         Review review = reviewService.findByIdFetchOrNull(reviewId);
         ReviewThread reviewThread = reviewService.createThread(user, requestDto, review);
         return ThreadResponseDto.fromEntity(reviewThread);
+    }
+
+    @ApiOperation(value="review page 가져오기", notes="이 api는 review page를 가져옵니다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "review page 조회 성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    @GetMapping("")
+    public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId, @RequestParam("page") int page) {
+        PageRequest pageRequest = new PageRequest(page);
+        return reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
     }
 }

@@ -28,7 +28,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
         dto.liveReviewAvailableTimes = entity.getLiveReviewAvailableTimes();
         dto.priority = entity.getPriority();
         dto.state = entity.getState().getId();
-        //dto.tags = entity.getTags().stream().map(TagResponseDto::fromEntity).collect(Collectors.toList());
+//        dto.tags = entity.getTags().stream().map(TagResponseDto::fromEntity).collect(Collectors.toList());
         dto.user = UserResponseDto.fromEntity(entity.getUser());
         return dto;
     }

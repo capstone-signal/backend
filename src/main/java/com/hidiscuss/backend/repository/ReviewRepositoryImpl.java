@@ -5,7 +5,7 @@ import com.hidiscuss.backend.entity.Review;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public Page<Review> findAllByDiscussionIdFetch(Long discussionId, Pageable pageable) {
+    public Page<Review> findAllByDiscussionIdFetch(Long discussionId, PageRequest pageRequest) {
         List<Review> result = queryFactory.selectFrom(qReview)
                 .where(qReview.discussion.id.eq(discussionId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .offset(pageRequest.getOffset())
+                .limit(pageRequest.getPageSize())
                 .fetch();
-        return new PageImpl<>(result, pageable, result.size());
+        return new PageImpl<>(result, pageRequest, result.size());
     }
 }
