@@ -53,7 +53,7 @@ public class ReviewController {
         return ThreadResponseDto.fromEntity(reviewThread);
     }
 
-    @ApiOperation(value="review page 가져오기", notes="이 api는 review page를 가져옵니다.")
+    @ApiOperation(value="review page 가져오기", notes="이 api는 page 단위로 review를 가져옵니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "review page 조회 성공"),
             @ApiResponse(code = 400, message = "잘못된 요청"),
@@ -64,4 +64,6 @@ public class ReviewController {
         PageRequest pageRequest = new PageRequest(page);
         return reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
     }
+
+
 }
