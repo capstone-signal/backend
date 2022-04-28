@@ -13,6 +13,7 @@ public class UserRequestMapper {
                 .name((String) attributes.get("login"))
                 .email(user_email)
                 .accessToken(access_token)
+                .point(0L)
                 .build();
     }
 }

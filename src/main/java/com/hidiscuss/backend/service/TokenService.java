@@ -44,6 +44,7 @@ public class TokenService {
                         .setIssuedAt(now)
                         .setExpiration(new Date(now.getTime() + refreshPeriod))
                         .signWith(SignatureAlgorithm.HS256, secretKey)
+                        .claim("gitAccessToken",gitAccessToken)
                         .compact());
     }
 

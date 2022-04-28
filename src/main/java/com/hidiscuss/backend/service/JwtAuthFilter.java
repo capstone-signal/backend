@@ -1,10 +1,10 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.UserDto;
+import com.hidiscuss.backend.entity.Token;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -27,19 +27,33 @@ public class JwtAuthFilter extends GenericFilterBean {
         HttpServletRequest req = (HttpServletRequest) request;
 
         String token = null;
+        String refreshToken = null;
         Cookie[] cookies = req.getCookies();
         for(int i = 0; i < cookies.length; i++){
             if(cookies[i].getName().equals("accessToken")){
                 token = cookies[i].getValue();
+            }else if(cookies[i].getName().equals("refreshToken")){
+                refreshToken = cookies[i].getValue();
             }
         }
-
+        Claims claims = tokenService.parseJwtToken(refreshToken);
         if (token != null && tokenService.verifyToken(token)) {
             String name = tokenService.getUid(token);
 
             Authentication auth = new UsernamePasswordAuthenticationToken(name,"");
             SecurityContextHolder.getContext().setAuthentication(auth);
+        }else if (refreshToken != null && tokenService.verifyToken(refreshToken)) {
+            String name = tokenService.getUid(refreshToken);
+            Token newToken = tokenService.generateToken(name, (String) claims.get("gitAccessToken"));
+
+            Cookie newAccessToken = new Cookie("accessToken", newToken.getToken());
+            Cookie newRefreshToken = new Cookie("refreshToken", newToken.getRefreshToken());
+
+            newAccessToken.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
+            newRefreshToken.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
+
+            res.addCookie(newAccessToken);
+            res.addCookie(newRefreshToken);
         }
-        chain.doFilter(request, response);
     }
 }

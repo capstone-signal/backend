@@ -30,6 +30,7 @@ public class UserController {
     })
     @GetMapping("/userlist")
     public ResponseEntity<List<User>> getUserList() {
+        System.out.println("aaa");
         return new ResponseEntity<>(userService.getUserList(), HttpStatus.OK);
     }
 }
