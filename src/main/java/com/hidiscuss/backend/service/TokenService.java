@@ -25,10 +25,10 @@ public class TokenService {
 
     public Token generateToken(String uid, String gitAccessToken) {
         long tokenPeriod = 1000L * 60L * 60L * 2L;
-        long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
+        long refreshPeriod = 1000L * 60L * 60L * 8L;
 
         Claims claims = Jwts.claims().setSubject(uid);
-        claims.put("role", "USER");
+        claims.put("role", "ROLE_USER");
 
         Date now = new Date();
         return new Token(
@@ -47,16 +47,16 @@ public class TokenService {
                         .claim("gitAccessToken",gitAccessToken)
                         .compact());
     }
-
-
     public boolean verifyToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token);
+
             return claims.getBody()
                     .getExpiration()
                     .after(new Date());
+
         } catch (Exception e) {
             return false;
         }
@@ -73,7 +73,4 @@ public class TokenService {
                 .parseClaimsJws(authorizationHeader) // (4)
                 .getBody();
     }
-
-
-
 }

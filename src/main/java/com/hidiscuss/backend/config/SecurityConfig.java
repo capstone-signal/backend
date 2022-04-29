@@ -2,12 +2,13 @@ package com.hidiscuss.backend.config;
 
 import com.hidiscuss.backend.service.CustomOAuth2UserService;
 import com.hidiscuss.backend.controller.OAuth2SuccessHandler;
-import com.hidiscuss.backend.service.JwtAuthFilter;
+import com.hidiscuss.backend.Oauth.JwtAuthFilter;
 import com.hidiscuss.backend.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomOAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler successHandler;
@@ -38,7 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .authorizeRequests()
-                .antMatchers("/token/**").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .cors()

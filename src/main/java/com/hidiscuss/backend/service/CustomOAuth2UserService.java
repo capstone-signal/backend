@@ -1,6 +1,7 @@
 package com.hidiscuss.backend.service;
 
 
+import com.hidiscuss.backend.Oauth.OAuth2Attribute;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

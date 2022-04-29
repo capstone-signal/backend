@@ -22,8 +22,7 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "point"
-    )
+    @Column(name = "point")
     private Long point;
 
     @Builder

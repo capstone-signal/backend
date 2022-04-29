@@ -7,12 +7,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Secured({"ROLE_USER"})
 @RestController
 @RequestMapping("api/v1/user")
 public class UserController {
@@ -30,7 +32,6 @@ public class UserController {
     })
     @GetMapping("/userlist")
     public ResponseEntity<List<User>> getUserList() {
-        System.out.println("aaa");
         return new ResponseEntity<>(userService.getUserList(), HttpStatus.OK);
     }
 }
