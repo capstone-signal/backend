@@ -2,12 +2,10 @@ package com.hidiscuss.backend.service;
 
 import com.hidiscuss.backend.controller.dto.CreateDiscussionCodeRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
-import com.hidiscuss.backend.entity.Discussion;
-import com.hidiscuss.backend.entity.DiscussionState;
-import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
-import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,9 +14,15 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.catchThrowable;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,6 +95,26 @@ class DiscussionServiceTest {
         Discussion discussion = discussionService.findByIdOrNull(1L);
 
         assertThat(discussion).isNull();
+    }
+
+    @Test
+    @DisplayName("findByIdFetchOrNull_id로 discussion를 찾는다")
+    void findByIdFetchOrNull_common() {
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(mock(Discussion.class));
+
+        Discussion discussion = discussionService.findByIdFetchOrNull(0L);
+
+        then(discussion).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findByIdFetchOrNull_discussion이 없을 경우 예외를 반환한다")
+    void findByIdFetchOrNull_withNoDiscussion() {
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(null);
+
+        Throwable throwable = catchThrowable(() -> discussionService.findByIdFetchOrNull(0L));
+
+        then(throwable).isInstanceOf(NoSuchElementException.class);
     }
 
     private CreateDiscussionRequestDto getCreateDiscussionRequestDto() {

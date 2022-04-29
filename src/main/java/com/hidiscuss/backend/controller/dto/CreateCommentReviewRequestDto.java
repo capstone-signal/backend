@@ -14,6 +14,6 @@ public class CreateCommentReviewRequestDto {
     public Long discussionId;
 
     @NotNull
-    public List<CommentReviewDiffDto> diffList;
+    public List<CreateCommentReviewDiffDto> diffList;
 
 }

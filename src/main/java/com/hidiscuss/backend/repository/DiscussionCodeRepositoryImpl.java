@@ -1,6 +1,5 @@
 package com.hidiscuss.backend.repository;
 
-import com.hidiscuss.backend.controller.dto.CommentReviewDiffDto;
 import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.QDiscussionCode;
 import com.querydsl.jpa.impl.JPAQueryFactory;

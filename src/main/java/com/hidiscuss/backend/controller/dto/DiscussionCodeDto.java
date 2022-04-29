@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Getter
 public class DiscussionCodeDto {
@@ -15,5 +18,11 @@ public class DiscussionCodeDto {
     public static DiscussionCodeDto fromEntity(DiscussionCode entity) {
         DiscussionCodeDto dto = new DiscussionCodeDto(entity.getId(), entity.getFilename(), entity.getContent());
         return dto;
+    }
+
+    public static List<DiscussionCodeDto> fromEntityList(List<DiscussionCode> entityList) {
+        return entityList.stream()
+                .map(DiscussionCodeDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }

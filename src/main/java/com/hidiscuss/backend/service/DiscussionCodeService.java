@@ -79,5 +79,9 @@ public class DiscussionCodeService {
         }
         return discussionCodeRepository.saveAll(codes);
     }
+
+    public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
+        return discussionCodeRepository.findByDiscussion(discussion);
+    }
 }
 
