@@ -62,7 +62,9 @@ public class ReviewController {
     @GetMapping("")
     public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId, @RequestParam("page") int page) {
         PageRequest pageRequest = new PageRequest(page);
-        return reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
+        Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
+        Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
+        return dtoPage;
     }
 
 

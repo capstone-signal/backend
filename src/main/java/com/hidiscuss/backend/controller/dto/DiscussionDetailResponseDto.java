@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class DiscussionDetailResponseDto {
-    private DiscussionResponseDto discussionResponseDto;
-    private List<DiscussionCodeDto> discussionCodeDtoList;
-    private Long userAuthority;
+    private DiscussionResponseDto discussion;
+    private List<DiscussionCodeDto> codes;
 }

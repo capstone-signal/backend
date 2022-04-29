@@ -68,12 +68,10 @@ public class DiscussionController {
     })
     @GetMapping("/{discussionId}")
     public DiscussionDetailResponseDto getDiscussion(@PathVariable("discussionId") Long discussionId) {
-        // UserAuthority: 어떤 유저인지에 따라 다르게 동작해야 하는 페이지
-        // 사용자가 라이브 리뷰 예약한 사람이라면, 버튼 클릭했을 때 Picker 시간 확인해서 각자 다른 모달을 보여줌
-        // 즉 진입 시점을 봐야 함,,, 그니까 리뷰 예약 리스트를 보고, 현재 시간이 있는지 보고, 있다면 거기의 리뷰어를 가져옴
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(discussion);
-        return new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), DiscussionCodeDto.fromEntityList(discussionCodeList), 0L);
+
+        return new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), DiscussionCodeDto.fromEntityList(discussionCodeList));
     }
 }
 

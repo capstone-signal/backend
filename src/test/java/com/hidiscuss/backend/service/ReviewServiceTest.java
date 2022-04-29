@@ -117,12 +117,12 @@ public class ReviewServiceTest {
         Review review_1 = Review.builder().id(1L).build();
         Review review_2 = Review.builder().id(2L).build();
         Page<Review> entities = new PageImpl<>(List.of(review_1, review_2));
-//        given(reviewRepository.findAllByDiscussionIdFetch(any(Long.class), any(pageRequest.of().getClass())))
-//                .willReturn(entities);
+        given(reviewRepository.findAllByDiscussionIdFetch(any(Long.class), any(pageRequest.of().getClass())))
+                .willReturn(entities);
 
-//        Page<ReviewDto> reviewDtos = reviewService.findAllByDiscussionIdFetch(0L, pageRequest.of());
+        Page<Review> review = reviewService.findAllByDiscussionIdFetch(0L, pageRequest.of());
 
-//        then(reviewDtos.getContent().size()).isEqualTo(entities.getContent().size());
+        then(review).isNotNull();
     }
 
     private CreateCommentReviewDiffDto getCommentReviewDiffDto(Long id) {

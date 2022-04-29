@@ -65,9 +65,7 @@ public class ReviewService {
         return review;
     }
 
-    public Page<ReviewDto> findAllByDiscussionIdFetch(Long id, PageRequest pageRequest) {
-        Page<Review> entityPage = reviewRepository.findAllByDiscussionIdFetch(id, pageRequest);
-        Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
-        return dtoPage;
+    public Page<Review> findAllByDiscussionIdFetch(Long id, PageRequest pageRequest) {
+        return reviewRepository.findAllByDiscussionIdFetch(id, pageRequest);
     }
 }
