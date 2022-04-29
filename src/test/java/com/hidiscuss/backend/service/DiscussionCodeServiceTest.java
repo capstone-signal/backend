@@ -3,9 +3,11 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionCodeRequestDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionCode;
+import com.hidiscuss.backend.entity.Review;
 import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.kohsuke.github.*;
@@ -18,7 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,6 +86,16 @@ public class DiscussionCodeServiceTest {
 
         assertThat(discussionCodes).isNotNull();
         assertThat(discussionCodes.size()).isEqualTo(files.size());
+    }
+
+    @Test
+    @DisplayName("getDiscussionCode_discussion으로 discussionCode를 찾는다")
+    void getDiscussionCode_common() {
+        given(discussionCodeRepository.findByDiscussion(any(Discussion.class))).willReturn(mock(List.class));
+
+        List<DiscussionCode> discussionCodes = discussionCodeService.getDiscussionCode(discussion);
+
+        then(discussionCodes).isNotNull();
     }
 
     private CreateDiscussionCodeRequestDto getCreateDiscussionCodeRequestDto() {

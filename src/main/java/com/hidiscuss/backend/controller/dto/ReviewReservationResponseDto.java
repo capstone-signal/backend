@@ -1,15 +1,18 @@
 package com.hidiscuss.backend.controller.dto;
 
 import com.hidiscuss.backend.entity.ReviewReservation;
+import com.hidiscuss.backend.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class ReviewReservationResponseDto {
 
     private Long id;
-    //private UserResponseDto user;
+    private UserResponseDto reviewer;
     //private ReviewResponseDto review;
     private DiscussionResponseDto discussion;
     private LocalDateTime reviewStartDateTime;
@@ -17,14 +20,14 @@ public class ReviewReservationResponseDto {
     private Boolean revieweeParticipated;
     private Boolean isdone;
 
-    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone) {
+    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone, User user) {
         this.id = id;
         this.discussion = discussion;
         this.reviewStartDateTime = reviewStartDateTime;
         this.reviewerParticipated = reviewerParticipated;
         this.revieweeParticipated = revieweeParticipated;
         this.isdone = isdone;
-        //this.user = user;
+        this.reviewer = UserResponseDto.fromEntity(user);
         //this.review = review;
     }
 
@@ -35,7 +38,8 @@ public class ReviewReservationResponseDto {
                 reviewReservation.getReviewStartDateTime(),
                 reviewReservation.getReviewerParticipated(),
                 reviewReservation.getRevieweeParticipated(),
-                reviewReservation.getIsdone()
+                reviewReservation.getIsdone(),
+                reviewReservation.getReviewer()
         );
     }
 }

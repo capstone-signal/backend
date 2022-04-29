@@ -1,10 +1,15 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.*;
 
+import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
+import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
+import com.hidiscuss.backend.controller.dto.ReviewDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,5 +67,9 @@ public class ReviewService {
         Review review = reviewRepository.findByIdFetchOrNull(id);
         if (review == null) throw new NoSuchElementException("Review not found");
         return review;
+    }
+
+    public Page<Review> findAllByDiscussionIdFetch(Long id, PageRequest pageRequest) {
+        return reviewRepository.findAllByDiscussionIdFetch(id, pageRequest);
     }
 }

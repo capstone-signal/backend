@@ -11,7 +11,7 @@ import javax.persistence.*;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-abstract class ReviewDiff extends BaseEntity {
+public abstract class ReviewDiff extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
