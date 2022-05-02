@@ -6,15 +6,15 @@ public final class PageRequest {
 
     private int page;
     private int size;
-    private Sort.Direction direction;
+    private Sort sort;
 
-    public PageRequest(int page) {
+    public PageRequest(int page, Sort sort) {
         this.page = page <= 0 ? 1 : page;
         this.size = 5;
-        this.direction = Sort.Direction.DESC;
+        this.sort = sort;
     }
 
     public org.springframework.data.domain.PageRequest of() {
-        return org.springframework.data.domain.PageRequest.of(this.page - 1, size, direction, "createdAt");
+        return org.springframework.data.domain.PageRequest.of(this.page - 1, size, sort);
     }
 }

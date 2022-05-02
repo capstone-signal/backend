@@ -1,16 +1,16 @@
 package com.hidiscuss.backend.controller;
 
 import com.hidiscuss.backend.controller.dto.*;
-import com.hidiscuss.backend.entity.Discussion;
-import com.hidiscuss.backend.entity.DiscussionCode;
-import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.DiscussionCodeService;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewService;
+import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,6 +72,29 @@ public class DiscussionController {
         List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(discussion);
 
         return new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), DiscussionCodeDto.fromEntityList(discussionCodeList));
+    }
+
+    @ApiOperation(value = "Discussion 목록 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Discussion 목록 조회"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    @GetMapping("/")
+    public Page<DiscussionResponseDto> getDiscussions(@RequestParam("page") int page
+            , @RequestParam(value = "state", required = false, defaultValue = "not_reviewed") DiscussionState state
+            , @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword
+            , @RequestParam(value = "tags", required = false, defaultValue = "") List<String> tags
+            , @RequestParam(value = "onlymine", required = false, defaultValue = "0") boolean onlymine
+            , @RequestParam(value = "sort", required = false, defaultValue = "createdAt") String sort) {
+        PageRequest pageRequest = new PageRequest(page, Sort.by(sort).descending());
+        GetDiscussionsDto dto = new GetDiscussionsDto(state, keyword, tags);
+        User user = User.builder().id(7000L).build();
+        if (onlymine)
+            dto.setUserId(user.getId());
+        Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
+
+        return entities.map(i -> DiscussionResponseDto.fromEntity(i));
     }
 }
 
