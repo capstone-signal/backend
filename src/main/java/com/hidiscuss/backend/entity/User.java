@@ -22,13 +22,7 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "access_token", nullable = false)
-    private String accessToken;
-
-    @Column(name = "refresh_token", nullable = false)
-    private String refreshToken;
-
-    @Column(name = "point", nullable = false)
+    @Column(name = "point")
     private Long point;
 
     @Builder
@@ -36,8 +30,6 @@ public class User extends BaseEntity {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
         this.point = point;
     }
 }

@@ -10,7 +10,8 @@ spring:
     hibernate:
       ddl-auto: create
     generate-ddl: true
-    show-sql: true
+
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
