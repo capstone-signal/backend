@@ -40,31 +40,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .authorizeRequests()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             .and()
                 .cors()
             .and()
                 .oauth2Login()
-                    .loginPage("/oauth2/authorization/github")
-                    .defaultSuccessUrl("/")
+                .authorizationEndpoint()
+                .baseUri("/api/oauth2/authorization")
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/api/login/oauth2/code/*")
+                .and()
                     .successHandler(successHandler)
                     .userInfoEndpoint()
                     .userService(oAuth2UserService);
     }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("https://github.com");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowedMethods(List.of("HEAD","GET", "POST", "PUT", "DELETE", "PATCH"));
-        configuration.setAllowCredentials(true);
-        System.out.println(configuration.getAllowedOrigins());
-
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 
 }
