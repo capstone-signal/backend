@@ -1,5 +1,5 @@
 -- user(id 7000) 생성
-INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `access_token`, `email`, `username`, `point`, `refresh_token`) VALUES (7000, NOW(), NOW(), '1', '1', '1', 1, '1');
+INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (7000, NOW(), NOW(), '1', '1', 1);
 
 -- discussion(id 7100) 생성
 INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_available_times`, `live_review_required`, `priority`, `question`, `state`, `title`, `user_id`) VALUES
