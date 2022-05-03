@@ -8,7 +8,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @Table(name = "LiveReviewDiff")
 public class LiveReviewDiff extends ReviewDiff {
 

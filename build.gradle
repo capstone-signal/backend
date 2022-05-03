@@ -47,9 +47,13 @@ dependencies {
   
 	// Github REST API Client
 	implementation 'org.kohsuke:github-api:1.303'
+	implementation 'com.sun.xml.bind:jaxb-core:3.0.2'
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+	implementation 'io.jsonwebtoken:jjwt-api:0.10.7'
 
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.1'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.1'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
 }
 
 tasks.named('test') {
