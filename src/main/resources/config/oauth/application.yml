@@ -1,0 +1,16 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - repo
+              - user
+environments:
+  url:
+    homeurl: ${HOME_URL}
+  key:
+    secretKey: ${JWT_SECRET_KEY}
