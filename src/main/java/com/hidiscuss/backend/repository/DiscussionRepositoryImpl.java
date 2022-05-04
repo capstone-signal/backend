@@ -46,11 +46,13 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
                 .join(qDiscussionTag)
                 .on(qDiscussion.eq(qDiscussionTag.discussion))
                 .where(qDiscussion.state.eq(dto.getState())
-                        .and(qDiscussion.title.contains(dto.getKeyword())))
+                        .and(qDiscussion.title.contains(dto.getKeyword()))
+                        .and(qDiscussionTag.tag.id.in(tags.stream().map(i -> i.getTag().getId()).collect(Collectors.toList()))))
                 .groupBy(qDiscussion);
 
-        if (dto.getTags().size() != 0)
-            query.where(qDiscussionTag.tag.id.in(tags.stream().map(i -> i.getTag().getId()).collect(Collectors.toList())));
+//        태그가 없는 discussion을 처리하기 위한 코드, 임시로 삭제
+//        if (dto.getTags().size() != 0)
+//            query.where(qDiscussionTag.tag.id.in(tags.stream().map(i -> i.getTag().getId()).collect(Collectors.toList())));
 
         Optional<Long> userId = Optional.ofNullable(dto.getUserId());
         if (userId.isPresent())
