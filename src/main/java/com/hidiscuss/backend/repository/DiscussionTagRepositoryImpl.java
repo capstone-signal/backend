@@ -10,4 +10,5 @@ public class DiscussionTagRepositoryImpl {
     public DiscussionTagRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
+
 }

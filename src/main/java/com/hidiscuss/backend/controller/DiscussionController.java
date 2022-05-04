@@ -5,6 +5,7 @@ import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.DiscussionCodeService;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewService;
+import com.hidiscuss.backend.service.TagService;
 import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.List;
 public class DiscussionController {
     private final DiscussionService discussionService;
     private final DiscussionCodeService discussionCodeService;
+    private final TagService tagService;
 
 
     @PostMapping("/")
@@ -88,10 +90,12 @@ public class DiscussionController {
             , @RequestParam(value = "onlymine", required = false, defaultValue = "0") boolean onlymine
             , @RequestParam(value = "sort", required = false, defaultValue = "createdAt") String sort) {
         PageRequest pageRequest = new PageRequest(page, Sort.by(sort).descending());
-        GetDiscussionsDto dto = new GetDiscussionsDto(state, keyword, tags);
+        List<DiscussionTagDto> tagDtos = tagService.getTags(tags);
+        GetDiscussionsDto dto = new GetDiscussionsDto(state, keyword, tagDtos);
         User user = User.builder().id(7000L).build();
-        if (onlymine)
+        if (onlymine) {
             dto.setUserId(user.getId());
+        }
         Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
 
         return entities.map(i -> DiscussionResponseDto.fromEntity(i));

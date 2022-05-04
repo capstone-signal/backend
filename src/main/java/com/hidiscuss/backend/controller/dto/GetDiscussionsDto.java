@@ -9,10 +9,10 @@ import java.util.List;
 public class GetDiscussionsDto {
     private DiscussionState state;
     private String keyword;
-    private List<String> tags;
+    private List<DiscussionTagDto> tags;
     private Long userId;
 
-    public GetDiscussionsDto(DiscussionState state, String keyword, List<String> tags) {
+    public GetDiscussionsDto(DiscussionState state, String keyword, List<DiscussionTagDto> tags) {
         this.state = state;
         this.keyword = keyword;
         this.tags = tags;
