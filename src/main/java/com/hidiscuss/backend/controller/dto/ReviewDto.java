@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class ReviewDto extends BaseResponseDto {
@@ -15,6 +16,7 @@ public class ReviewDto extends BaseResponseDto {
     private UserResponseDto reviewer;
     private List<CommentReviewDiffResponseDto> commentDiffList = new ArrayList<>();
     private List<LiveReviewDiffResponseDto> liveDiffList = new ArrayList<>();
+    private List<ThreadResponseDto> threadList = new ArrayList<>();
     private Boolean accepted;
     private ReviewType reviewType;
 
@@ -34,6 +36,7 @@ public class ReviewDto extends BaseResponseDto {
             for (LiveReviewDiff item : entityList)
                 dto.liveDiffList.add(LiveReviewDiffResponseDto.fromEntity(item));
         }
+        dto.threadList = review.getThreadList().stream().map(i -> ThreadResponseDto.fromEntity(i)).collect(Collectors.toList());
         return dto;
     }
 }
