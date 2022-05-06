@@ -6,14 +6,18 @@ import com.hidiscuss.backend.service.DiscussionCodeService;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewService;
 import com.hidiscuss.backend.service.TagService;
+import com.hidiscuss.backend.utils.ApiPageable;
 import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -82,18 +86,12 @@ public class DiscussionController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
+    @ApiPageable
     @GetMapping("/")
-    public Page<DiscussionResponseDto> getDiscussions(@RequestParam("page") int page
-            , @RequestParam(value = "state", required = false, defaultValue = "not_reviewed") DiscussionState state
-            , @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword
-            , @RequestParam(value = "tags", required = false, defaultValue = "") List<String> tags
-            , @RequestParam(value = "onlymine", required = false, defaultValue = "0") boolean onlymine
-            , @RequestParam(value = "sort", required = false, defaultValue = "createdAt") String sort) {
-        PageRequest pageRequest = new PageRequest(page, Sort.by(sort).descending());
-        List<DiscussionTagDto> tagDtos = tagService.getTags(tags);
-        GetDiscussionsDto dto = new GetDiscussionsDto(state, keyword, tagDtos);
+    public Page<DiscussionResponseDto> getDiscussions(GetDiscussionsDto dto, @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
+        PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         User user = User.builder().id(7000L).build();
-        if (onlymine) {
+        if (dto.isOnlyMine()) {
             dto.setUserId(user.getId());
         }
         Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());

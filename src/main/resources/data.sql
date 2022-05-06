@@ -10,7 +10,7 @@ INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_a
 INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_available_times`, `live_review_required`, `priority`, `question`, `state`, `title`, `user_id`) VALUES
     (7102, '2022-05-05 00:07:14.000000', NOW(), '{\"times\": [{\"end\": \"2022-04-28T15:00:21.386Z\", \"start\": \"2022-04-27T11:02:21.386Z\"}]}', 1, 3, '0', 'NOT_REVIEWED', '3_테스트_동형_낫리뷰', 7001);
 INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_available_times`, `live_review_required`, `priority`, `question`, `state`, `title`, `user_id`) VALUES
-    (7103, '2022-05-07 00:07:14.000000', NOW(), '{\"times\": [{\"end\": \"2022-04-28T15:00:21.386Z\", \"start\": \"2022-04-27T11:02:21.386Z\"}]}', 1, 4, '0', 'NOT_REVIEWED', '4_테스트_동형_낫리뷰', 7001);
+    (7103, '2022-05-07 00:07:14.000000', NOW(), '{\"times\": [{\"end\": \"2022-04-28T15:00:21.386Z\", \"start\": \"2022-04-27T11:02:21.386Z\"}]}', 1, 4, '0', 'REVIEWING', '4_테스트_동형_낫리뷰', 7001);
 INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_available_times`, `live_review_required`, `priority`, `question`, `state`, `title`, `user_id`) VALUES
     (7104, '2022-05-09 00:07:14.000000', NOW(), '{\"times\": [{\"end\": \"2022-04-28T15:00:21.386Z\", \"start\": \"2022-04-27T11:02:21.386Z\"}]}', 1, 5, '0', 'NOT_REVIEWED', '5_테스트_동형_낫리뷰', 7001);
 INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_available_times`, `live_review_required`, `priority`, `question`, `state`, `title`, `user_id`) VALUES

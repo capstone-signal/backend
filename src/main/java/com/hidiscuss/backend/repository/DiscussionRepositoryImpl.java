@@ -1,14 +1,9 @@
 package com.hidiscuss.backend.repository;
 
-import com.hidiscuss.backend.controller.dto.DiscussionResponseDto;
-import com.hidiscuss.backend.controller.dto.DiscussionTagDto;
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
-import com.hidiscuss.backend.controller.dto.UserResponseDto;
 import com.hidiscuss.backend.entity.*;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -41,18 +36,19 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
 
     @Override
     public Page<Discussion> findAllFilteredFetch(GetDiscussionsDto dto, PageRequest pageRequest) {
-        List<DiscussionTag> tags = dto.getTags().stream().map(i -> DiscussionTagDto.toEntity(i)).collect(Collectors.toList());
         JPAQuery<Discussion> query = queryFactory.selectFrom(qDiscussion)
                 .join(qDiscussionTag)
                 .on(qDiscussion.eq(qDiscussionTag.discussion))
-                .where(qDiscussion.state.eq(dto.getState())
-                        .and(qDiscussion.title.contains(dto.getKeyword()))
-                        .and(qDiscussionTag.tag.id.in(tags.stream().map(i -> i.getTag().getId()).collect(Collectors.toList()))))
+                .where(qDiscussionTag.tag.id.in(dto.getTags().stream().map(i -> Long.parseLong(i)).collect(Collectors.toList())))
                 .groupBy(qDiscussion);
 
-//        태그가 없는 discussion을 처리하기 위한 코드, 임시로 삭제
-//        if (dto.getTags().size() != 0)
-//            query.where(qDiscussionTag.tag.id.in(tags.stream().map(i -> i.getTag().getId()).collect(Collectors.toList())));
+        Optional<String> discussionKeyword = Optional.ofNullable(dto.getKeyword());
+        if (discussionKeyword.isPresent())
+            query.where(qDiscussion.title.contains(dto.getKeyword()));
+
+        Optional<DiscussionState> discussionState = Optional.ofNullable(dto.getState());
+        if (discussionState.isPresent())
+            query.where(qDiscussion.state.eq(dto.getState()));
 
         Optional<Long> userId = Optional.ofNullable(dto.getUserId());
         if (userId.isPresent())

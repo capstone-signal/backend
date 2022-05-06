@@ -11,7 +11,7 @@ public final class PageRequest {
     public PageRequest(int page, Sort sort) {
         this.page = page <= 0 ? 1 : page;
         this.size = 5;
-        this.sort = sort;
+        this.sort = sort.descending();
     }
 
     public org.springframework.data.domain.PageRequest of() {

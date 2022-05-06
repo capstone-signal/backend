@@ -22,7 +22,7 @@ public class Tag {
     private String name;
 
     @OneToMany(mappedBy = "tag")
-    List<DiscussionTag> discussions = new ArrayList<>();
+    List<DiscussionTag> discussionTags = new ArrayList<>();
 
     @Builder
     public Tag(Long id, String name) {
