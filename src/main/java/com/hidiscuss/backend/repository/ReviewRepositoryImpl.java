@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.repository;
 
+import com.hidiscuss.backend.entity.QDiscussion;
 import com.hidiscuss.backend.entity.QReview;
 import com.hidiscuss.backend.entity.Review;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QReview qReview = QReview.review;
+//    private final QDiscussion qDiscussion = QDiscussion.discussion;
 
     public ReviewRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -22,6 +24,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     @Override
     public Review findByIdFetchOrNull(Long id) {
         return queryFactory.selectFrom(qReview)
+                .join(qReview.discussion).fetchJoin()
+                .join(qReview.reviewer).fetchJoin()
                 .where(qReview.id.eq(id))
                 .fetchOne();
     }
