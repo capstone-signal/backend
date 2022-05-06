@@ -29,11 +29,6 @@ public class DiscussionCodeService {
                     .discussion(discussion)
                     .filename(d.filename)
                     .content(d.content)
-                    .sha("DIRECT")
-                    .status(Status.ADDED)
-                    .additions((long) d.getLength())
-                    .deletions(0L)
-                    .changes(0L)
                     .language(d.language)
                     .build();
             codes.add(code);
@@ -51,22 +46,12 @@ public class DiscussionCodeService {
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(file.getPatch())
-                        .sha(file.getSha())
-                        .status(Status.convertFromGithubStatus(file.getStatus()))
-                        .additions((long) file.getAdditions())
-                        .deletions((long) file.getDeletions())
-                        .changes((long) file.getChanges());
+                        .content(file.getPatch());
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(file.getPatch())
-                        .sha(file.getSha())
-                        .status(Status.convertFromGithubStatus(file.getStatus()))
-                        .additions((long) file.getLinesAdded())
-                        .deletions((long) file.getLinesDeleted())
-                        .changes((long) file.getLinesChanged());
+                        .content(file.getPatch());
             } else {
                 throw new IllegalArgumentException("Unknown file type");
             }

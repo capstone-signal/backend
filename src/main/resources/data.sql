@@ -6,8 +6,10 @@ INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_a
     (7100, NOW(), NOW(), '{\"times\": [{\"end\": \"2022-04-28T15:00:21.386Z\", \"start\": \"2022-04-27T11:02:21.386Z\"}]}', 1, 0, '0', 'NOT_REVIEWED', 'title', 7000);
 
 -- discussionCode(id 7200, 7201) 생성
-INSERT INTO `hidiscuss`.`discussion_code` (`id`, `created_at`, `last_modified_at`, `additions`, `changes`, `content`, `deletions`, `filename`, `sha`, `status`, `discussion_id`, `language`) VALUES (7200, NOW(), NOW(), 1, 1, '1', 1, '1', '1', 'ADDED', 7100, 'jave');
-INSERT INTO `hidiscuss`.`discussion_code` (`id`, `created_at`, `last_modified_at`, `additions`, `changes`, `content`, `deletions`, `filename`, `sha`, `status`, `discussion_id`, `language`) VALUES (7201, NOW(), NOW(), 1, 1, '1', 1, '1', '1', 'ADDED', 7100, 'typescript');
+INSERT INTO `discussion_code` (`id`, `created_at`, `last_modified_at`, `content`, `filename`, `language`, `discussion_id`) VALUES
+    (7200, NOW(), NOW(), 'content', 'filename', 'language', 7100);
+INSERT INTO `discussion_code` (`id`, `created_at`, `last_modified_at`, `content`, `filename`, `language`, `discussion_id`) VALUES
+    (7201, NOW(), NOW(), 'content', 'filename', 'language', 7100);
 
 -- review(id 7300) 생성
 INSERT INTO `hidiscuss`.`review` (`id`, `created_at`, `last_modified_at`, `accepted`, `review_type`, `discussion_id`, `reviewer_id`) VALUES(7300, NOW(), NOW(), 0, 'COMMENT', 7100, 7000);

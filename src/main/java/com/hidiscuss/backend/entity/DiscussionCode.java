@@ -20,24 +20,8 @@ public class DiscussionCode extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
-    @Column(name = "sha", nullable = false)
-    private String sha;
-
     @Column(name = "filename", nullable = false)
     private String filename;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private Status status;
-
-    @Column(name = "additions", nullable = false)
-    private Long additions;
-
-    @Column(name = "deletions", nullable = false)
-    private Long deletions;
-
-    @Column(name = "changes", nullable = false)
-    private Long changes;
 
     @Column(columnDefinition = "MEDIUMTEXT", name = "content", nullable = false)
     private String content;
@@ -46,15 +30,10 @@ public class DiscussionCode extends BaseEntity {
     private String language;
 
     @Builder
-    public DiscussionCode(Long id, Discussion discussion, String sha, String filename, Status status, Long additions, Long deletions, Long changes, String content, String language) {
+    public DiscussionCode(Long id, Discussion discussion, String filename, String content, String language) {
         this.id = id;
         this.discussion = discussion;
-        this.sha = sha;
         this.filename = filename;
-        this.status = status;
-        this.additions = additions;
-        this.deletions = deletions;
-        this.changes = changes;
         this.content = content;
         this.language = language;
     }
