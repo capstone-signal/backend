@@ -16,9 +16,10 @@ INSERT INTO `hidiscuss`.`review` (`id`, `created_at`, `last_modified_at`, `accep
 
 -- commentReviewDiff(id 7400, 7401) 생성
 INSERT INTO `hidiscuss`.`comment_review_diff` (`id`, `created_at`, `last_modified_at`, `code_after`, `code_locate`, `comment`, `discussion_code_id`, `review_id`) VALUES
-    (7400, NOW(), NOW(), 'string', 'string', 'string', 7200, 7300);
+    (7400, NOW(), NOW(), 'ss', '{}', 'd', 7200, 7300);
 INSERT INTO `hidiscuss`.`comment_review_diff` (`id`, `created_at`, `last_modified_at`, `code_after`, `code_locate`, `comment`, `discussion_code_id`, `review_id`) VALUES
-    (7401, NOW(), NOW(), 'string', 'string', 'string', 7200, 7300);
+    (7401, NOW(), NOW(), 'ss', '{}', 'd', 7200, 7300);
+
 
 -- liveReviewDiff(id 7500) 생성
 INSERT INTO `hidiscuss`.`live_review_diff` (`id`, `created_at`, `last_modified_at`, `code_after`, `discussion_code_id`, `review_id`) VALUES
