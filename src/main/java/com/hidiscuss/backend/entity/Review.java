@@ -70,4 +70,8 @@ public class Review extends BaseEntity {
     public void setCommentDiffList(List<CommentReviewDiff> commentDiffList) {
         this.commentDiffList = commentDiffList;
     }
+
+    public void setLiveDiffList(List<LiveReviewDiff> liveDiffList) {
+        this.liveDiffList = liveDiffList;
+    }
 }

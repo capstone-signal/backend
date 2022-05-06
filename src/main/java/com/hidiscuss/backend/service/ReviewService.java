@@ -2,6 +2,7 @@ package com.hidiscuss.backend.service;
 
 
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
+import com.hidiscuss.backend.controller.dto.CreateLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.controller.dto.ReviewDto;
 import com.hidiscuss.backend.entity.*;
@@ -25,30 +26,68 @@ public class ReviewService {
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
     private final CommentReviewDiffService commentReviewDiffService;
+    private final LiveReviewDiffService liveReviewDiffService;
 
 
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
-        Review review = createReview(user, dto, reviewType);
+        Discussion discussion = discussionRepository
+                .findByIdFetchOrNull(dto.discussionId);
+        if (discussion == null)
+            throw new NoSuchElementException("Discussion not found");
+
+        Review review = Review.builder()
+                .reviewer(user)
+                .discussion(discussion)
+                .liveDiffList(new ArrayList<>())
+                .reviewType(reviewType)
+                .accepted(false)
+                .build();
+        review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
         return review;
     }
 
-    //TODO: commentDiffList로만 만들어지는 것 liveDiffList로도 적용되도록 일반화
-    public Review createReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
+    @Transactional
+    public Review createLiveReview(User user, long discussionId, ReviewType reviewType) {
         Discussion discussion = discussionRepository
-                .findByIdFetchOrNull(dto.discussionId);
+                .findByIdFetchOrNull(discussionId);
         if (discussion == null)
             throw new NoSuchElementException("Discussion not found");
+
+        if(discussion.getState() == DiscussionState.NOT_REVIEWED)
+            discussion.setState(DiscussionState.REVIEWING);
+
         Review review = Review.builder()
                 .reviewer(user)
                 .discussion(discussion)
-                .commentDiffList(new ArrayList<>())
+                .liveDiffList(new ArrayList<>())
                 .reviewType(reviewType)
                 .accepted(false)
                 .build();
         review = reviewRepository.save(review);
+
+        List<LiveReviewDiff> diffList = liveReviewDiffService.createNewLiveReviewDiff(review, discussion);
+        review.setLiveDiffList(diffList);
+        return review;
+    }
+
+    @Transactional
+    public Review updateLiveReview(User user, CreateLiveReviewRequestDto dto, long reviewId) {
+        Discussion discussion = discussionRepository
+                .findByIdFetchOrNull(dto.discussionId);
+        if (discussion == null)
+            throw new NoSuchElementException("Discussion not found");
+
+        Review review = reviewRepository.findByIdFetchOrNull(reviewId);
+        System.out.println(reviewId);
+
+        if(review == null)
+            throw new NoSuchElementException("Reivew not found");
+
+        List<LiveReviewDiff> diffList = liveReviewDiffService.updateLiveReviewDiff(review, dto.getDiffList());
+        review.setLiveDiffList(diffList);
         return review;
     }
 

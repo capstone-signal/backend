@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/review")
@@ -36,6 +35,34 @@ public class ReviewController {
         User user = User.builder().id(7000L).build();
         Review review = reviewService.createCommentReview(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
+    }
+
+    @ApiOperation(value="새로운 live review 생성", notes="이 api는 새로운 live review를 생성합니다. 대신 빈 diff를 가지고 있습니다.")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "새로운 live review 생성 성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("newlivereview")
+    public LiveReviewResponseDto saveLiveReview(@RequestParam("type") ReviewType reviewType, @RequestParam("discussionId") long discussionId) {
+        User user = User.builder().id(7000L).build();
+        Review review = reviewService.createLiveReview(user, discussionId, reviewType);
+        return LiveReviewResponseDto.fromEntity(review);
+    }
+
+    @ApiOperation(value="live review Update", notes="이 api는 live review를 Update합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "live review Update 성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("{reviewId}/livereview")
+    public LiveReviewResponseDto updateLiveReview(@RequestBody @Valid CreateLiveReviewRequestDto requestDto, @PathVariable("reviewId") Long reviewId) {
+        User user = User.builder().id(7000L).build();
+        Review review = reviewService.updateLiveReview(user, requestDto,reviewId);
+        return LiveReviewResponseDto.fromEntity(review);
     }
 
     @ApiOperation(value="thread 작성", notes="이 api는 comment review 하위에 thread를 저장합니다. thread는 discussion이 완료되어도 누구나 작성할 수 있습니다.")

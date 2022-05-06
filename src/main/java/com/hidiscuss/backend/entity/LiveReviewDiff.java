@@ -11,4 +11,24 @@ import javax.persistence.*;
 @Table(name = "LiveReviewDiff")
 public class LiveReviewDiff extends ReviewDiff {
 
+    @Builder
+    public LiveReviewDiff(Long id, Review review, DiscussionCode discussionCode, String codeAfter) {
+        super(id, review, discussionCode, codeAfter);
+    }
+
+    public LiveReviewDiff() {
+        super();
+    }
+
+    public void setReview(Review review) {
+        super.review = review;
+        review.getLiveDiffList().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "CommentReviewDiff{" +
+                '}';
+    }
+
 }
