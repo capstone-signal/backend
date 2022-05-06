@@ -34,6 +34,7 @@ public class DiscussionCodeService {
                     .additions((long) d.getLength())
                     .deletions(0L)
                     .changes(0L)
+                    .language(d.language)
                     .build();
             codes.add(code);
         });

@@ -102,6 +102,7 @@ public class DiscussionCodeServiceTest {
         CreateDiscussionCodeRequestDto createDiscussionCodeRequestDto = new CreateDiscussionCodeRequestDto();
         createDiscussionCodeRequestDto.filename = "filename";
         createDiscussionCodeRequestDto.content = "code";
+        createDiscussionCodeRequestDto.language = "language";
         return createDiscussionCodeRequestDto;
     }
 }

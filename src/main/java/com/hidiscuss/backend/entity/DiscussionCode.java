@@ -42,8 +42,11 @@ public class DiscussionCode extends BaseEntity {
     @Column(columnDefinition = "MEDIUMTEXT", name = "content", nullable = false)
     private String content;
 
+    @Column(name = "language", nullable = false)
+    private String language;
+
     @Builder
-    public DiscussionCode(Long id, Discussion discussion, String sha, String filename, Status status, Long additions, Long deletions, Long changes, String content) {
+    public DiscussionCode(Long id, Discussion discussion, String sha, String filename, Status status, Long additions, Long deletions, Long changes, String content, String language) {
         this.id = id;
         this.discussion = discussion;
         this.sha = sha;
@@ -53,5 +56,6 @@ public class DiscussionCode extends BaseEntity {
         this.deletions = deletions;
         this.changes = changes;
         this.content = content;
+        this.language = language;
     }
 }
