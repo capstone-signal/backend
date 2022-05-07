@@ -25,7 +25,7 @@ public abstract class ReviewDiff extends BaseEntity {
     @JoinColumn(name = "discussion_code_id", nullable = false)
     private DiscussionCode discussionCode;
 
-    @Column(name = "code_after", nullable = false)
+    @Column(columnDefinition = "mediumtext", name = "code_after", nullable = false)
     private String codeAfter;
 
 }

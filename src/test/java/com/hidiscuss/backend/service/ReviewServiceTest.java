@@ -127,7 +127,7 @@ public class ReviewServiceTest {
     }
 
     private CreateCommentReviewDiffDto getCommentReviewDiffDto(Long id) {
-        DiscussionCodeDto dto = new DiscussionCodeDto(id, "filename", "content");
+        DiscussionCodeDto dto = new DiscussionCodeDto(id, "filename", "content", "language");
         return new CreateCommentReviewDiffDto(dto, "codeAfter", "codeLocate", "comment");
     }
 }

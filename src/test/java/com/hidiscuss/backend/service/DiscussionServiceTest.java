@@ -136,6 +136,7 @@ class DiscussionServiceTest {
         CreateDiscussionCodeRequestDto dto = new CreateDiscussionCodeRequestDto();
         dto.content = "content";
         dto.filename = "filename";
+        dto.language = "language";
         return dto;
     }
 }

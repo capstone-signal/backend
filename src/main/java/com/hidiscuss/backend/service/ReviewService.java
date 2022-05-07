@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.service;
 
+
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.controller.dto.ReviewDto;
@@ -19,10 +20,12 @@ import java.util.NoSuchElementException;
 @Service
 @AllArgsConstructor
 public class ReviewService {
+
     private final ReviewRepository reviewRepository;
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
     private final CommentReviewDiffService commentReviewDiffService;
+
 
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
@@ -48,6 +51,7 @@ public class ReviewService {
         review = reviewRepository.save(review);
         return review;
     }
+
 
     public ReviewThread createThread(User user, CreateThreadRequestDto dto, Review review) {
         ReviewThread reviewThread = ReviewThread.builder()

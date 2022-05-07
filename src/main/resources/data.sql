@@ -1,6 +1,6 @@
 -- user(id 7000, 7001) 생성
-INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `access_token`, `email`, `username`, `point`, `refresh_token`) VALUES (7000, NOW(), NOW(), '1', '1', '수홍', 1, '1');
-INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `access_token`, `email`, `username`, `point`, `refresh_token`) VALUES (7001, NOW(), NOW(), '1', '1', '동형', 1, '1');
+INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (7000, NOW(), NOW(), '수홍', '1', 1);
+INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (7001, NOW(), NOW(), '동형', '1', 1);
 
 -- discussion(id 7100, 7101, 7102) 생성
 INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_available_times`, `live_review_required`, `priority`, `question`, `state`, `title`, `user_id`) VALUES
@@ -23,10 +23,10 @@ INSERT INTO `discussion` (`id`, `created_at`, `last_modified_at`, `live_review_a
     (7108, '2022-05-08 00:07:14.000000', NOW(), '{\"times\": [{\"end\": \"2022-04-28T15:00:21.386Z\", \"start\": \"2022-04-27T11:02:21.386Z\"}]}', 1, 9, '0', 'NOT_REVIEWED', '9_테스트_동형_낫리뷰', 7001);
 
 -- discussionCode(id 7200, 7201) 생성
-INSERT INTO `hidiscuss`.`discussion_code` (`id`, `created_at`, `last_modified_at`, `additions`, `changes`, `content`, `deletions`, `filename`, `sha`, `status`, `discussion_id`) VALUES (7200, NOW(), NOW(), 1, 1, '1', 1, '1', '1', 'ADDED', 7100);
-INSERT INTO `hidiscuss`.`discussion_code` (`id`, `created_at`, `last_modified_at`, `additions`, `changes`, `content`, `deletions`, `filename`, `sha`, `status`, `discussion_id`) VALUES (7201, NOW(), NOW(), 1, 1, '1', 1, '1', '1', 'ADDED', 7100);
-INSERT INTO `hidiscuss`.`discussion_code` (`id`, `created_at`, `last_modified_at`, `additions`, `changes`, `content`, `deletions`, `filename`, `sha`, `status`, `discussion_id`) VALUES (7202, NOW(), NOW(), 1, 1, '1', 1, '1', '1', 'ADDED', 7101);
-INSERT INTO `hidiscuss`.`discussion_code` (`id`, `created_at`, `last_modified_at`, `additions`, `changes`, `content`, `deletions`, `filename`, `sha`, `status`, `discussion_id`) VALUES (7203, NOW(), NOW(), 1, 1, '1', 1, '1', '1', 'ADDED', 7102);
+INSERT INTO `discussion_code` (`id`, `created_at`, `last_modified_at`, `content`, `filename`, `language`, `discussion_id`) VALUES
+    (7200, NOW(), NOW(), 'content', 'filename', 'language', 7100);
+INSERT INTO `discussion_code` (`id`, `created_at`, `last_modified_at`, `content`, `filename`, `language`, `discussion_id`) VALUES
+    (7201, NOW(), NOW(), 'content', 'filename', 'language', 7100);
 
 -- review(id 7300) 생성
 INSERT INTO `hidiscuss`.`review` (`id`, `created_at`, `last_modified_at`, `accepted`, `review_type`, `discussion_id`, `reviewer_id`) VALUES(7300, NOW(), NOW(), 0, 'COMMENT', 7100, 7000);
@@ -35,9 +35,10 @@ INSERT INTO `hidiscuss`.`review` (`id`, `created_at`, `last_modified_at`, `accep
 
 -- commentReviewDiff(id 7400, 7401) 생성
 INSERT INTO `hidiscuss`.`comment_review_diff` (`id`, `created_at`, `last_modified_at`, `code_after`, `code_locate`, `comment`, `discussion_code_id`, `review_id`) VALUES
-    (7400, NOW(), NOW(), 'string', 'string', 'string', 7200, 7300);
+    (7400, NOW(), NOW(), 'ss', '{}', 'd', 7200, 7300);
 INSERT INTO `hidiscuss`.`comment_review_diff` (`id`, `created_at`, `last_modified_at`, `code_after`, `code_locate`, `comment`, `discussion_code_id`, `review_id`) VALUES
-    (7401, NOW(), NOW(), 'string', 'string', 'string', 7200, 7300);
+    (7401, NOW(), NOW(), 'ss', '{}', 'd', 7200, 7300);
+
 
 -- liveReviewDiff(id 7500) 생성
 INSERT INTO `hidiscuss`.`live_review_diff` (`id`, `created_at`, `last_modified_at`, `code_after`, `discussion_code_id`, `review_id`) VALUES
