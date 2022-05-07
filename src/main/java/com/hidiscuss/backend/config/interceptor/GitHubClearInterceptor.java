@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class GithubInterceptor implements HandlerInterceptor {
+public class GitHubClearInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(
@@ -19,15 +19,6 @@ public class GithubInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) throws Exception {
-        GitHub github = GitHub.connectAnonymously();
-        //Github github = new GitHubBuilder().withOAuthToken("request...").build();
-        // TODO : github instance based on access token
-
-        GHRateLimit rateLimit = github.getRateLimit();
-        if(rateLimit.getRemaining() < 1) {
-            throw new RuntimeException("Github API rate limit exceeded"); // TODO : custom exception
-        }
-        GithubContext.setInstance(github);
         return true;
     }
 
