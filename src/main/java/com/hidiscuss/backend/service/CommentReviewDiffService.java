@@ -25,7 +25,7 @@ public class CommentReviewDiffService {
 
         for (int i = 0; i < list.size(); i++)
             idList.add(list.get(i).getDiscussionCode().getId());
-        List<DiscussionCode> codeList = discussionCodeRepository.findByIdListFetch(idList);
+        List<DiscussionCode> codeList = discussionCodeRepository.findByIdList(idList);
 
         if (codeList.size() != 0) {
             for (int i = 0; i < list.size(); i++) {

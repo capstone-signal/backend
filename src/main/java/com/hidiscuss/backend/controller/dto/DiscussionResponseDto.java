@@ -17,7 +17,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
     private Long priority;
     private int state;
     private UserResponseDto user;
-    private List<TagResponseDto> tags;
+    private List<DiscussionTagDto> tags;
     public static DiscussionResponseDto fromEntity(Discussion entity) {
         DiscussionResponseDto dto = new DiscussionResponseDto();
         dto.setBaseResponse(entity);
@@ -28,7 +28,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
         dto.liveReviewAvailableTimes = entity.getLiveReviewAvailableTimes();
         dto.priority = entity.getPriority();
         dto.state = entity.getState().getId();
-//        dto.tags = entity.getTags().stream().map(TagResponseDto::fromEntity).collect(Collectors.toList());
+        dto.tags = entity.getTags().stream().map(DiscussionTagDto::fromEntity).collect(Collectors.toList());
         dto.user = UserResponseDto.fromEntity(entity.getUser());
         return dto;
     }

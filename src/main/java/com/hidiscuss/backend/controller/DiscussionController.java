@@ -1,18 +1,23 @@
 package com.hidiscuss.backend.controller;
 
 import com.hidiscuss.backend.controller.dto.*;
-import com.hidiscuss.backend.entity.Discussion;
-import com.hidiscuss.backend.entity.DiscussionCode;
-import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.DiscussionCodeService;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewService;
+import com.hidiscuss.backend.service.TagService;
+import com.hidiscuss.backend.utils.ApiPageable;
+import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,6 +28,7 @@ import java.util.List;
 public class DiscussionController {
     private final DiscussionService discussionService;
     private final DiscussionCodeService discussionCodeService;
+    private final TagService tagService;
 
 
     @PostMapping("/")
@@ -72,6 +78,25 @@ public class DiscussionController {
         List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(discussion);
 
         return new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), DiscussionCodeDto.fromEntityList(discussionCodeList));
+    }
+
+    @ApiOperation(value = "Discussion 목록 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Discussion 목록 조회"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    @ApiPageable
+    @GetMapping("/")
+    public Page<DiscussionResponseDto> getDiscussions(GetDiscussionsDto dto, @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
+        PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
+        User user = User.builder().id(7000L).build();
+        if (dto.isOnlyMine()) {
+            dto.setUserId(user.getId());
+        }
+        Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
+
+        return entities.map(i -> DiscussionResponseDto.fromEntity(i));
     }
 }
 

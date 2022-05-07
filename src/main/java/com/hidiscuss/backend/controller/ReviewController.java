@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +62,7 @@ public class ReviewController {
     })
     @GetMapping("")
     public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId, @RequestParam("page") int page) {
-        PageRequest pageRequest = new PageRequest(page);
+        PageRequest pageRequest = new PageRequest(page, Sort.by("createdAt").descending());
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
         Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
         return dtoPage;
