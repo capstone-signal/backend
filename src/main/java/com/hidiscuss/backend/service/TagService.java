@@ -1,5 +1,7 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.controller.dto.DiscussionTagDto;
+import com.hidiscuss.backend.controller.dto.TagResponseDto;
 import com.hidiscuss.backend.entity.Tag;
 import com.hidiscuss.backend.repository.TagRepository;
 import com.hidiscuss.backend.utils.DbInitilization;
@@ -31,5 +33,9 @@ public class TagService {
 
     public List<Tag> findAll() {
         return tagRepository.findAll();
+    }
+
+    public List<DiscussionTagDto> getTags(List<String> tags) {
+        return tagRepository.findAllByName(tags);
     }
 }

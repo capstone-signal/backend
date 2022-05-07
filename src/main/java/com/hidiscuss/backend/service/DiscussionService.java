@@ -1,13 +1,17 @@
 package com.hidiscuss.backend.service;
 
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
+import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
 import com.hidiscuss.backend.entity.Discussion;
+import com.hidiscuss.backend.entity.DiscussionState;
 import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestFileDetail;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -60,5 +64,9 @@ public class DiscussionService {
         Discussion discussion = discussionRepository.findByIdFetchOrNull(id);
         if (discussion == null) throw new NoSuchElementException("Discussion not found");
         return discussion;
+    }
+
+    public Page<Discussion> getDiscussionsFiltered(GetDiscussionsDto dto, PageRequest pageRequest) {
+        return discussionRepository.findAllFilteredFetch(dto, pageRequest);
     }
 }

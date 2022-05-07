@@ -1,7 +1,9 @@
 package com.hidiscuss.backend.config;
 
 import com.hidiscuss.backend.config.interceptor.GithubInterceptor;
+import com.hidiscuss.backend.entity.StringToEnumConverter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -22,4 +24,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders("*").allowCredentials(true);
     }
 
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToEnumConverter());
+    }
 }
