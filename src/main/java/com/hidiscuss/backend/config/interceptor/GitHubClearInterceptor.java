@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class GithubInterceptor implements HandlerInterceptor {
+public class GitHubClearInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(

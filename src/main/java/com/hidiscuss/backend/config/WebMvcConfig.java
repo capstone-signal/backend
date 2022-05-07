@@ -1,17 +1,16 @@
 package com.hidiscuss.backend.config;
 
-import com.hidiscuss.backend.config.interceptor.GithubInterceptor;
+import com.hidiscuss.backend.config.interceptor.GitHubClearInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new GithubInterceptor()).order(1); // TODO : order 수정 => after authentication
+        registry.addInterceptor(new GitHubClearInterceptor()).order(Integer.MIN_VALUE);
     }
 
     @Override
