@@ -1,12 +1,13 @@
 package com.hidiscuss.backend.controller;
 
+import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.GHCommitResponseDto;
 import com.hidiscuss.backend.controller.dto.GHPullRequestResponseDto;
 import com.hidiscuss.backend.controller.dto.GHRepositoryResponseDto;
 import com.hidiscuss.backend.service.GithubService;
-import com.hidiscuss.backend.utils.GithubContext;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.*;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Secured(SecurityConfig.DEFAULT_ROLE)
 @RestController
 @RequestMapping("/github")
 @AllArgsConstructor
