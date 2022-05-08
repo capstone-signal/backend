@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,7 +34,9 @@ public class LiveReviewAvailableTimes {
     @Getter
     @Setter
     public static class LiveReviewAvailableTime {
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
         private LocalDateTime start;
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
         private LocalDateTime end;
 
         @Override
