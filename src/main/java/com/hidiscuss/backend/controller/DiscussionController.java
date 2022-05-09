@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.controller;
 
+import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.DiscussionCodeService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -28,11 +30,10 @@ import java.util.List;
 public class DiscussionController {
     private final DiscussionService discussionService;
     private final DiscussionCodeService discussionCodeService;
-    private final TagService tagService;
-
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 생성")
     @ApiResponses({
             @ApiResponse(code = 201, message = "새로운 Discussion 생성 성공"),
@@ -66,13 +67,14 @@ public class DiscussionController {
         return DiscussionResponseDto.fromEntity(discussion);
     }
 
+    @GetMapping("/{discussionId}")
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Discussion 상세페이지 조회")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Discussion 상세페이지 조회"),
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    @GetMapping("/{discussionId}")
     public DiscussionDetailResponseDto getDiscussion(@PathVariable("discussionId") Long discussionId) {
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(discussion);
@@ -80,16 +82,18 @@ public class DiscussionController {
         return new DiscussionDetailResponseDto(DiscussionResponseDto.fromEntity(discussion), DiscussionCodeDto.fromEntityList(discussionCodeList));
     }
 
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiPageable
     @ApiOperation(value = "Discussion 목록 조회")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Discussion 목록 조회"),
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    @ApiPageable
-    @GetMapping("/")
     public Page<DiscussionResponseDto> getDiscussions(GetDiscussionsDto dto, @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
+        // TODO : Inject the Authenticated User
         User user = User.builder().id(7000L).build();
         if (dto.isOnlyMine()) {
             dto.setUserId(user.getId());
