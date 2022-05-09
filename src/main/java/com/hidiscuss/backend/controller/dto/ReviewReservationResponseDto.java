@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hidiscuss.backend.entity.ReviewReservation;
 import com.hidiscuss.backend.entity.User;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ public class ReviewReservationResponseDto {
     private UserResponseDto reviewer;
     //private ReviewResponseDto review;
     private DiscussionResponseDto discussion;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
     private LocalDateTime reviewStartDateTime;
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;
