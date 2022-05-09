@@ -48,7 +48,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         }
         if (token != null && tokenService.verifyToken(token)) {
             Claims claims = tokenService.parseJwtToken(token);
-            String name = tokenService.getUid(token);
+            String name = (String) claims.get("userId");
 
             Authentication auth = new UsernamePasswordAuthenticationToken(name, claims.get("gitAccessToken"), AUTHORITIES);
             SecurityContextHolder.getContext().setAuthentication(auth);
