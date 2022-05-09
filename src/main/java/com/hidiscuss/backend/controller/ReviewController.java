@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -36,9 +37,10 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType, @RequestBody @Valid CreateCommentReviewRequestDto requestDto) {
-        // TODO : Inject the Authenticated User
-        User user = User.builder().id(7000L).build();
+    public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType
+            , @RequestBody @Valid CreateCommentReviewRequestDto requestDto
+            , @AuthenticationPrincipal String userId) {
+        User user = User.builder().id(Long.parseLong(userId)).build();
         Review review = reviewService.createCommentReview(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
     }
@@ -52,9 +54,10 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId, @RequestBody @Valid CreateThreadRequestDto requestDto) {
-        // TODO : Inject the Authenticated User
-        User user = User.builder().id(7000L).build();
+    public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId
+            , @RequestBody @Valid CreateThreadRequestDto requestDto
+            , @AuthenticationPrincipal String userId) {
+        User user = User.builder().id(Long.parseLong(userId)).build();
         Review review = reviewService.findByIdFetchOrNull(reviewId);
         ReviewThread reviewThread = reviewService.createThread(user, requestDto, review);
         return ThreadResponseDto.fromEntity(reviewThread);
@@ -73,6 +76,4 @@ public class ReviewController {
         Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
         return dtoPage;
     }
-
-
 }

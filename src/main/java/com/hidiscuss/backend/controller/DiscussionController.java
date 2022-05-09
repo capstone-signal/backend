@@ -3,12 +3,10 @@ package com.hidiscuss.backend.controller;
 import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
-import com.hidiscuss.backend.service.DiscussionCodeService;
-import com.hidiscuss.backend.service.DiscussionService;
-import com.hidiscuss.backend.service.ReviewService;
-import com.hidiscuss.backend.service.TagService;
+import com.hidiscuss.backend.service.*;
 import com.hidiscuss.backend.utils.ApiPageable;
 import com.hidiscuss.backend.utils.PageRequest;
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -41,7 +40,9 @@ public class DiscussionController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public DiscussionResponseDto createDiscussion(
-            @RequestBody @Valid CreateDiscussionRequestDto createDiscussionRequestDto) {
+            @RequestBody CreateDiscussionRequestDto createDiscussionRequestDto
+            , @AuthenticationPrincipal String userId) {
+        User user = User.builder().id(Long.parseLong(userId)).build();
         if (createDiscussionRequestDto.isDirectDiscussion()) {
             if (createDiscussionRequestDto.codes == null) {
                 throw new IllegalArgumentException("코드가 없습니다.");
@@ -61,8 +62,6 @@ public class DiscussionController {
         if (createDiscussionRequestDto.usePriority) {
             // rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
         }
-        // TODO : Inject the Authenticated User
-        User user = User.builder().id(9999L).build();
         Discussion discussion = discussionService.create(createDiscussionRequestDto, user);
         return DiscussionResponseDto.fromEntity(discussion);
     }
