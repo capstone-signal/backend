@@ -44,8 +44,10 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
         JPAQuery<Discussion> query = queryFactory.selectFrom(qDiscussion)
                 .join(qDiscussionTag)
                 .on(qDiscussion.eq(qDiscussionTag.discussion))
-                .where(qDiscussionTag.tag.id.in(dto.getTags().stream().map(i -> Long.parseLong(i)).collect(Collectors.toList())))
                 .groupBy(qDiscussion);
+
+        if (dto.getTags().size() != 0)
+            query.where(qDiscussionTag.tag.id.in(dto.getTags().stream().map(i -> Long.parseLong(i)).collect(Collectors.toList())));
 
         Optional<String> discussionKeyword = Optional.ofNullable(dto.getKeyword());
         if (discussionKeyword.isPresent())
