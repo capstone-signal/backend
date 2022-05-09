@@ -48,14 +48,14 @@ public class JwtAuthFilter extends GenericFilterBean {
         }
         if (token != null && tokenService.verifyToken(token)) {
             Claims claims = tokenService.parseJwtToken(token);
-            String name = tokenService.getUid(token);
+            String name = (String) claims.get("userId");
 
             Authentication auth = new UsernamePasswordAuthenticationToken(name, claims.get("gitAccessToken"), AUTHORITIES);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }else if (refreshToken != null && tokenService.verifyToken(refreshToken)) {
             Claims claims = tokenService.parseJwtToken(refreshToken);
             String name = tokenService.getUid(refreshToken);
-            Token newToken = tokenService.generateToken(name, (String) claims.get("gitAccessToken"));
+            Token newToken = tokenService.generateToken(name, (String) claims.get("gitAccessToken"),(Long) claims.get("userId"));
 
             Cookie newAccessToken = new Cookie("accessToken", newToken.getToken());
             Cookie newRefreshToken = new Cookie("refreshToken", newToken.getRefreshToken());
