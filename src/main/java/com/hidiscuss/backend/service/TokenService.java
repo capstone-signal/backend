@@ -23,7 +23,7 @@ public class TokenService {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public Token generateToken(String uid, String gitAccessToken) {
+    public Token generateToken(String uid, String gitAccessToken, Long userId) {
         long tokenPeriod = 1000L * 60L * 60L * 2L;
         long refreshPeriod = 1000L * 60L * 60L * 8L;
 
@@ -38,6 +38,7 @@ public class TokenService {
                         .setExpiration(new Date(now.getTime() + tokenPeriod))
                         .signWith(SignatureAlgorithm.HS256, secretKey)
                         .claim("gitAccessToken",gitAccessToken)
+                        .claim("userId", userId )
                         .compact(),
                 Jwts.builder()
                         .setClaims(claims)
@@ -45,6 +46,7 @@ public class TokenService {
                         .setExpiration(new Date(now.getTime() + refreshPeriod))
                         .signWith(SignatureAlgorithm.HS256, secretKey)
                         .claim("gitAccessToken",gitAccessToken)
+                        .claim("userId", userId )
                         .compact());
     }
     public boolean verifyToken(String token) {

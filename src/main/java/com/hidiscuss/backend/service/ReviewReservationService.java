@@ -5,6 +5,7 @@ import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
 import com.hidiscuss.backend.entity.ReviewReservation;
 import com.hidiscuss.backend.repository.ReviewReservationRepository;
+import com.hidiscuss.backend.repository.ReviewReservationRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ReviewReservationService {
     public static int REVIEW_SESSION_DURATION_IN_HOURS = 1;
 
     private final ReviewReservationRepository reviewReservationRepository;
+    private final ReviewReservationRepositoryCustom reviewReservationRepositoryCustom;
     private final EmailService emailService;
 
     public List<ReviewReservation> findByDiscussionId(Long discussionId) {
@@ -90,5 +92,9 @@ public class ReviewReservationService {
         boolean isBetween = comparerStartTime.isBefore(startTime) && comparerEndTime.isAfter(startTime);
         boolean isStartBeforeHour = startTime.isAfter(comparerStartTime.minusHours(REVIEW_SESSION_DURATION_IN_HOURS)) && startTime.isBefore(comparerStartTime);
         return isEqual || isBetween || isStartBeforeHour;
+    }
+
+    public List<ReviewReservation> findByDiscussionIdAndUserId(Long discussionId, Long userId) {
+        return reviewReservationRepositoryCustom.findByDiscussionIdAndUserId(discussionId,userId);
     }
 }

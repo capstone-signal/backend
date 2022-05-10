@@ -5,6 +5,7 @@ import com.hidiscuss.backend.entity.ReviewReservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -22,4 +23,13 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
                 .where(qReviewReservation.discussion.id.eq(discussionId))
                 .fetch();
     }
+
+    public List<ReviewReservation> findByDiscussionIdAndUserId(Long discussionId, Long userId){
+        return queryFactory.selectFrom(qReviewReservation)
+                .where(qReviewReservation.discussion.id.eq(discussionId)
+                        .and(qReviewReservation.reviewer.id.eq(userId).or(qReviewReservation.discussion.user.id.eq(userId)))
+                        .and(qReviewReservation.reviewStartDateTime.before(LocalDateTime.now())))
+                .fetch();
+    }
+
 }
