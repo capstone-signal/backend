@@ -73,7 +73,7 @@ public class DiscussionService {
         return discussionRepository.findAllFilteredFetch(dto, pageRequest);
     }
 
-    public void delete(Discussion discussion, User user) {
+    public Long delete(Discussion discussion, User user) {
         if (!discussion.getUser().getId().equals(user.getId())) {
             throw new UserAuthorityException("You can only delete discussions you have created");
         }
@@ -84,5 +84,6 @@ public class DiscussionService {
         } else {
             throw new IllegalArgumentException("Only discussions that do not have reviews or reservations can be deleted");
         }
+        return discussion.getId();
     }
 }

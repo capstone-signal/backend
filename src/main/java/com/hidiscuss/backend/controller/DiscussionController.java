@@ -109,12 +109,12 @@ public class DiscussionController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public void deleteDiscussion(@PathVariable("discussionId") Long discussionId
+    public Long deleteDiscussion(@PathVariable("discussionId") Long discussionId
             , @AuthenticationPrincipal String userId) {
         User user = userService.findById(Long.parseLong(userId));
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
-        discussionService.delete(discussion, user);
-
+        Long deleted = discussionService.delete(discussion, user);
+        return deleted;
     }
 }
 
