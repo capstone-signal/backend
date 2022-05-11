@@ -90,13 +90,12 @@ public class DiscussionController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public Page<DiscussionResponseDto> getDiscussions(GetDiscussionsDto dto, @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
+    public Page<DiscussionResponseDto> getDiscussions(GetDiscussionsDto dto
+            , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable
+            , @AuthenticationPrincipal String userId) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
-        // TODO : Inject the Authenticated User
-        User user = User.builder().id(7000L).build();
-        if (dto.isOnlyMine()) {
-            dto.setUserId(user.getId());
-        }
+        if (dto.isOnlyMine())
+            dto.setUserId(Long.parseLong(userId));
         Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
 
         return entities.map(i -> DiscussionResponseDto.fromEntity(i));
