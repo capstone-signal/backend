@@ -18,8 +18,9 @@ public class GithubService {
 
     public Collection<GHRepository> getRepositories() {
         try {
-            return getGitHub().getUser("capstone-signal").getRepositories().values(); // TODO : get user from session
+            return getGitHub().getMyself().getRepositories().values(); // TODO : get user from session
         } catch (IOException e) {
+            e.printStackTrace();
             throw new GithubException("Failed to get repositories", e);
         }
     }

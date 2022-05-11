@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "CommentReviewDiff")
 public class CommentReviewDiff extends ReviewDiff {
 
-    @Column(name = "code_locate", nullable = false)
+    @Column(columnDefinition = "json", name = "code_locate", nullable = false)
     private String codeLocate;
 
     @Column(name = "comment", nullable = false)

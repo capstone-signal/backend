@@ -38,7 +38,7 @@ public class TokenService {
                         .setExpiration(new Date(now.getTime() + tokenPeriod))
                         .signWith(SignatureAlgorithm.HS256, secretKey)
                         .claim("gitAccessToken",gitAccessToken)
-                        .claim("userId", userId )
+                        .claim("userId",userId.toString())
                         .compact(),
                 Jwts.builder()
                         .setClaims(claims)

@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.List;
@@ -113,7 +114,7 @@ public class ReviewServiceTest {
     @Test
     @DisplayName("findAllByDiscussionIdFetch_discussionId로 리뷰를 모두 가져온다")
     void findAllByDiscussionIdFetch_common() {
-        PageRequest pageRequest = new PageRequest(0);
+        PageRequest pageRequest = new PageRequest(0, Sort.by("createdAt").descending());
         Review review_1 = Review.builder().id(1L).build();
         Review review_2 = Review.builder().id(2L).build();
         Page<Review> entities = new PageImpl<>(List.of(review_1, review_2));
@@ -126,7 +127,7 @@ public class ReviewServiceTest {
     }
 
     private CreateCommentReviewDiffDto getCommentReviewDiffDto(Long id) {
-        DiscussionCodeDto dto = new DiscussionCodeDto(id, "filename", "content");
+        DiscussionCodeDto dto = new DiscussionCodeDto(id, "filename", "content", "language");
         return new CreateCommentReviewDiffDto(dto, "codeAfter", "codeLocate", "comment");
     }
 }

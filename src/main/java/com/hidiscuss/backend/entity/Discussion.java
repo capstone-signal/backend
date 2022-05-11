@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,6 +41,9 @@ public class Discussion extends BaseEntity {
 
     @Column(columnDefinition = "bigint default 0", name = "priority", nullable = false)
     private Long priority;
+
+    @OneToMany(mappedBy = "discussion")
+    private List<DiscussionTag> tags = new ArrayList<>();
 
     @Builder
     public Discussion(Long id, User user, String question, String title, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority) {

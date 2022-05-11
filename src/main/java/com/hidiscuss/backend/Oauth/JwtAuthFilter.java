@@ -1,11 +1,13 @@
 package com.hidiscuss.backend.Oauth;
 
+import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.entity.Token;
 import com.hidiscuss.backend.service.TokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -30,8 +32,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpServletRequest req = (HttpServletRequest) request;
 
-        final List AUTHORITIES = new ArrayList();
-        AUTHORITIES.add(new SimpleGrantedAuthority("ROLE_USER"));
+        final List<GrantedAuthority> AUTHORITIES = List.of(new SimpleGrantedAuthority(SecurityConfig.DEFAULT_ROLE));
 
         String token = null;
         String refreshToken = null;
@@ -46,9 +47,10 @@ public class JwtAuthFilter extends GenericFilterBean {
             }
         }
         if (token != null && tokenService.verifyToken(token)) {
-            String name = tokenService.getUid(token);
+            Claims claims = tokenService.parseJwtToken(token);
+            String name = (String) claims.get("userId");
 
-            Authentication auth = new UsernamePasswordAuthenticationToken(name,"", AUTHORITIES);
+            Authentication auth = new UsernamePasswordAuthenticationToken(name, claims.get("gitAccessToken"), AUTHORITIES);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }else if (refreshToken != null && tokenService.verifyToken(refreshToken)) {
             Claims claims = tokenService.parseJwtToken(refreshToken);

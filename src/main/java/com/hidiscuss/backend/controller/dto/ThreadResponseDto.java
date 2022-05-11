@@ -9,8 +9,6 @@ public class ThreadResponseDto extends BaseResponseDto {
 
     private UserResponseDto user;
 
-    private CommentReviewResponseDto review;
-
     private String content;
 
     public static ThreadResponseDto fromEntity(ReviewThread entity) {
@@ -18,7 +16,6 @@ public class ThreadResponseDto extends BaseResponseDto {
         dto.setBaseResponse(entity);
         dto.id = entity.getId();
         dto.user = UserResponseDto.fromEntity(entity.getUser());
-        dto.review = CommentReviewResponseDto.fromEntity(entity.getReview());
         dto.content = entity.getContent();
         return dto;
     }

@@ -17,7 +17,7 @@ public class DiscussionCodeRepositoryImpl implements DiscussionCodeRepositoryCus
     }
 
     @Override
-    public List<DiscussionCode> findByIdListFetch(List<Long> list) {
+    public List<DiscussionCode> findByIdList(List<Long> list) {
         return queryFactory.selectFrom(qDiscussionCode)
                 .where(qDiscussionCode.id.in(list))
                 .fetch();

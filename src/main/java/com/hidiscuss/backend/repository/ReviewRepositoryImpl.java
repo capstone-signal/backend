@@ -1,5 +1,7 @@
 package com.hidiscuss.backend.repository;
 
+import com.hidiscuss.backend.entity.QDiscussion;
+import com.hidiscuss.backend.entity.QDiscussionCode;
 import com.hidiscuss.backend.entity.QReview;
 import com.hidiscuss.backend.entity.Review;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,6 +16,7 @@ import java.util.List;
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QReview qReview = QReview.review;
+//    private final QDiscussionCode qDiscussionCode = QDiscussionCode.discussionCode;
 
     public ReviewRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -22,6 +25,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     @Override
     public Review findByIdFetchOrNull(Long id) {
         return queryFactory.selectFrom(qReview)
+                .join(qReview.discussion).fetchJoin()
+                .join(qReview.reviewer).fetchJoin()
                 .where(qReview.id.eq(id))
                 .fetchOne();
     }
@@ -30,6 +35,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     public Page<Review> findAllByDiscussionIdFetch(Long discussionId, PageRequest pageRequest) {
         List<Review> result = queryFactory.selectFrom(qReview)
                 .where(qReview.discussion.id.eq(discussionId))
+                .join(qReview.reviewer).fetchJoin()
+//                .join(qReview.commentDiffList).fetchJoin()
+//                .join(qReview.liveDiffList).fetchJoin()
+                .join(qReview.discussion).fetchJoin()
+//                .join(qDiscussionCode).fetchJoin()
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .fetch();

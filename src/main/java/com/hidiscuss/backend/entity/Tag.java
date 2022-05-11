@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,6 +20,9 @@ public class Tag {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "tag")
+    List<DiscussionTag> discussionTags = new ArrayList<>();
 
     @Builder
     public Tag(Long id, String name) {

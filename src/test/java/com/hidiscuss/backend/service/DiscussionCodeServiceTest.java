@@ -65,7 +65,6 @@ public class DiscussionCodeServiceTest {
         List<GHCommit.File> files = new ArrayList<>();
         GHCommit.File file = Mockito.mock(GHCommit.File.class);
         when(file.getPatch()).thenReturn(null);
-        when(file.getStatus()).thenReturn("added");
         files.add(file);
 
         Exception ex = assertThrows(EmptyDiscussionCodeException.class, () -> discussionCodeService.createFromFiles(discussion, files));
@@ -79,7 +78,6 @@ public class DiscussionCodeServiceTest {
         GHCommit.File file = Mockito.mock(GHCommit.File.class);
         when(file.getFileName()).thenReturn("test.java");
         when(file.getPatch()).thenReturn("test");
-        when(file.getStatus()).thenReturn("added");
         files.add(file);
 
         List<DiscussionCode> discussionCodes = discussionCodeService.createFromFiles(discussion, files);
@@ -102,6 +100,7 @@ public class DiscussionCodeServiceTest {
         CreateDiscussionCodeRequestDto createDiscussionCodeRequestDto = new CreateDiscussionCodeRequestDto();
         createDiscussionCodeRequestDto.filename = "filename";
         createDiscussionCodeRequestDto.content = "code";
+        createDiscussionCodeRequestDto.language = "language";
         return createDiscussionCodeRequestDto;
     }
 }
