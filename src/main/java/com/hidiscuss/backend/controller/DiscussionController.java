@@ -93,7 +93,7 @@ public class DiscussionController {
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable
             , @AuthenticationPrincipal String userId) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
-        if (dto.isOnlyMine())
+        if (dto.getOnlyMine() == true)
             dto.setUserId(Long.parseLong(userId));
         Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
 

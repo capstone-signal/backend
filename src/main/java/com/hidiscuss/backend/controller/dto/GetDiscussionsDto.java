@@ -23,14 +23,18 @@ public class GetDiscussionsDto implements Serializable {
 
     private List<String> tags;
 
-    private boolean onlyMine;
+    private Boolean onlyMine;
 
-    public GetDiscussionsDto(DiscussionState state, String keyword, List<String> tags, boolean onlyMine) {
+    public GetDiscussionsDto(DiscussionState state, String keyword, List<String> tags, Boolean onlyMine) {
         this.state = state;
         this.keyword = keyword;
         this.tags = new ArrayList<>();
         if (tags != null) this.tags = tags;
-        this.onlyMine = onlyMine;
+        if (onlyMine == null){
+            this.onlyMine = false;
+        } else {
+            this.onlyMine = onlyMine;
+        }
     }
 
     @Nullable
