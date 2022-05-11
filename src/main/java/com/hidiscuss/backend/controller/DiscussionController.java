@@ -29,6 +29,7 @@ import java.util.List;
 public class DiscussionController {
     private final DiscussionService discussionService;
     private final DiscussionCodeService discussionCodeService;
+    private final UserService userService;
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,7 +43,7 @@ public class DiscussionController {
     public DiscussionResponseDto createDiscussion(
             @RequestBody CreateDiscussionRequestDto createDiscussionRequestDto
             , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+        User user = userService.findById(Long.parseLong("userId"));
         if (createDiscussionRequestDto.isDirectDiscussion()) {
             if (createDiscussionRequestDto.codes == null) {
                 throw new IllegalArgumentException("코드가 없습니다.");

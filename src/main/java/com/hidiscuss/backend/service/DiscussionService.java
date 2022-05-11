@@ -4,6 +4,7 @@ import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionState;
+import com.hidiscuss.backend.entity.DiscussionTag;
 import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import lombok.AllArgsConstructor;
@@ -30,13 +31,13 @@ public class DiscussionService {
 
     public Discussion create(
             CreateDiscussionRequestDto dto,
-            @NotNull User user // TODO: user type
+            @NotNull User user
     ) {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
         discussion = discussionRepository.save(discussion);
 
         // Processing Tag
-        discussionTagService.create(discussion, dto.tagIds);
+        discussion.setTags(discussionTagService.create(discussion, dto.tagIds));
         // Processing DiscussionCode
         switch(dto.discussionType) { // case가 PR or COMMIT이면 Controller에서 검증
             case "PR":
