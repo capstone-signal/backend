@@ -43,7 +43,7 @@ public class DiscussionController {
     public DiscussionResponseDto createDiscussion(
             @RequestBody CreateDiscussionRequestDto createDiscussionRequestDto
             , @AuthenticationPrincipal String userId) {
-        User user = userService.findById(Long.parseLong("userId"));
+        User user = userService.findById(Long.parseLong(userId));
         if (createDiscussionRequestDto.isDirectDiscussion()) {
             if (createDiscussionRequestDto.codes == null) {
                 throw new IllegalArgumentException("코드가 없습니다.");
@@ -102,7 +102,7 @@ public class DiscussionController {
     }
 
     @DeleteMapping("/{discussionId}")
-//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 삭제")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Discussion 삭제"),
@@ -111,7 +111,7 @@ public class DiscussionController {
     })
     public void deleteDiscussion(@PathVariable("discussionId") Long discussionId
             , @AuthenticationPrincipal String userId) {
-        User user = userService.findById(Long.parseLong("7000"));
+        User user = userService.findById(Long.parseLong(userId));
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         discussionService.delete(discussion, user);
 
