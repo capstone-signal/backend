@@ -97,4 +97,9 @@ public class ReviewReservationService {
     public List<ReviewReservation> findByDiscussionIdAndUserId(Long discussionId, Long userId) {
         return reviewReservationRepositoryCustom.findByDiscussionIdAndUserId(discussionId,userId);
     }
+
+    public ReviewReservation findByIdOrNull(Long reservationId) {
+            return reviewReservationRepository.findById(reservationId).orElse(null);
+    }
+
 }

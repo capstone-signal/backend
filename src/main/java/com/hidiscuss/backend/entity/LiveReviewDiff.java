@@ -3,11 +3,13 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "LiveReviewDiff")
 public class LiveReviewDiff extends ReviewDiff {
 
@@ -27,7 +29,7 @@ public class LiveReviewDiff extends ReviewDiff {
 
     @Override
     public String toString() {
-        return "CommentReviewDiff{" +
+        return "LiveReviewDiff{" +
                 '}';
     }
 
