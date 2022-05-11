@@ -46,7 +46,7 @@ INSERT INTO `hidiscuss`.`live_review_diff` (`id`, `created_at`, `last_modified_a
 
 -- liveReviewReservation(id 7600) 생성
 INSERT INTO `hidiscuss`.`review_reservation` (`id`, `created_at`, `last_modified_at`, `isdone`, `review_start_date`, `reviewee_participated`, `reviewer_participated`, `discussion_id`, `review_id`, `reviewer_id`) VALUES
-    (7600, NOW(), NOW(), 0, '2022-04-27 18:00:02.947000', 0, 0, 7100, NULL, 7000);
+    (7600, NOW(), NOW(), 0, NOW() + INTERVAL 1 DAY, 0, 0, 7100, NULL, 7000);
 
 -- discussion_tag(id 7700 - 7704) 생성
 INSERT INTO `hidiscuss`.`discussion_tag` (`id`, `created_at`, `last_modified_at`, `discussion_id`, `tag_id`) VALUES

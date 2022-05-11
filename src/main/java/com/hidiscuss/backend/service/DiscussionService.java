@@ -6,6 +6,7 @@ import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionState;
 import com.hidiscuss.backend.entity.DiscussionTag;
 import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
@@ -28,6 +29,7 @@ public class DiscussionService {
     private final GithubService githubService;
     private final DiscussionCodeService discussionCodeService;
     private final DiscussionTagService discussionTagService;
+    private final ReviewReservationService reviewReservationService;
 
     public Discussion create(
             CreateDiscussionRequestDto dto,
@@ -69,5 +71,18 @@ public class DiscussionService {
 
     public Page<Discussion> getDiscussionsFiltered(GetDiscussionsDto dto, PageRequest pageRequest) {
         return discussionRepository.findAllFilteredFetch(dto, pageRequest);
+    }
+
+    public void delete(Discussion discussion, User user) {
+        if (!discussion.getUser().getId().equals(user.getId())) {
+            throw new UserAuthorityException("You can only delete discussions you have created");
+        }
+        Boolean notReviewed = discussion.getState().equals(DiscussionState.NOT_REVIEWED);
+        Boolean noReservation = (reviewReservationService.findByDiscussionId(discussion.getId()).size() == 0);
+        if (notReviewed && noReservation) {
+            discussionRepository.delete(discussion);
+        } else {
+            throw new IllegalArgumentException("Only discussions that do not have reviews or reservations can be deleted");
+        }
     }
 }

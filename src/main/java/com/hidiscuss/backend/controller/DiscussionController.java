@@ -100,6 +100,22 @@ public class DiscussionController {
 
         return entities.map(i -> DiscussionResponseDto.fromEntity(i));
     }
+
+    @DeleteMapping("/{discussionId}")
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "Discussion 삭제")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Discussion 삭제"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public void deleteDiscussion(@PathVariable("discussionId") Long discussionId
+            , @AuthenticationPrincipal String userId) {
+        User user = userService.findById(Long.parseLong("7000"));
+        Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
+        discussionService.delete(discussion, user);
+
+    }
 }
 
 
