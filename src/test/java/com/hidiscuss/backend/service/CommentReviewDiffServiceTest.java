@@ -69,7 +69,7 @@ public class CommentReviewDiffServiceTest {
     @Test
     @DisplayName("saveCommentReviewDiff_commentReviewDiff가 저장된다.")
     void createCommentReviewDiff_common() {
-        given(discussionCodeRepository.findByIdListFetch(idList)).willReturn(codeList);
+        given(discussionCodeRepository.findByIdList(idList)).willReturn(codeList);
         given(commentReviewDiffRepository.saveAll(anyList())).willAnswer(i -> i.getArgument(0));
 
         List<CommentReviewDiff> entityList = commentReviewDiffService.createCommentReviewDiff(review, dtoList);
@@ -83,7 +83,7 @@ public class CommentReviewDiffServiceTest {
     @DisplayName("saveCommentReviewDiff_discussionCode 개수만큼 만들어지지 않은 경우 예외를 반환한다.")
     void createCommentReviewDiff_withNoDiscussionCode() {
         Review review = new Review();
-        given(discussionCodeRepository.findByIdListFetch(idList)).willReturn(new ArrayList<>());
+        given(discussionCodeRepository.findByIdList(idList)).willReturn(new ArrayList<>());
 
         Throwable throwable = catchThrowable(() -> commentReviewDiffService.createCommentReviewDiff(review, dtoList));
 
