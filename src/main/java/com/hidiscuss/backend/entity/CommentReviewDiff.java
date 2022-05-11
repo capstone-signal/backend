@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Table(name = "CommentReviewDiff")
 public class CommentReviewDiff extends ReviewDiff {
 
-    @Column(columnDefinition = "json", name = "code_locate", nullable = false)
+    @Column(/*columnDefinition = "json", */name = "code_locate", nullable = false)
     private String codeLocate;
 
     @Column(name = "comment", nullable = false)
