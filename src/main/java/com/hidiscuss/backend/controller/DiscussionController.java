@@ -82,7 +82,6 @@ public class DiscussionController {
     }
 
     @GetMapping("/")
-    @ResponseStatus(HttpStatus.CREATED)
     @ApiPageable
     @ApiOperation(value = "Discussion 목록 조회")
     @ApiResponses({
