@@ -14,6 +14,7 @@ import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestFileDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -69,8 +70,8 @@ public class DiscussionService {
         return discussion;
     }
 
-    public Page<Discussion> getDiscussionsFiltered(GetDiscussionsDto dto, PageRequest pageRequest) {
-        return discussionRepository.findAllFilteredFetch(dto, pageRequest);
+    public Page<Discussion> getDiscussionsFiltered(GetDiscussionsDto dto, Pageable pageable) {
+        return discussionRepository.findAllFilteredFetch(dto, pageable);
     }
 
     public Long delete(Discussion discussion, User user) {

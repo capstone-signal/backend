@@ -72,7 +72,7 @@ public class ReviewService {
         return review;
     }
 
-    public Page<Review> findAllByDiscussionIdFetch(Long id, PageRequest pageRequest) {
-        return reviewRepository.findAllByDiscussionIdFetch(id, pageRequest);
+    public Page<Review> findAllByDiscussionIdFetch(Long id, Pageable pageable) {
+        return reviewRepository.findAllByDiscussionIdFetch(id, pageable);
     }
 }

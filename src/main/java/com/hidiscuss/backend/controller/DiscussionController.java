@@ -6,13 +6,10 @@ import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.*;
 import com.hidiscuss.backend.utils.ApiPageable;
 import com.hidiscuss.backend.utils.PageRequest;
-import io.jsonwebtoken.Claims;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -20,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -68,7 +64,6 @@ public class DiscussionController {
     }
 
     @GetMapping("/{discussionId}")
-    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Discussion 상세페이지 조회")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Discussion 상세페이지 조회"),
@@ -94,11 +89,11 @@ public class DiscussionController {
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable
             , @AuthenticationPrincipal String userId) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
-        if (dto.getOnlyMine() == true)
+        if (dto.getOnlyMine())
             dto.setUserId(Long.parseLong(userId));
         Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
 
-        return entities.map(i -> DiscussionResponseDto.fromEntity(i));
+        return entities.map(DiscussionResponseDto::fromEntity);
     }
 
     @DeleteMapping("/{discussionId}")
@@ -113,8 +108,7 @@ public class DiscussionController {
             , @AuthenticationPrincipal String userId) {
         User user = userService.findById(Long.parseLong(userId));
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
-        Long deleted = discussionService.delete(discussion, user);
-        return deleted;
+        return discussionService.delete(discussion, user);
     }
 }
 

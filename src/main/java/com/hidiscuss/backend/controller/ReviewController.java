@@ -79,7 +79,6 @@ public class ReviewController {
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
-        Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
-        return dtoPage;
+        return entityPage.map(ReviewDto::fromEntity);
     }
 }
