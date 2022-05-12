@@ -49,47 +49,47 @@ public class ReviewService {
         return review;
     }
 
-    @Transactional
-    public Review createLiveReview(User user, long discussionId, ReviewType reviewType) {
-        Discussion discussion = discussionRepository
-                .findByIdFetchOrNull(discussionId);
-        if (discussion == null)
-            throw new NoSuchElementException("Discussion not found");
-
-        if(discussion.getState() == DiscussionState.NOT_REVIEWED)
-            discussion.setState(DiscussionState.REVIEWING);
-
-        Review review = Review.builder()
-                .reviewer(user)
-                .discussion(discussion)
-                .liveDiffList(new ArrayList<>())
-                .reviewType(reviewType)
-                .accepted(false)
-                .build();
-        review = reviewRepository.save(review);
-
-        List<LiveReviewDiff> diffList = liveReviewDiffService.createNewLiveReviewDiff(review, discussion);
-        review.setLiveDiffList(diffList);
-        return review;
-    }
-
-    @Transactional
-    public Review updateLiveReview(User user, CreateLiveReviewRequestDto dto, long reviewId) {
-        Discussion discussion = discussionRepository
-                .findByIdFetchOrNull(dto.discussionId);
-        if (discussion == null)
-            throw new NoSuchElementException("Discussion not found");
-
-        Review review = reviewRepository.findByIdFetchOrNull(reviewId);
-        System.out.println(reviewId);
-
-        if(review == null)
-            throw new NoSuchElementException("Reivew not found");
-
-        List<LiveReviewDiff> diffList = liveReviewDiffService.updateLiveReviewDiff(review, dto.getDiffList());
-        review.setLiveDiffList(diffList);
-        return review;
-    }
+//    @Transactional
+//    public Review createLiveReview(User user, long discussionId, ReviewType reviewType) {
+//        Discussion discussion = discussionRepository
+//                .findByIdFetchOrNull(discussionId);
+//        if (discussion == null)
+//            throw new NoSuchElementException("Discussion not found");
+//
+//        if(discussion.getState() == DiscussionState.NOT_REVIEWED)
+//            discussion.setState(DiscussionState.REVIEWING);
+//
+//        Review review = Review.builder()
+//                .reviewer(user)
+//                .discussion(discussion)
+//                .liveDiffList(new ArrayList<>())
+//                .reviewType(reviewType)
+//                .accepted(false)
+//                .build();
+//        review = reviewRepository.save(review);
+//
+//        List<LiveReviewDiff> diffList = liveReviewDiffService.createNewLiveReviewDiff(review, discussion);
+//        review.setLiveDiffList(diffList);
+//        return review;
+//    }
+//
+//    @Transactional
+//    public Review updateLiveReview(User user, CreateLiveReviewRequestDto dto, long reviewId) {
+//        Discussion discussion = discussionRepository
+//                .findByIdFetchOrNull(dto.discussionId);
+//        if (discussion == null)
+//            throw new NoSuchElementException("Discussion not found");
+//
+//        Review review = reviewRepository.findByIdFetchOrNull(reviewId);
+//        System.out.println(reviewId);
+//
+//        if(review == null)
+//            throw new NoSuchElementException("Reivew not found");
+//
+//        List<LiveReviewDiff> diffList = liveReviewDiffService.updateLiveReviewDiff(review, dto.getDiffList());
+//        review.setLiveDiffList(diffList);
+//        return review;
+//    }
 
 
     public ReviewThread createThread(User user, CreateThreadRequestDto dto, Review review) {

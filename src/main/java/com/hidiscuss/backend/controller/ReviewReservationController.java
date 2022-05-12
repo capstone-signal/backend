@@ -2,12 +2,15 @@ package com.hidiscuss.backend.controller;
 
 
 import com.hidiscuss.backend.config.SecurityConfig;
-import com.hidiscuss.backend.controller.dto.CreateLiveReviewDiffDto;
+import com.hidiscuss.backend.controller.dto.CompleteLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateReviewReservationRequestDto;
+import com.hidiscuss.backend.controller.dto.LiveReviewDiffResponseDto;
 import com.hidiscuss.backend.controller.dto.ReviewReservationResponseDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
+import com.hidiscuss.backend.repository.ReviewRepository;
 import com.hidiscuss.backend.service.DiscussionService;
+import com.hidiscuss.backend.service.LiveReviewDiffService;
 import com.hidiscuss.backend.service.ReviewReservationService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,7 +22,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,10 +35,12 @@ public class ReviewReservationController {
 
     private final DiscussionService discussionService;
     private final ReviewReservationService reviewReservationService;
+    private final LiveReviewDiffService liveReviewDiffService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
+    private final ReviewRepository reviewRepository;
 
     @GetMapping("")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "discussion Id를 받아 이미 예약된 리뷰들 반환")
     @ApiResponses({
             @ApiResponse(code = 200, message = "예약된 리뷰들 반환 (없는 경우 포함)"),
@@ -72,32 +79,33 @@ public class ReviewReservationController {
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 
-
     @ApiOperation(value = "UserId, DiscussionId, Reservation time을 받아 이미 예약된 리뷰들 반환")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
             @ApiResponse(code = 200, message = "내가 Reivewee 혹은 Reviewer 이고 24시간 이내의 reservation 이 있으면 True, 없으면 False"),
             @ApiResponse(code = 400, message = "discussionId가 null 또는 Discussion이 존재하지 않음."),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("my/${discussionId}")
-    public List<ReviewReservation> isReservedReservation(@RequestParam("discussionId") Long discussionId, @AuthenticationPrincipal Long userId) {
+    @GetMapping("my/{discussionId}")
+    public List<ReviewReservationResponseDto> isReservedReservation(@PathVariable("discussionId") Long discussionId, @AuthenticationPrincipal Long userId) {
         if (discussionService.findByIdOrNull(discussionId) == null) {
             throw NotFoundDiscussion();
         }
-        return reviewReservationService.findByDiscussionIdAndUserId(discussionId, userId);
+        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(discussionId, 7000L);
+        return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
 
-    @PostMapping("participate/${reservationId}")
+    @PostMapping("participate/{reservationId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "User가 참여 버튼을 누르면 database 상태 변경")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "User가 참여 버튼을 누르면 discussion, Particioate 상태 변경 후 Review가 없으면 만들어서 반환")
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
             @ApiResponse(code = 200, message = "리뷰 참여 버튼을 누르면 유저인지 확인하고 새로운 리뷰를 만들어 리뷰를 반환해준다."),
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public ReviewReservation enterLiveReviewReservation(@RequestParam("reservationId") Long reservationId, @AuthenticationPrincipal Long userId) {
+    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal Long userId, @RequestBody List<Long> discussionCodesIdList) {
+        userId =7000L;
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
@@ -110,30 +118,49 @@ public class ReviewReservationController {
         } else{
             reviewReservation.setRevieweeParticipated(true);
         }
-        reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
 
-        if (reviewReservation.getReview() == null)
-            reviewReservation.setReview(new Review());
-
-        return reviewReservation;
+        if (reviewReservation.getReview() == null){
+           ReviewReservation newReviewReservation = ReviewReservationService.createNewLiveReview(discussionCodesIdList, reviewReservation);
+        }
+        return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 
-    @PutMapping("review/livediff/${diffId}")
+    @PutMapping("review/livediff/{diffId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured(SecurityConfig.DEFAULT_ROLE)
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "N분마다 포커싱 되어 있는 파일 업데이트")
     @ApiResponses({
             @ApiResponse(code = 200, message = "리뷰 참여 버튼을 누르면 유저인지 확인하고 새로운 리뷰를 만들어 리뷰를 반환해준다."),
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public LiveReviewDiff updateFocusedDiff(@RequestParam("diffId") Long diffId, @RequestBody String codeAfter, @AuthenticationPrincipal Long userId) {
-        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElse(null);
+    public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody String codeAfter) {
+        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElseThrow(this::NotFoundLiveDiff);
 
-        if(liveReviewDiff == null)
-            throw NotFoundLiveDiff();
+        liveReviewDiff.setCodeAfter(codeAfter);
+        liveReviewDiffRepository.save(liveReviewDiff);
+        return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
+    }
 
-        return liveReviewDiff;
+    @PutMapping("review/complete/{reviewReservationId}")
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "라이브리뷰 완료")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "리뷰완료 버튼을 누르거나 한시간이 되면 완료시키는 Api"),
+            @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    public Map<String, Long> completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
+        ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
+        reviewReservation.setIsdone(Boolean.TRUE);
+        if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
+            reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
+        }
+        reviewReservationService.saveAllDiffs(completeLiveReviewRequestDto);
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("discsussionId",reviewReservation.getDiscussion().getId());
+        map.put("reservationId",reviewReservation.getId());
+        return map;
     }
 
 

@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "LiveReviewDiff")
 public class LiveReviewDiff extends ReviewDiff {
 
@@ -25,6 +24,10 @@ public class LiveReviewDiff extends ReviewDiff {
     public void setReview(Review review) {
         super.review = review;
         review.getLiveDiffList().add(this);
+    }
+
+    public void setCodeAfter(String codeAfter){
+        super.setCodeAfter(codeAfter);
     }
 
     @Override

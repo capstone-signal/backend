@@ -24,7 +24,7 @@ public class ReviewReservation extends BaseEntity {
     private User reviewer;
 
     @ManyToOne
-    @JoinColumn(name = "review_id", nullable = true)
+    @JoinColumn(name = "review_id")
     private Review review;
 
     @ManyToOne

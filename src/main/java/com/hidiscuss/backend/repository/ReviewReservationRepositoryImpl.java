@@ -24,11 +24,13 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
                 .fetch();
     }
 
+    @Override
     public List<ReviewReservation> findByDiscussionIdAndUserId(Long discussionId, Long userId){
         return queryFactory.selectFrom(qReviewReservation)
                 .where(qReviewReservation.discussion.id.eq(discussionId)
                         .and(qReviewReservation.reviewer.id.eq(userId).or(qReviewReservation.discussion.user.id.eq(userId)))
-                        .and(qReviewReservation.reviewStartDateTime.before(LocalDateTime.now())))
+                        .and(qReviewReservation.reviewStartDateTime.before(LocalDateTime.now()))
+                        .and(qReviewReservation.reviewStartDateTime.after(LocalDateTime.now().minusHours(1L))))
                 .fetch();
     }
 
