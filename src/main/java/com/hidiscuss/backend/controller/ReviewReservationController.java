@@ -33,7 +33,6 @@ public class ReviewReservationController {
     private final UserService userService;
 
     @GetMapping("")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value ="discussion Id를 받아 이미 예약된 리뷰들 반환")
     @ApiResponses({
             @ApiResponse(code = 200, message = "예약된 리뷰들 반환 (없는 경우 포함)"),
