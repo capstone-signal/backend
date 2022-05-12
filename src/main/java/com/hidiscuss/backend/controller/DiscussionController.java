@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -85,7 +86,7 @@ public class DiscussionController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public Page<DiscussionResponseDto> getDiscussions(GetDiscussionsDto dto
+    public Page<DiscussionResponseDto> getDiscussions(@Valid GetDiscussionsDto dto
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable
             , @AuthenticationPrincipal String userId) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
