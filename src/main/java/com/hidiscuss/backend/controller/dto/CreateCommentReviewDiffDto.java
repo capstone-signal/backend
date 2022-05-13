@@ -4,6 +4,7 @@ import com.hidiscuss.backend.entity.CommentReviewDiff;
 import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.Review;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
@@ -11,6 +12,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCommentReviewDiffDto {

@@ -36,7 +36,7 @@ public class DiscussionCodeService {
         if (codes.size() == 0) {
            throw new EmptyDiscussionCodeException("No codes found");
         }
-        return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
+        return discussionCodeRepository.saveAll(codes);
     }
 
     public List<DiscussionCode> createFromFiles(Discussion discussion, List<?> files) {

@@ -1,11 +1,10 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.controller.ReviewController;
+import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
-import com.hidiscuss.backend.entity.Discussion;
-import com.hidiscuss.backend.entity.DiscussionState;
-import com.hidiscuss.backend.entity.DiscussionTag;
-import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -31,6 +31,8 @@ public class DiscussionService {
     private final DiscussionCodeService discussionCodeService;
     private final DiscussionTagService discussionTagService;
     private final ReviewReservationService reviewReservationService;
+    private final ReviewService reviewService;
+    private final StyleReviewService styleReviewService;
 
     public Discussion create(
             CreateDiscussionRequestDto dto,
@@ -54,7 +56,19 @@ public class DiscussionService {
                 discussionCodeService.createFromFiles(discussion, commitFiles);
                 break;
             case "DIRECT":
-                discussionCodeService.createFromDirect(discussion, dto.codes);
+                List<DiscussionCode> codes = discussionCodeService.createFromDirect(discussion, dto.codes);
+                List<DiscussionCode> pyCodes = new ArrayList<>();
+                for(DiscussionCode code : codes)
+                    if (code.getLanguage().equals("Python"))
+                        pyCodes.add(code);
+                if (!pyCodes.isEmpty()) {
+                    CreateCommentReviewRequestDto styleReviewDto
+                            = new CreateCommentReviewRequestDto(
+                            discussion.getId()
+                            , styleReviewService.createStyleReviewDto(pyCodes));
+                    User autoBot = User.builder().id(1L).build();
+                    reviewService.createCommentReview(autoBot, styleReviewDto, ReviewType.COMMENT);
+                }
                 break;
         }
         return discussion;
