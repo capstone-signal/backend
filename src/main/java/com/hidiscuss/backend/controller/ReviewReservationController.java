@@ -6,14 +6,17 @@ import com.hidiscuss.backend.controller.dto.CreateReviewReservationRequestDto;
 import com.hidiscuss.backend.controller.dto.ReviewReservationResponseDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.ReviewReservation;
+import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewReservationService;
+import com.hidiscuss.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,6 +30,7 @@ public class ReviewReservationController {
 
     private final DiscussionService discussionService;
     private final ReviewReservationService reviewReservationService;
+    private final UserService userService;
 
     @GetMapping("")
     @Secured(SecurityConfig.DEFAULT_ROLE)
@@ -56,15 +60,17 @@ public class ReviewReservationController {
     })
     public ReviewReservationResponseDto addReviewReservation(
             @RequestBody @Valid CreateReviewReservationRequestDto createReviewReservationRequestDto
+            , @AuthenticationPrincipal String userId
     ) {
         Discussion discussion = discussionService.findByIdOrNull(createReviewReservationRequestDto.discussionId);
+        User user = userService.findById(Long.parseLong(userId));
         if (discussion == null) { // 존재하지 않는 Discussion
             throw NotFoundDiscussion();
         }
         if (!discussion.getLiveReviewRequired()) {
             throw new IllegalArgumentException("Live Review is not required");
         }
-        ReviewReservation reviewReservation = reviewReservationService.create(createReviewReservationRequestDto.reviewStartDateTime, discussion);
+        ReviewReservation reviewReservation = reviewReservationService.create(createReviewReservationRequestDto.reviewStartDateTime, discussion, user);
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 

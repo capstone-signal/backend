@@ -60,4 +60,6 @@ public class Discussion extends BaseEntity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public void setTags(List<DiscussionTag> tags) { this.tags = tags; }
 }

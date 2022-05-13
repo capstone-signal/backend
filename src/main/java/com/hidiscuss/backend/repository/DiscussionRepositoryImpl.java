@@ -10,10 +10,7 @@ import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.QDiscussion;
 import com.hidiscuss.backend.entity.QUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,7 +37,7 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
     }
 
     @Override
-    public Page<Discussion> findAllFilteredFetch(GetDiscussionsDto dto, PageRequest pageRequest) {
+    public Page<Discussion> findAllFilteredFetch(GetDiscussionsDto dto, Pageable pageable) {
         JPAQuery<Discussion> query = queryFactory.selectFrom(qDiscussion)
                 .join(qDiscussionTag)
                 .on(qDiscussion.eq(qDiscussionTag.discussion))
@@ -61,15 +58,16 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
         if (userId.isPresent())
             query.where(qDiscussion.user.id.eq(userId.get()));
 
-        query.offset(pageRequest.getOffset()).limit(pageRequest.getPageSize());
+        long totalSize = query.fetch().size();
 
-        for (Sort.Order o : pageRequest.getSort()) {
+        query.offset(pageable.getOffset()).limit(pageable.getPageSize());
+
+        for (Sort.Order o : pageable.getSort()) {
             PathBuilder pathBuilder = new PathBuilder(qDiscussion.getType(), qDiscussion.getMetadata());
             OrderSpecifier orderSpecifier = new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                     pathBuilder.get(o.getProperty()));
             query.orderBy(orderSpecifier);
         }
-        List<Discussion> result = query.fetch();
-        return new PageImpl<>(result, pageRequest, result.size());
+        return new PageImpl<>(query.fetch(), pageable, totalSize);
     }
 }

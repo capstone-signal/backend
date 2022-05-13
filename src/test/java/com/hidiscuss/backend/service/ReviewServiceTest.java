@@ -2,6 +2,7 @@ package com.hidiscuss.backend.service;
 
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
+import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.*;
 import com.hidiscuss.backend.utils.PageRequest;
 import org.junit.jupiter.api.*;
@@ -54,7 +55,8 @@ public class ReviewServiceTest {
     @DisplayName("createReview_코멘트 리뷰와 여러 개의 diff 정보가 저장된다")
     void createReview_common() {
         CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
-        Discussion discussion = new Discussion();
+        Discussion discussion = Discussion.builder().user(User.builder().id(1000L).build()).build();
+        User user = User.builder().id(2000L).build();
         given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(discussion);
         given(reviewRepository.save(any(Review.class))).willAnswer(i -> i.getArgument(0));
 
@@ -75,6 +77,19 @@ public class ReviewServiceTest {
         Throwable throwable = catchThrowable(() -> reviewService.createReview(user, dto, reviewType));
 
         then(throwable).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("createReview_자신의 discussion에 리뷰를 작성하려는 경우 예외를 반환한다.")
+    void createReview_reviewMyself() {
+        CreateCommentReviewRequestDto dto = new CreateCommentReviewRequestDto(1L, diffList);
+        Discussion discussion = Discussion.builder().user(User.builder().id(1000L).build()).build();
+        User user = User.builder().id(1000L).build();
+        given(discussionRepository.findByIdFetchOrNull(any(Long.class))).willReturn(discussion);
+
+        Throwable throwable = catchThrowable(() -> reviewService.createReview(user, dto, reviewType));
+
+        then(throwable).isInstanceOf(UserAuthorityException.class);
     }
 
     @Test

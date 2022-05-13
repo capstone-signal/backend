@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public Page<Review> findAllByDiscussionIdFetch(Long discussionId, PageRequest pageRequest) {
+    public Page<Review> findAllByDiscussionIdFetch(Long discussionId, Pageable pageable) {
         List<Review> result = queryFactory.selectFrom(qReview)
                 .where(qReview.discussion.id.eq(discussionId))
                 .join(qReview.reviewer).fetchJoin()
@@ -40,9 +41,14 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 //                .join(qReview.liveDiffList).fetchJoin()
                 .join(qReview.discussion).fetchJoin()
 //                .join(qDiscussionCode).fetchJoin()
-                .offset(pageRequest.getOffset())
-                .limit(pageRequest.getPageSize())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
-        return new PageImpl<>(result, pageRequest, result.size());
+
+        long totalSize = queryFactory.selectFrom(qReview)
+                .where(qReview.discussion.id.eq(discussionId))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, totalSize);
     }
 }
