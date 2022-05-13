@@ -37,10 +37,9 @@ public class ReviewReservationController {
     private final ReviewReservationService reviewReservationService;
     private final LiveReviewDiffService liveReviewDiffService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
-    private final ReviewRepository reviewRepository;
 
     @GetMapping("")
-//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "discussion Id를 받아 이미 예약된 리뷰들 반환")
     @ApiResponses({
             @ApiResponse(code = 200, message = "예약된 리뷰들 반환 (없는 경우 포함)"),
@@ -95,7 +94,7 @@ public class ReviewReservationController {
     @PostMapping("participate/{reservationId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "User가 참여 버튼을 누르면 discussion, Particioate 상태 변경 후 Review가 없으면 만들어서 반환")
-//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
             @ApiResponse(code = 200, message = "리뷰 참여 버튼을 누르면 유저인지 확인하고 새로운 리뷰를 만들어 리뷰를 반환해준다."),
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
@@ -123,7 +122,7 @@ public class ReviewReservationController {
 
     @PutMapping("review/livediff/{diffId}")
     @ResponseStatus(HttpStatus.CREATED)
-//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "N분마다 포커싱 되어 있는 파일 업데이트")
     @ApiResponses({
             @ApiResponse(code = 200, message = "리뷰 참여 버튼을 누르면 유저인지 확인하고 새로운 리뷰를 만들어 리뷰를 반환해준다."),
@@ -138,7 +137,7 @@ public class ReviewReservationController {
     }
 
     @PutMapping("review/complete/{reviewReservationId}")
-//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "라이브리뷰 완료")
     @ApiResponses({
             @ApiResponse(code = 200, message = "리뷰완료 버튼을 누르거나 한시간이 되면 완료시키는 Api"),
