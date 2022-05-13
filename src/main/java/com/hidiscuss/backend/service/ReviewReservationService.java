@@ -35,8 +35,8 @@ public class ReviewReservationService {
         return reviewReservationRepository.findByDiscussionId(discussionId);
     }
 
-    public List<ReviewReservation> findByDiscussionIdAndUserId(Long discussionId, Long userId) {
-        return reviewReservationRepository.findByDiscussionIdAndUserId(discussionId,userId);
+    public List<ReviewReservation> findByDiscussionIdAndUserId(Long userId) {
+        return reviewReservationRepository.findByDiscussionIdAndUserId(userId);
     }
 
     public ReviewReservation create(
@@ -122,28 +122,36 @@ public class ReviewReservationService {
     }
 
 
-    public  ReviewReservation createNewLiveReview(List<Long> discussionCodes, ReviewReservation reviewReservation) {
+    public ReviewReservation createNewLiveReviewAndDiffs(List<Long> discussionCodeIds, ReviewReservation reviewReservation) {
+
         Review review = Review.builder()
                 .reviewer(reviewReservation.getReviewer())
                 .discussion(reviewReservation.getDiscussion())
                 .reviewType(ReviewType.LIVE)
                 .accepted(false)
                 .build();
+        reviewRepository.save(review);
+
         List <LiveReviewDiff> liveReviewDiffList =  new ArrayList<>();
-        for (Long code : discussionCodes) {
+
+        for (Long code : discussionCodeIds) {
             discussionCodeRepository.findById(code).ifPresent(discussionCode -> liveReviewDiffList.add(
                     LiveReviewDiff.builder()
                             .review(review)
                             .discussionCode(discussionCode)
+                            .codeAfter("null")
                             .build()
             ));
         }
+
+
         if(liveReviewDiffList.size() > 0)
             liveReviewDiffRepository.saveAll(liveReviewDiffList);
 
         review.setLiveDiffList(liveReviewDiffList);
         reviewRepository.save(review);
         reviewReservation.setReview(review);
+        reviewReservationRepository.save(reviewReservation);
         return reviewReservation;
     }
 }

@@ -7,5 +7,5 @@ import java.util.List;
 public interface ReviewReservationRepositoryCustom {
     List<ReviewReservation> findByDiscussionId(Long discussionId);
 
-    List<ReviewReservation> findByDiscussionIdAndUserId(Long discussionId, Long userId);
+    List<ReviewReservation> findByDiscussionIdAndUserId(Long userId);
 }

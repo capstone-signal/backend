@@ -80,18 +80,15 @@ public class ReviewReservationController {
     }
 
     @ApiOperation(value = "UserId, DiscussionId, Reservation time을 받아 이미 예약된 리뷰들 반환")
-//    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
             @ApiResponse(code = 200, message = "내가 Reivewee 혹은 Reviewer 이고 24시간 이내의 reservation 이 있으면 True, 없으면 False"),
             @ApiResponse(code = 400, message = "discussionId가 null 또는 Discussion이 존재하지 않음."),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("my/{discussionId}")
-    public List<ReviewReservationResponseDto> isReservedReservation(@PathVariable("discussionId") Long discussionId, @AuthenticationPrincipal Long userId) {
-        if (discussionService.findByIdOrNull(discussionId) == null) {
-            throw NotFoundDiscussion();
-        }
-        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(discussionId, 7000L);
+    @GetMapping("my")
+    public List<ReviewReservationResponseDto> isReservedReservation(@AuthenticationPrincipal Long userId) {
+        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(userId);
         return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
 
@@ -105,7 +102,6 @@ public class ReviewReservationController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal Long userId, @RequestBody List<Long> discussionCodesIdList) {
-        userId =7000L;
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
@@ -120,7 +116,7 @@ public class ReviewReservationController {
         }
 
         if (reviewReservation.getReview() == null){
-           ReviewReservation newReviewReservation = ReviewReservationService.createNewLiveReview(discussionCodesIdList, reviewReservation);
+          reviewReservation = reviewReservationService.createNewLiveReviewAndDiffs(discussionCodesIdList,reviewReservation);
         }
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
@@ -137,8 +133,7 @@ public class ReviewReservationController {
     public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody String codeAfter) {
         LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElseThrow(this::NotFoundLiveDiff);
 
-        liveReviewDiff.setCodeAfter(codeAfter);
-        liveReviewDiffRepository.save(liveReviewDiff);
+        liveReviewDiff = liveReviewDiffService.updateDiff(liveReviewDiff,codeAfter);
         return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
     }
 
