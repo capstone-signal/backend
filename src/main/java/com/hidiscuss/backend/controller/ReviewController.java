@@ -4,16 +4,20 @@ import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.ReviewService;
+import com.hidiscuss.backend.utils.ApiPageable;
 import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -63,16 +67,17 @@ public class ReviewController {
     }
 
     @GetMapping("")
+    @ApiPageable
     @ApiOperation(value="review page 가져오기", notes="이 api는 page 단위로 review를 가져옵니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "review page 조회 성공"),
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId, @RequestParam("page") int page) {
-        PageRequest pageRequest = new PageRequest(page, Sort.by("createdAt").descending());
+    public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId
+            , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
+        PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
-        Page<ReviewDto> dtoPage = entityPage.map(i -> ReviewDto.fromEntity(i));
-        return dtoPage;
+        return entityPage.map(ReviewDto::fromEntity);
     }
 }

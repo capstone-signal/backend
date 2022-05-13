@@ -6,6 +6,8 @@ import com.hidiscuss.backend.controller.dto.CreateLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.controller.dto.ReviewDto;
 import com.hidiscuss.backend.entity.*;
+import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
+import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +30,6 @@ public class ReviewService {
     private final CommentReviewDiffService commentReviewDiffService;
     private final LiveReviewDiffService liveReviewDiffService;
 
-
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
         Discussion discussion = discussionRepository
@@ -36,6 +37,8 @@ public class ReviewService {
         if (discussion == null)
             throw new NoSuchElementException("Discussion not found");
 
+        if (discussion.getUser().getId().equals(user.getId()))
+            throw new UserAuthorityException("Cannot review your own code");
         Review review = Review.builder()
                 .reviewer(user)
                 .discussion(discussion)
@@ -65,7 +68,7 @@ public class ReviewService {
         return review;
     }
 
-    public Page<Review> findAllByDiscussionIdFetch(Long id, PageRequest pageRequest) {
-        return reviewRepository.findAllByDiscussionIdFetch(id, pageRequest);
+    public Page<Review> findAllByDiscussionIdFetch(Long id, Pageable pageable) {
+        return reviewRepository.findAllByDiscussionIdFetch(id, pageable);
     }
 }

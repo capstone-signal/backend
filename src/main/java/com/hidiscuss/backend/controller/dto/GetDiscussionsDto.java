@@ -17,24 +17,24 @@ import java.util.List;
 @Getter
 @ApiModel
 public class GetDiscussionsDto implements Serializable {
-    private DiscussionState state;
+    @Nullable private DiscussionState state;
+    @Nullable private String keyword;
+    @Nullable private List<String> tags;
+    @Nullable private Boolean onlyMine;
 
-    private String keyword;
-
-    private List<String> tags;
-
-    private boolean onlyMine;
-
-    public GetDiscussionsDto(DiscussionState state, String keyword, List<String> tags, boolean onlyMine) {
+    public GetDiscussionsDto(DiscussionState state, String keyword, List<String> tags, Boolean onlyMine) {
         this.state = state;
         this.keyword = keyword;
         this.tags = new ArrayList<>();
         if (tags != null) this.tags = tags;
-        this.onlyMine = onlyMine;
+        if (onlyMine == null){
+            this.onlyMine = false;
+        } else {
+            this.onlyMine = onlyMine;
+        }
     }
 
-    @Nullable
-    private Long userId;
+    @Nullable private Long userId;
 
     public void setUserId(Long userId) {
         this.userId = userId;
