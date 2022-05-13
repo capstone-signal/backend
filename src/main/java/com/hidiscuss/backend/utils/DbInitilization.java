@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 public class DbInitilization {
     public static List<Tag> getInitialTags() {
         List<String> tagNames = List.of(
+                "오류해결",
+                "리팩토링",
+                "코드스타일",
                 "react",
                 "vue",
                 "nextjs",
