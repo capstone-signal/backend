@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class StyleReviewService {
     public List<CreateCommentReviewDiffDto> createStyleReviewDto(List<DiscussionCode> codes) {
+        // add jython codes
         List<CreateCommentReviewDiffDto> dto = codes.stream()
                 .map((i) -> CreateCommentReviewDiffDto
                         .builder()

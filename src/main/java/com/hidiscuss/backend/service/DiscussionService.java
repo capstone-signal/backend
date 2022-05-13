@@ -1,6 +1,7 @@
 package com.hidiscuss.backend.service;
 
 import com.hidiscuss.backend.controller.ReviewController;
+import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +42,8 @@ public class DiscussionService {
     ) {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
         discussion = discussionRepository.save(discussion);
+        List<DiscussionCode> codes = new ArrayList<>();
+        User autoBot = User.builder().id(1L).build();
 
         // Processing Tag
         discussion.setTags(discussionTagService.create(discussion, dto.tagIds));
@@ -48,28 +52,23 @@ public class DiscussionService {
             case "PR":
                 GHPullRequest pr = githubService.getPullRequestById(Long.parseLong(dto.gitRepositoryId), Integer.parseInt(dto.gitNodeId));
                 List<GHPullRequestFileDetail> prFiles = githubService.getFilesByPullRequest(pr);
-                discussionCodeService.createFromFiles(discussion, prFiles);
+                codes = discussionCodeService.createFromFiles(discussion, prFiles);
                 break;
             case "COMMIT":
                 GHCommit commit = githubService.getCommitById(Long.parseLong(dto.gitRepositoryId), dto.gitNodeId);
                 List<GHCommit.File> commitFiles = githubService.getFilesByCommit(commit);
-                discussionCodeService.createFromFiles(discussion, commitFiles);
+                codes = discussionCodeService.createFromFiles(discussion, commitFiles);
                 break;
             case "DIRECT":
-                List<DiscussionCode> codes = discussionCodeService.createFromDirect(discussion, dto.codes);
-                List<DiscussionCode> pyCodes = new ArrayList<>();
-                for(DiscussionCode code : codes)
-                    if (code.getLanguage().equals("Python"))
-                        pyCodes.add(code);
-                if (!pyCodes.isEmpty()) {
-                    CreateCommentReviewRequestDto styleReviewDto
-                            = new CreateCommentReviewRequestDto(
-                            discussion.getId()
-                            , styleReviewService.createStyleReviewDto(pyCodes));
-                    User autoBot = User.builder().id(1L).build();
-                    reviewService.createCommentReview(autoBot, styleReviewDto, ReviewType.COMMENT);
-                }
+                codes = discussionCodeService.createFromDirect(discussion, dto.codes);
                 break;
+        }
+
+        List<DiscussionCode> pyCodes = codes.stream().filter(code -> code.getLanguage().equals("Python")).collect(Collectors.toList());
+        if (!pyCodes.isEmpty()) {
+            List<CreateCommentReviewDiffDto> diffList = styleReviewService.createStyleReviewDto(pyCodes);
+            CreateCommentReviewRequestDto styleReviewDto = new CreateCommentReviewRequestDto(discussion.getId(), diffList);
+            reviewService.createCommentReview(autoBot, styleReviewDto, ReviewType.COMMENT);
         }
         return discussion;
     }

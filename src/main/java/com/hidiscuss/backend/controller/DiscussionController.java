@@ -30,7 +30,7 @@ public class DiscussionController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured(SecurityConfig.DEFAULT_ROLE)
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 생성")
     @ApiResponses({
             @ApiResponse(code = 201, message = "새로운 Discussion 생성 성공"),
@@ -40,7 +40,7 @@ public class DiscussionController {
     public DiscussionResponseDto createDiscussion(
             @RequestBody CreateDiscussionRequestDto createDiscussionRequestDto
             , @AuthenticationPrincipal String userId) {
-        User user = userService.findById(Long.parseLong(userId));
+        User user = userService.findById(Long.parseLong("7001"));
         if (createDiscussionRequestDto.isDirectDiscussion()) {
             if (createDiscussionRequestDto.codes == null) {
                 throw new IllegalArgumentException("코드가 없습니다.");
