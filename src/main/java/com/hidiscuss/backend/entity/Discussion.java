@@ -29,7 +29,7 @@ public class Discussion extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "question", nullable = false)
+    @Column(columnDefinition = "varchar(10000) default ''", name = "question", nullable = false)
     private String question;
 
     @Column(columnDefinition = "boolean default false", name = "live_review_required", nullable = false)
