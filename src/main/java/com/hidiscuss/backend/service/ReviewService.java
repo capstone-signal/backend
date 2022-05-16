@@ -37,7 +37,7 @@ public class ReviewService {
         Review review = Review.builder()
                 .reviewer(user)
                 .discussion(discussion)
-                .liveDiffList(new ArrayList<>())
+                .commentDiffList(new ArrayList<>())
                 .reviewType(reviewType)
                 .accepted(false)
                 .build();
