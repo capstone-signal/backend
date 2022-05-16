@@ -30,7 +30,6 @@ import java.util.List;
 public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     private final TokenService tokenService;
     private final UserRequestMapper userRequestMapper;
-    private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
 
     @Value("${environments.url.homeurl}")
@@ -38,7 +37,7 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException, ServletException {
+            throws IOException {
 
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
         String gitaccessToken = oAuth2User.getAttribute("accessToken");

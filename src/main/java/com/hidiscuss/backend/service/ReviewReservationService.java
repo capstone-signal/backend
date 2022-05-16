@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -36,7 +37,7 @@ public class ReviewReservationService {
     }
 
     public List<ReviewReservation> findByDiscussionIdAndUserId(Long userId) {
-        return reviewReservationRepository.findByDiscussionIdAndUserId(userId);
+        return reviewReservationRepository.findByUserId(userId);
     }
 
     public ReviewReservation create(
@@ -108,7 +109,7 @@ public class ReviewReservationService {
             return reviewReservationRepository.findById(reservationId).orElse(null);
     }
 
-    public void saveAllDiffs(CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
+    public void saveAll(CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
         Set<String> ids = completeLiveReviewRequestDto.changeCode.keySet();
 
         for(String id:ids){
@@ -144,7 +145,6 @@ public class ReviewReservationService {
             ));
         }
 
-
         if(liveReviewDiffList.size() > 0)
             liveReviewDiffRepository.saveAll(liveReviewDiffList);
 
@@ -153,5 +153,20 @@ public class ReviewReservationService {
         reviewReservation.setReview(review);
         reviewReservationRepository.save(reviewReservation);
         return reviewReservation;
+    }
+
+    public ReviewReservation checkUser(ReviewReservation reviewReservation,Long userId){
+        if(!Objects.equals(reviewReservation.getReviewer().getId(), userId) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), userId)){
+            throw  NoReviewerOrReviewee();
+        }
+        if(reviewReservation.getReviewer().getId().equals(userId)){
+            reviewReservation.setReviewerParticipated(true);
+        } else{
+            reviewReservation.setRevieweeParticipated(true);
+        }
+        return reviewReservation;
+    }
+    private RuntimeException NoReviewerOrReviewee() {
+        return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
 }

@@ -12,9 +12,14 @@ public class LiveReviewDiffService {
 
     private final LiveReviewDiffRepository liveReviewDiffRepository;
 
-    public LiveReviewDiff updateDiff(LiveReviewDiff liveReviewDiff, String codeAfter) {
+    public LiveReviewDiff findByIdAndUpdateByCodeAfter(Long diffId, String codeAfter, Long userId) {
+        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElse(null);
+        if(liveReviewDiff == null) throw NotFoundLiveDiff();
         liveReviewDiff.setCodeAfter(codeAfter);
         liveReviewDiffRepository.save(liveReviewDiff);
         return liveReviewDiff;
+    }
+    private RuntimeException NotFoundLiveDiff() {
+        return new IllegalArgumentException("LiveDiff not found");
     }
 }

@@ -2,15 +2,9 @@ package com.hidiscuss.backend.controller;
 
 
 import com.hidiscuss.backend.config.SecurityConfig;
-import com.hidiscuss.backend.controller.dto.CompleteLiveReviewRequestDto;
-import com.hidiscuss.backend.controller.dto.CreateReviewReservationRequestDto;
-import com.hidiscuss.backend.controller.dto.LiveReviewDiffResponseDto;
-import com.hidiscuss.backend.controller.dto.ReviewReservationResponseDto;
+import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
-import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
-import com.hidiscuss.backend.repository.ReviewRepository;
 import com.hidiscuss.backend.service.DiscussionService;
-import com.hidiscuss.backend.service.LiveReviewDiffService;
 import com.hidiscuss.backend.service.ReviewReservationService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,10 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,8 +26,6 @@ public class ReviewReservationController {
 
     private final DiscussionService discussionService;
     private final ReviewReservationService reviewReservationService;
-    private final LiveReviewDiffService liveReviewDiffService;
-    private final LiveReviewDiffRepository liveReviewDiffRepository;
 
     @GetMapping("")
     @Secured(SecurityConfig.DEFAULT_ROLE)
@@ -86,7 +75,7 @@ public class ReviewReservationController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("my")
-    public List<ReviewReservationResponseDto> isReservedReservation(@AuthenticationPrincipal Long userId) {
+    public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal Long userId) {
         List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(userId);
         return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
@@ -100,72 +89,22 @@ public class ReviewReservationController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal Long userId, @RequestBody List<Long> discussionCodesIdList) {
+    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal Long userId, @RequestBody EnterLiveReivewReservationRequestDto enterLiveReivewReservationRequestDto) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
         }
-        if(!Objects.equals(reviewReservation.getReviewer().getId(), userId) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), userId)){
-            throw  NoReviewerOrReviewee();
-        }
-        if(reviewReservation.getReviewer().getId().equals(userId)){
-            reviewReservation.setReviewerParticipated(true);
-        } else{
-            reviewReservation.setRevieweeParticipated(true);
-        }
-
+        reviewReservation = reviewReservationService.checkUser(reviewReservation, userId);
         if (reviewReservation.getReview() == null){
-          reviewReservation = reviewReservationService.createNewLiveReviewAndDiffs(discussionCodesIdList,reviewReservation);
+          reviewReservation = reviewReservationService.createNewLiveReviewAndDiffs(enterLiveReivewReservationRequestDto.discussionCodeIdList,reviewReservation);
         }
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 
-    @PutMapping("review/livediff/{diffId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Secured(SecurityConfig.DEFAULT_ROLE)
-    @ApiOperation(value = "N분마다 포커싱 되어 있는 파일 업데이트")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "리뷰 참여 버튼을 누르면 유저인지 확인하고 새로운 리뷰를 만들어 리뷰를 반환해준다."),
-            @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
-            @ApiResponse(code = 500, message = "서버 에러")
-    })
-    public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody String codeAfter) {
-        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElseThrow(this::NotFoundLiveDiff);
-
-        liveReviewDiff = liveReviewDiffService.updateDiff(liveReviewDiff,codeAfter);
-        return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
-    }
-
-    @PutMapping("review/complete/{reviewReservationId}")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
-    @ApiOperation(value = "라이브리뷰 완료")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "리뷰완료 버튼을 누르거나 한시간이 되면 완료시키는 Api"),
-            @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
-            @ApiResponse(code = 500, message = "서버 에러")
-    })
-    public Map<String, Long> completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
-        ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        reviewReservation.setIsdone(Boolean.TRUE);
-        if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
-            reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
-        }
-        reviewReservationService.saveAllDiffs(completeLiveReviewRequestDto);
-        HashMap<String, Long> map = new HashMap<>();
-        map.put("discsussionId",reviewReservation.getDiscussion().getId());
-        map.put("reservationId",reviewReservation.getId());
-        return map;
-    }
 
 
-    private RuntimeException NoReviewerOrReviewee() {
-        return new IllegalArgumentException("You are not Reviewee Or Reviewer");
-    }
     private RuntimeException NotFoundReservaiton() {
         return new IllegalArgumentException("Reservation not found");
-    }
-    private RuntimeException NotFoundLiveDiff() {
-        return new IllegalArgumentException("LiveDiff not found");
     }
     private RuntimeException NotFoundDiscussion() {
         return new IllegalArgumentException("Discussion not found");
