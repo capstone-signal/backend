@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/review")
@@ -34,10 +31,6 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final LiveReviewDiffService liveReviewDiffService;
     private final ReviewReservationService reviewReservationService;
-
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -88,7 +81,7 @@ public class ReviewController {
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
         return entityPage.map(ReviewDto::fromEntity);
     }
-//------------------------------------------------------------------------
+
     @PutMapping("livediff/{diffId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Secured(SecurityConfig.DEFAULT_ROLE)
@@ -111,17 +104,13 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public Map<String, Long> completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
+    public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        reviewReservation.setIsdone(Boolean.TRUE);
         if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
             reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
         }
         reviewReservationService.saveAll(completeLiveReviewRequestDto);
-        HashMap<String, Long> map = new HashMap<>();
-        map.put("discsussionId",reviewReservation.getDiscussion().getId());
-        map.put("reservationId",reviewReservation.getId());
-        return map;
+        return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
     }
 
 

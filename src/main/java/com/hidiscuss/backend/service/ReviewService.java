@@ -4,7 +4,6 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateThreadRequestDto;
 import com.hidiscuss.backend.entity.*;
-import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.*;
 import lombok.AllArgsConstructor;
@@ -64,7 +63,7 @@ public class ReviewService {
         return review;
     }
 
-    public Page<Review> findAllByDiscussionIdFetch(Long id, Pageable pageable) {
+    public Page<Review> findAllByDiscussionIdFetch(Long id, PageRequest pageable) {
         return reviewRepository.findAllByDiscussionIdFetch(id, pageable);
     }
 }

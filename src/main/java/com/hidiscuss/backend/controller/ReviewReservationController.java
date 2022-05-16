@@ -27,6 +27,7 @@ public class ReviewReservationController {
 
     private final DiscussionService discussionService;
     private final ReviewReservationService reviewReservationService;
+    private final UserService userService;
 
     @GetMapping("")
     @Secured(SecurityConfig.DEFAULT_ROLE)
@@ -103,8 +104,6 @@ public class ReviewReservationController {
         }
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
-
-
 
     private RuntimeException NotFoundReservaiton() {
         return new IllegalArgumentException("Reservation not found");

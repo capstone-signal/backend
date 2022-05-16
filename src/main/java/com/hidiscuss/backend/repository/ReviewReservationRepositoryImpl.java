@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -28,6 +29,8 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
     public List<ReviewReservation> findByUserId(Long userId){
         LocalDateTime now = LocalDateTime.now();
         return queryFactory.selectFrom(qReviewReservation)
+                .join(qReviewReservation.discussion).fetchJoin()
+                .join(qReviewReservation.reviewer).fetchJoin()
                 .where(qReviewReservation.reviewer.id.eq(userId).or(qReviewReservation.discussion.user.id.eq(userId))
                         .and(qReviewReservation.reviewStartDateTime.before(now)
                         .and(qReviewReservation.reviewStartDateTime.after(now.minusHours(1L)))))

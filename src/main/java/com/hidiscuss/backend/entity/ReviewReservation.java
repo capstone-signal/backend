@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name = "ReviewReservation")
 public class ReviewReservation extends BaseEntity {
@@ -24,6 +23,7 @@ public class ReviewReservation extends BaseEntity {
     private User reviewer;
 
     @ManyToOne
+    @Setter
     @JoinColumn(name = "review_id")
     private Review review;
 
@@ -34,9 +34,11 @@ public class ReviewReservation extends BaseEntity {
     @Column(name = "review_start_date", nullable = false)
     private LocalDateTime reviewStartDateTime;
 
+    @Setter
     @Column(columnDefinition ="boolean default false", name = "reviewer_participated", nullable = false)
     private Boolean reviewerParticipated;
 
+    @Setter
     @Column(columnDefinition ="boolean default false", name = "reviewee_participated", nullable = false)
     private Boolean revieweeParticipated;
 
