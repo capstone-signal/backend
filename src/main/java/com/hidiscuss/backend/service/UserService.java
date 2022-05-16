@@ -5,6 +5,7 @@ import com.hidiscuss.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserService {
@@ -17,5 +18,10 @@ public class UserService {
 
     public List<User> getUserList() {
         return userRepository.getUserList();
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("No such user"));
     }
 }

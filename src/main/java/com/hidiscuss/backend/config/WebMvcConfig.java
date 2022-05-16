@@ -22,7 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(profile.equals("dev") ? "http://localhost:3000" : "https://hidiscuss.ga")
+                .allowedOrigins("http://localhost:3000", "https://hidiscuss.ga", "http://localhost")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
     }

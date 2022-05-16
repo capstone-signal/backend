@@ -6,6 +6,11 @@ import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
 import com.hidiscuss.backend.repository.ReviewRepository;
+import com.hidiscuss.backend.entity.Discussion;
+import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
+import com.hidiscuss.backend.entity.ReviewReservation;
+import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.ReviewReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,9 +47,12 @@ public class ReviewReservationService {
 
     public ReviewReservation create(
             LocalDateTime startTime,
-            Discussion discussion
+            Discussion discussion,
+            User reviewer
     ) {
         Long discussionId = discussion.getId();
+        if (discussion.getUser().getId().equals(reviewer.getId()))
+            throw new UserAuthorityException("Cannot schedule a review for your own discussion");
         List<ReviewReservation> alreadyExistReviewReservation = this.findByDiscussionId(discussionId);
         alreadyExistReviewReservation.forEach(reviewReservation -> {
             if(isDuplicatedReviewReservation(startTime, reviewReservation)) {
@@ -67,7 +75,7 @@ public class ReviewReservationService {
         ReviewReservation reviewReservation = ReviewReservation.builder()
                 .reviewStartDateTime(startTime)
                 .discussion(discussion)
-                .reviewer(discussion.getUser()) // TODO IMPLEMENT : get Context User
+                .reviewer(reviewer)
                 .build();
 
         String revieweeEmail = discussion.getUser().getEmail();

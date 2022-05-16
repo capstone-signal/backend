@@ -6,6 +6,7 @@ import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.service.DiscussionService;
 import com.hidiscuss.backend.service.ReviewReservationService;
+import com.hidiscuss.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -55,15 +56,17 @@ public class ReviewReservationController {
     })
     public ReviewReservationResponseDto addReviewReservation(
             @RequestBody @Valid CreateReviewReservationRequestDto createReviewReservationRequestDto
+            , @AuthenticationPrincipal String userId
     ) {
         Discussion discussion = discussionService.findByIdOrNull(createReviewReservationRequestDto.discussionId);
+        User user = userService.findById(Long.parseLong(userId));
         if (discussion == null) { // 존재하지 않는 Discussion
             throw NotFoundDiscussion();
         }
         if (!discussion.getLiveReviewRequired()) {
             throw new IllegalArgumentException("Live Review is not required");
         }
-        ReviewReservation reviewReservation = reviewReservationService.create(createReviewReservationRequestDto.reviewStartDateTime, discussion);
+        ReviewReservation reviewReservation = reviewReservationService.create(createReviewReservationRequestDto.reviewStartDateTime, discussion, user);
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 

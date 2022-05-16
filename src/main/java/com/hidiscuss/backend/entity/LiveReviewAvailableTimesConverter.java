@@ -2,6 +2,7 @@ package com.hidiscuss.backend.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hidiscuss.backend.exception.LiveReviewTimeConvertException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -28,8 +29,7 @@ public class LiveReviewAvailableTimesConverter implements AttributeConverter<Liv
         try {
             stringified = objectMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
-            log.error("Convert error", e);
-            throw new RuntimeException(e); // TODO : change to custom exception
+            throw new LiveReviewTimeConvertException("Convert error");
         }
         return stringified;
     }
@@ -43,8 +43,7 @@ public class LiveReviewAvailableTimesConverter implements AttributeConverter<Liv
         try {
             attribute = objectMapper.readValue(dbData, LiveReviewAvailableTimes.class);
         } catch (JsonProcessingException e) {
-            log.error("Convert error", e);
-            throw new RuntimeException(e); // TODO : change to custom exception
+            throw new LiveReviewTimeConvertException("Convert error");
         }
         return attribute;
     }
