@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 @Getter
 @AllArgsConstructor
@@ -22,7 +25,7 @@ public class CreateCommentReviewDiffDto {
     public String codeAfter;
 
     @NotNull
-    public String codeLocate;
+    public List<Long> codeLocate = new ArrayList<>();
 
     @Nullable
     public String comment;
@@ -32,7 +35,7 @@ public class CreateCommentReviewDiffDto {
                 .review(review)
                 .discussionCode(code)
                 .codeAfter(dto.getCodeAfter())
-                .codeLocate(dto.getCodeLocate())
+                .codeLocate(getCodeLocateString(dto.codeLocate))
                 .comment(dto.getComment())
                 .build();
     }
@@ -41,9 +44,14 @@ public class CreateCommentReviewDiffDto {
         CreateCommentReviewDiffDto dto = new CreateCommentReviewDiffDto();
         dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
         dto.codeAfter = entity.getCodeAfter();
-        dto.codeLocate = entity.getCodeLocate();
+        String[] locate = entity.getCodeLocate().split(",");
+        dto.codeLocate = List.of(Long.parseLong(locate[0]), Long.parseLong(locate[1]));
         dto.comment = entity.getComment();
 
         return dto;
+    }
+
+    public static String getCodeLocateString(List<Long> codeLocate) {
+        return codeLocate.get(0).toString() + "," + codeLocate.get(1).toString();
     }
 }
