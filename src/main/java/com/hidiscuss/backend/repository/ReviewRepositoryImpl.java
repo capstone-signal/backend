@@ -1,13 +1,10 @@
 package com.hidiscuss.backend.repository;
 
-import com.hidiscuss.backend.entity.QDiscussion;
-import com.hidiscuss.backend.entity.QDiscussionCode;
 import com.hidiscuss.backend.entity.QReview;
 import com.hidiscuss.backend.entity.Review;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 

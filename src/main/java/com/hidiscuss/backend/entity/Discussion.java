@@ -61,5 +61,7 @@ public class Discussion extends BaseEntity {
         this.user = user;
     }
 
+    public void setState (DiscussionState state){ this.state = state; };
+
     public void setTags(List<DiscussionTag> tags) { this.tags = tags; }
 }
