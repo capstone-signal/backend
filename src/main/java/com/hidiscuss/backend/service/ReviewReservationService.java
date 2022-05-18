@@ -41,7 +41,7 @@ public class ReviewReservationService {
         return reviewReservationRepository.findByDiscussionId(discussionId);
     }
 
-    public List<ReviewReservation> findByDiscussionIdAndUserId(Long userId) {
+    public List<ReviewReservation> findByUserId(Long userId) {
         return reviewReservationRepository.findByUserId(userId);
     }
 

@@ -96,7 +96,7 @@ public class ReviewController {
         return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
     }
 
-    @PutMapping("review/complete/{reviewReservationId}")
+    @PutMapping("complete/{reviewReservationId}")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "라이브리뷰 완료")
     @ApiResponses({

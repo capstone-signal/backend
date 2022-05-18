@@ -80,7 +80,7 @@ public class ReviewReservationController {
     })
     @GetMapping("my")
     public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal Long userId) {
-        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(userId);
+        List<ReviewReservation> reviewReservationList = reviewReservationService.findByUserId(userId);
         return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
 
