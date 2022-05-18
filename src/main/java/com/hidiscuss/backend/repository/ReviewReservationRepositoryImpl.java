@@ -26,6 +26,12 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
     }
 
     @Override
+    public ReviewReservation findByReservationId(Long reservationId){
+        return queryFactory.selectFrom(qReviewReservation)
+                .where(qReviewReservation.id.eq(reservationId)).fetchOne();
+    }
+
+    @Override
     public List<ReviewReservation> findByUserId(Long userId){
         LocalDateTime now = LocalDateTime.now();
         return queryFactory.selectFrom(qReviewReservation)

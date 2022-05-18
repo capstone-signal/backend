@@ -3,6 +3,7 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -46,6 +47,10 @@ public class Review extends BaseEntity {
     @Column(name = "review_type", nullable = false)
     private ReviewType reviewType;
 
+    @Setter
+    @Column(columnDefinition ="boolean default false", name = "isdone", nullable = false)
+    private Boolean isdone;
+
     @Builder
     public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> commentDiffList, List<LiveReviewDiff> liveDiffList, List<ReviewThread> threadList, Boolean accepted, ReviewType reviewType) {
         this.id = id;
@@ -56,6 +61,7 @@ public class Review extends BaseEntity {
         this.threadList = threadList;
         this.accepted = accepted;
         this.reviewType = reviewType;
+        this.isdone = false;
     }
 
     @Override
@@ -69,6 +75,7 @@ public class Review extends BaseEntity {
                 ", threadList=" + threadList +
                 ", accepted=" + accepted +
                 ", reviewType=" + reviewType +
+                ", isDone=" + isdone +
                 '}';
     }
 

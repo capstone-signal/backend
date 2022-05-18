@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-
 @Service
 @AllArgsConstructor
 public class LiveReviewDiffService {
@@ -18,15 +17,10 @@ public class LiveReviewDiffService {
 
         LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElse(null);
         if(liveReviewDiff == null) throw NotFoundLiveDiff();
-        if(!Objects.equals(liveReviewDiff.getReview().getReviewer().getId(), userId) && !Objects.equals(
-                liveReviewDiff.getReview().getDiscussion().getUser().getId(), userId)){
-            throw  NoReviewerOrReviewee();
-        }
         liveReviewDiff.setCodeAfter(codeAfter);
         liveReviewDiffRepository.save(liveReviewDiff);
         return liveReviewDiff;
     }
-    private RuntimeException NoReviewerOrReviewee() {return new IllegalArgumentException("You are not Reviewee Or Reviewer");}
     private RuntimeException NotFoundLiveDiff() {
         return new IllegalArgumentException("LiveDiff not found");
     }
