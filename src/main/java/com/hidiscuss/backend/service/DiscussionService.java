@@ -87,4 +87,17 @@ public class DiscussionService {
         }
         return discussion.getId();
     }
+
+    public Long complete(Discussion discussion, User user) {
+        if (!discussion.getUser().getId().equals(user.getId())) {
+            throw new UserAuthorityException("You can only complete discussions you have created");
+        }
+        if (reviewReservationService.findByDiscussionId(discussion.getId()).size() == 0) {
+            discussion.setState(DiscussionState.COMPLETED);
+            discussionRepository.save(discussion);
+        }
+        else
+            throw new IllegalArgumentException("Only discussions that do not have reservations can be completed");
+        return discussion.getId();
+    }
 }
