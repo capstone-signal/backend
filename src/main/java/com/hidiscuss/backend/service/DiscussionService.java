@@ -43,7 +43,7 @@ public class DiscussionService {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
         discussion = discussionRepository.save(discussion);
         List<DiscussionCode> codes = new ArrayList<>();
-        User autoBot = User.builder().id(1L).build();
+        User autoBot = User.builder().id(9999L).build();
 
         // Processing Tag
         discussion.setTags(discussionTagService.create(discussion, dto.tagIds));

@@ -1,5 +1,5 @@
 -- user(id 7000, 7001) 생성
-INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (1, NOW(), NOW(), 'autoBot@hidiscuss.com', 'autoBot', 1);
+INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (9999, NOW(), NOW(), 'autoBot@hidiscuss.com', 'autoBot', 1);
 INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (7000, NOW(), NOW(), 'tnghd5761@gmail.com', '수홍', 1);
 INSERT INTO `hidiscuss`.`user` (`id`, `created_at`, `last_modified_at`, `email`, `username`, `point`) VALUES (7001, NOW(), NOW(), 'donghyeongzz@gmail.com', '동형', 1);
 
