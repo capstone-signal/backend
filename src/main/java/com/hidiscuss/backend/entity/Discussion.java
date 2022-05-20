@@ -42,7 +42,7 @@ public class Discussion extends BaseEntity {
     @Column(columnDefinition = "bigint default 0", name = "priority", nullable = false)
     private Long priority;
 
-    @OneToMany(mappedBy = "discussion")
+    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiscussionTag> tags = new ArrayList<>();
 
     @Builder

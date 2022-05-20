@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
@@ -47,5 +48,12 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch().size();
 
         return new PageImpl<>(result, pageable, totalSize);
+    }
+
+    @Override
+    public Optional<Review> findByReviewerId(Long userId) {
+        return Optional.ofNullable(queryFactory.selectFrom(qReview)
+                .where(qReview.reviewer.id.eq(userId))
+                .fetchOne());
     }
 }
