@@ -42,7 +42,7 @@ public class Discussion extends BaseEntity {
     @Column(columnDefinition = "bigint default 0", name = "priority", nullable = false)
     private Long priority;
 
-    @OneToMany(mappedBy = "discussion")
+    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiscussionTag> tags = new ArrayList<>();
 
     @Builder
@@ -61,7 +61,7 @@ public class Discussion extends BaseEntity {
         this.user = user;
     }
 
-    public void setState (DiscussionState state){ this.state = state; };
-
     public void setTags(List<DiscussionTag> tags) { this.tags = tags; }
+
+    public void complete() { this.state = DiscussionState.COMPLETED; }
 }

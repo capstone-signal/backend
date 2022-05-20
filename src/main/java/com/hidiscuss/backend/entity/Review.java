@@ -30,13 +30,13 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentReviewDiff> commentDiffList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LiveReviewDiff> liveDiffList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewThread> threadList = new ArrayList<>();
 
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
