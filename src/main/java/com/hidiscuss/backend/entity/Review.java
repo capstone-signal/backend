@@ -52,7 +52,7 @@ public class Review extends BaseEntity {
     private Boolean isdone;
 
     @Builder
-    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> commentDiffList, List<LiveReviewDiff> liveDiffList, List<ReviewThread> threadList, Boolean accepted, ReviewType reviewType) {
+    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> commentDiffList, List<LiveReviewDiff> liveDiffList, List<ReviewThread> threadList, Boolean accepted, ReviewType reviewType, Boolean isdone) {
         this.id = id;
         this.reviewer = reviewer;
         this.discussion = discussion;
@@ -61,7 +61,7 @@ public class Review extends BaseEntity {
         this.threadList = threadList;
         this.accepted = accepted;
         this.reviewType = reviewType;
-        this.isdone = false;
+        this.isdone = isdone;
     }
 
     @Override

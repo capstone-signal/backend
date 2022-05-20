@@ -40,6 +40,7 @@ public class ReviewService {
                 .commentDiffList(new ArrayList<>())
                 .reviewType(reviewType)
                 .accepted(false)
+                .isdone(true)
                 .build();
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());

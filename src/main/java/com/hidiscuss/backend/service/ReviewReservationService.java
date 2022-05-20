@@ -75,7 +75,6 @@ public class ReviewReservationService {
             throw new IllegalArgumentException("예약 가능한 시간이 아닙니다.");
         }
 
-
         ReviewReservation reviewReservation = ReviewReservation.builder()
                 .reviewStartDateTime(startTime)
                 .discussion(discussion)
@@ -89,6 +88,7 @@ public class ReviewReservationService {
                 .liveDiffList(new ArrayList<>())
                 .reviewType(ReviewType.LIVE)
                 .threadList(new ArrayList<>())
+                .isdone(false)
                 .accepted(false)
                 .build();
         reviewRepository.save(review);
@@ -109,7 +109,7 @@ public class ReviewReservationService {
         if(liveReviewDiffList.size() > 0)
             liveReviewDiffRepository.saveAll(liveReviewDiffList);
         review.setLiveDiffList(liveReviewDiffList);
-        
+
         String revieweeEmail = discussion.getUser().getEmail();
         String reviewerEmail = reviewReservation.getReviewer().getEmail();
 
@@ -149,19 +149,6 @@ public class ReviewReservationService {
 
     public ReviewReservation findByIdOrNull(Long reservationId) {
             return reviewReservationRepository.findById(reservationId).orElse(null);
-    }
-
-    public void saveAll(CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
-        Set<String> ids = completeLiveReviewRequestDto.changeCode.keySet();
-
-        for(String id:ids){
-            Long parseId = Long.parseLong(id);
-            LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(parseId).orElse(null);
-            if(liveReviewDiff != null) {
-                liveReviewDiff.setCodeAfter(completeLiveReviewRequestDto.changeCode.get(id));
-                liveReviewDiffRepository.save(liveReviewDiff);
-            }
-        }
     }
 
     public ReviewReservation checkUser(ReviewReservation reviewReservation,Long userId){

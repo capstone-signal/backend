@@ -49,7 +49,7 @@ public class ReviewReservationController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    //@Secured(SecurityConfig.DEFAULT_ROLE)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "새로운 라이브 리뷰 예약 추가")
     @ApiResponses({
             @ApiResponse(code = 201, message = "성공"),
@@ -60,7 +60,6 @@ public class ReviewReservationController {
             @RequestBody @Valid CreateReviewReservationRequestDto createReviewReservationRequestDto
             , @AuthenticationPrincipal String userId
     ) {
-        userId = "7001";
         Discussion discussion = discussionService.findByIdOrNull(createReviewReservationRequestDto.discussionId);
         User user = userService.findById(Long.parseLong(userId));
         if (discussion == null) { // 존재하지 않는 Discussion
@@ -87,7 +86,6 @@ public class ReviewReservationController {
     }
 
     @PostMapping("participate/{reservationId}")
-    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "User가 참여 버튼을 누르면 discussion, Particioate 상태 변경 후 Review가 없으면 만들어서 반환")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
