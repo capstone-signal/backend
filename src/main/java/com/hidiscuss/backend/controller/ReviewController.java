@@ -107,7 +107,7 @@ public class ReviewController {
     public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
-            reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
+            reviewReservation.getDiscussion().complete();
         }
         reviewReservationService.saveAll(completeLiveReviewRequestDto);
         return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -55,5 +56,10 @@ public class ReviewReservation extends BaseEntity {
         this.reviewerParticipated = false;
         this.revieweeParticipated = false;
         this.isdone = false;
+    }
+
+    public Boolean isCompletedReservation() {
+        // TODO: isDone이 true인 것과 or연산
+        return reviewStartDateTime.plusHours(1).isAfter(LocalDateTime.now());
     }
 }
