@@ -33,16 +33,13 @@ public class CreateDiscussionRequestDto {
     @Nullable
     public LiveReviewAvailableTimes liveReviewAvailableTimes;
 
-    @Nullable
-    public boolean usePriority = true;
-
     @NotNull
     public List<Long> tagIds;
 
     @Nullable
     public List<CreateDiscussionCodeRequestDto> codes;
 
-    @NotNull
+    @Nullable
     public Long priority;
 
     public static Discussion toEntity(CreateDiscussionRequestDto dto, User user) {
@@ -52,7 +49,7 @@ public class CreateDiscussionRequestDto {
                 .title(dto.title)
                 .liveReviewRequired(dto.liveReviewRequired)
                 .liveReviewAvailableTimes(dto.liveReviewAvailableTimes)
-                .priority(dto.usePriority ? dto.priority : 0L)
+                .priority(dto.priority != null ? dto.priority : 0L)
                 .build();
     }
 
