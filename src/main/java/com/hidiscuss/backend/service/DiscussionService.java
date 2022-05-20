@@ -100,6 +100,7 @@ public class DiscussionService {
 
     public Long complete(Discussion discussion, User user) {
         List<ReviewReservation> reservations = reviewReservationService.findByDiscussionId(discussion.getId());
+        // 하나라도 지금 이후라면
         Boolean hasNotCompletedReservation = reservations.stream().anyMatch((reservation) -> !reservation.isCompletedReservation());
 
         if (!discussion.getUser().getId().equals(user.getId()))

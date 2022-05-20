@@ -60,6 +60,6 @@ public class ReviewReservation extends BaseEntity {
 
     public Boolean isCompletedReservation() {
         // TODO: isDone이 true인 것과 or연산
-        return reviewStartDateTime.plusHours(1).isAfter(LocalDateTime.now());
+        return reviewStartDateTime.plusHours(1).isBefore(LocalDateTime.now());
     }
 }
