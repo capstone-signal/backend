@@ -31,7 +31,6 @@ public class ReviewService {
                 .findByIdFetchOrNull(dto.discussionId);
         if (discussion == null)
             throw new NoSuchElementException("Discussion not found");
-
         if (discussion.getUser().getId().equals(user.getId()))
             throw new UserAuthorityException("Cannot review your own code");
         Review review = Review.builder()
@@ -44,6 +43,9 @@ public class ReviewService {
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
+//        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED)) {
+            discussion.reviewing();
+//        }
         return review;
     }
 
