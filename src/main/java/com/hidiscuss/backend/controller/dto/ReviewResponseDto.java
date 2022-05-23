@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class ReviewDto extends BaseResponseDto {
+public class ReviewResponseDto extends BaseResponseDto {
     private Long id;
     private UserResponseDto reviewer;
     private List<CommentReviewDiffResponseDto> commentDiffList = new ArrayList<>();
@@ -20,8 +20,8 @@ public class ReviewDto extends BaseResponseDto {
     private Boolean accepted;
     private ReviewType reviewType;
 
-    public static ReviewDto fromEntity(Review review) {
-        ReviewDto dto = new ReviewDto();
+    public static ReviewResponseDto fromEntity(Review review) {
+        ReviewResponseDto dto = new ReviewResponseDto();
         dto.setBaseResponse(review);
         dto.id = review.getId();
         dto.reviewer = UserResponseDto.fromEntity(review.getReviewer());
