@@ -80,11 +80,11 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId
+    public Page<ReviewResponseDto> getReviews(@RequestParam("discussionId") Long discussionId
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
-        return entityPage.map(ReviewDto::fromEntity);
+        return entityPage.map(ReviewResponseDto::fromEntity);
     }
 
     @PutMapping("livediff/{diffId}")

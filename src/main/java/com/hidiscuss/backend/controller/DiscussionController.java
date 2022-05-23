@@ -57,9 +57,9 @@ public class DiscussionController {
             }
         }
 
-        if (createDiscussionRequestDto.usePriority) {
-            // rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
-        }
+//        if (createDiscussionRequestDto.usePriority) {
+//             rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
+//        }
         Discussion discussion = discussionService.create(createDiscussionRequestDto, user);
         return DiscussionResponseDto.fromEntity(discussion);
     }
@@ -110,6 +110,21 @@ public class DiscussionController {
         User user = userService.findById(Long.parseLong(userId));
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         return discussionService.delete(discussion, user);
+    }
+
+    @PutMapping("/{discussionId}/complete")
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "Discussion 완료")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Discussion 완료"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public Long completeDiscussion(@PathVariable("discussionId") Long discussionId
+            , @AuthenticationPrincipal String userId) {
+        User user = userService.findById(Long.parseLong(userId));
+        Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
+        return discussionService.complete(discussion, user);
     }
 }
 

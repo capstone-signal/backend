@@ -15,5 +15,5 @@ public interface DiscussionCodeRepository extends JpaRepository<DiscussionCode, 
 
     List<DiscussionCode> findByDiscussion(Discussion discussion);
 
-    DiscussionCode findById(DiscussionCode discussionCode);
+    void deleteByDiscussion(Discussion discussion);
 }
