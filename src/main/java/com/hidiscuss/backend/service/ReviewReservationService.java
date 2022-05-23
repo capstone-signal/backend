@@ -31,10 +31,8 @@ public class ReviewReservationService {
     public static int REVIEW_SESSION_DURATION_IN_HOURS = 1;
 
     private final ReviewReservationRepository reviewReservationRepository;
-    private final LiveReviewDiffRepository liveReviewDiffRepository;
     private final EmailService emailService;
-    private final ReviewRepository reviewRepository;
-    private final DiscussionCodeRepository discussionCodeRepository;
+    private final ReviewService reviewService;
 
     public List<ReviewReservation> findByDiscussionId(Long discussionId) {
         return reviewReservationRepository.findByDiscussionId(discussionId);
@@ -82,33 +80,7 @@ public class ReviewReservationService {
                 .build();
 
 
-        Review review = Review.builder()
-                .reviewer(reviewReservation.getReviewer())
-                .discussion(reviewReservation.getDiscussion())
-                .liveDiffList(new ArrayList<>())
-                .reviewType(ReviewType.LIVE)
-                .threadList(new ArrayList<>())
-                .isdone(false)
-                .accepted(false)
-                .build();
-        reviewRepository.save(review);
-
-        List <LiveReviewDiff> liveReviewDiffList =  new ArrayList<>();
-
-        List<DiscussionCode> discussionCodeList = discussionCodeRepository.findByDiscussion(reviewReservation.getDiscussion());
-        for (DiscussionCode code : discussionCodeList) {
-            liveReviewDiffList.add(
-                    LiveReviewDiff.builder()
-                            .review(review)
-                            .discussionCode(code)
-                            .codeAfter("Not Reviewed")
-                            .build()
-            );
-        }
-
-        if(liveReviewDiffList.size() > 0)
-            liveReviewDiffRepository.saveAll(liveReviewDiffList);
-        review.setLiveDiffList(liveReviewDiffList);
+        Review review = reviewService.createLiveReivew(reviewReservation);
 
         String revieweeEmail = discussion.getUser().getEmail();
         String reviewerEmail = reviewReservation.getReviewer().getEmail();
@@ -116,7 +88,6 @@ public class ReviewReservationService {
         emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
         emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
-        reviewRepository.save(review);
         reviewReservation.setReview(review);
         return reviewReservationRepository.save(reviewReservation);
     }

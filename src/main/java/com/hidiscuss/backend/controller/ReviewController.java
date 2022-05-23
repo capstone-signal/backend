@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.hibernate.engine.internal.CacheHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.Id;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
@@ -94,11 +96,9 @@ public class ReviewController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto, @AuthenticationPrincipal String userId) {
-        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter,Long.parseLong(userId));
-        if(!Objects.equals(liveReviewDiff.getReview().getReviewer().getId(), Long.parseLong(userId)) && !Objects.equals(
-                liveReviewDiff.getReview().getDiscussion().getUser().getId(), Long.parseLong(userId))){
-            throw  NoReviewerOrReviewee();
-        }
+        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter);
+        if (!CheckUser(userId, liveReviewDiff.getReview().getReviewer(), liveReviewDiff.getReview().getDiscussion()))
+            throw NoReviewerOrReviewee();
         return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
     }
 
@@ -112,13 +112,9 @@ public class ReviewController {
     })
     public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        if(!Objects.equals(reviewReservation.getReviewer().getId(), Long.parseLong(userId)) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), Long.parseLong(userId))){
-            throw  NoReviewerOrReviewee();
-        }
-        if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
-            reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
-        }
-        reviewReservation.getReview().setIsdone(Boolean.TRUE);
+        if(!CheckUser(userId, reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+            throw NoReviewerOrReviewee();
+        reviewService.changeCompleteStates(reviewReservation);
         return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
     }
 
@@ -136,5 +132,12 @@ public class ReviewController {
 
     private RuntimeException NoReviewerOrReviewee() {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
+    }
+
+    private Boolean CheckUser(String userId, User reviewer, Discussion discussion){
+        if(!Objects.equals(reviewer.getId(), Long.parseLong(userId)) && !Objects.equals(discussion.getUser().getId(), Long.parseLong(userId))){
+            return false;
+        }
+        return true;
     }
 }

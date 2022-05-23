@@ -13,9 +13,9 @@ public class LiveReviewDiffService {
 
     private final LiveReviewDiffRepository liveReviewDiffRepository;
 
-    public LiveReviewDiff findByIdAndUpdateByCodeAfter(Long diffId, String codeAfter, Long userId) {
+    public LiveReviewDiff findByIdAndUpdateByCodeAfter(Long diffId, String codeAfter) {
 
-        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElse(null);
+        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElseThrow(this::NotFoundLiveDiff);
         if(liveReviewDiff == null) throw NotFoundLiveDiff();
         liveReviewDiff.setCodeAfter(codeAfter);
         liveReviewDiffRepository.save(liveReviewDiff);
