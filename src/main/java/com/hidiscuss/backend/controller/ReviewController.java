@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.Id;
+import javax.swing.text.StyledEditorKit;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
@@ -95,11 +96,11 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "해당 LiveDiff가 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto, @AuthenticationPrincipal String userId) {
+    public Boolean updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto, @AuthenticationPrincipal String userId) {
         LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter);
         if (!CheckUser(userId, liveReviewDiff.getReview().getReviewer(), liveReviewDiff.getReview().getDiscussion()))
             throw NoReviewerOrReviewee();
-        return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
+        return true;
     }
 
     @PutMapping("complete/{reviewReservationId}")
