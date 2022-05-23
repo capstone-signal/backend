@@ -43,8 +43,7 @@ public class ReviewController {
     })
     public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType
             , @RequestBody @Valid CreateCommentReviewRequestDto requestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+            , @AuthenticationPrincipal User user) {
         Review review = reviewService.createCommentReview(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
     }
@@ -60,8 +59,7 @@ public class ReviewController {
     })
     public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId
             , @RequestBody @Valid CreateThreadRequestDto requestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+            , @AuthenticationPrincipal User user) {
         Review review = reviewService.findByIdFetchOrNull(reviewId);
         ReviewThread reviewThread = reviewService.createThread(user, requestDto, review);
         return ThreadResponseDto.fromEntity(reviewThread);
@@ -91,8 +89,10 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "해당 LiveDiff가 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto, @AuthenticationPrincipal Long userId) {
-        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter,userId);
+    public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId
+            , @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto
+            , @AuthenticationPrincipal User user) {
+        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId, updateFocusedDiffRequestDto.codeAfter, user.getId());
         return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
     }
 
@@ -104,7 +104,8 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
+    public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId
+            , @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
             reviewReservation.getDiscussion().complete();

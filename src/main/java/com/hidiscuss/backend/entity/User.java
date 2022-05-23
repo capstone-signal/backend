@@ -29,6 +29,9 @@ public class User extends BaseEntity {
     @Transient
     private String role;
 
+    @Transient
+    private String accessToken;
+
     @Builder
     public User(Long id, String name, String email, String accessToken, String refreshToken, Long point) {
         this.id = id;
@@ -39,7 +42,7 @@ public class User extends BaseEntity {
 
     public User(Claims claims) {
         this.id = Long.valueOf(claims.get("userId").toString());
-        this.name = claims.get("name").toString();
+        this.name = claims.get("sub").toString();
         this.role = claims.get("role").toString();
     }
 }

@@ -57,10 +57,9 @@ public class ReviewReservationController {
     })
     public ReviewReservationResponseDto addReviewReservation(
             @RequestBody @Valid CreateReviewReservationRequestDto createReviewReservationRequestDto
-            , @AuthenticationPrincipal String userId
+            , @AuthenticationPrincipal User user
     ) {
         Discussion discussion = discussionService.findByIdOrNull(createReviewReservationRequestDto.discussionId);
-        User user = userService.findById(Long.parseLong(userId));
         if (discussion == null) { // 존재하지 않는 Discussion
             throw NotFoundDiscussion();
         }
@@ -79,8 +78,8 @@ public class ReviewReservationController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("my")
-    public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal Long userId) {
-        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(userId);
+    public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal User user) {
+        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(user.getId());
         return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
 
@@ -93,12 +92,14 @@ public class ReviewReservationController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal Long userId, @RequestBody EnterLiveReivewReservationRequestDto enterLiveReivewReservationRequestDto) {
+    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId
+            , @AuthenticationPrincipal User user
+            , @RequestBody EnterLiveReivewReservationRequestDto enterLiveReivewReservationRequestDto) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
         }
-        reviewReservation = reviewReservationService.checkUser(reviewReservation, userId);
+        reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
         if (reviewReservation.getReview() == null){
           reviewReservation = reviewReservationService.createNewLiveReviewAndDiffs(enterLiveReivewReservationRequestDto.discussionCodeIdList,reviewReservation);
         }
