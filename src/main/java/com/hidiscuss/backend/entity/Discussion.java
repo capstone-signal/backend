@@ -3,6 +3,7 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Discussion extends BaseEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     @Column(columnDefinition = "enum('NOT_REVIEWED', 'REVIEWING', 'COMPLETED') default 'NOT_REVIEWED'", name = "state", nullable = false)
     private DiscussionState state;
 

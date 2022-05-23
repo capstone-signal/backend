@@ -1,11 +1,7 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.CompleteLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.SendEmailDto;
 import com.hidiscuss.backend.entity.*;
-import com.hidiscuss.backend.repository.DiscussionCodeRepository;
-import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
-import com.hidiscuss.backend.repository.ReviewRepository;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
 import com.hidiscuss.backend.entity.ReviewReservation;
@@ -89,6 +85,10 @@ public class ReviewReservationService {
         emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
         reviewReservation.setReview(review);
+        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED))
+        {
+            discussion.setState(DiscussionState.REVIEWING);
+        }
         return reviewReservationRepository.save(reviewReservation);
     }
 
@@ -130,7 +130,4 @@ public class ReviewReservationService {
         }
         return reviewReservation;
     }
-
-
-
 }
