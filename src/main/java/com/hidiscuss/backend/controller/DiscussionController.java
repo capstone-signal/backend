@@ -112,7 +112,7 @@ public class DiscussionController {
         return discussionService.delete(discussion, user);
     }
 
-    @PutMapping("/{discussionId}")
+    @PutMapping("/{discussionId}/complete")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 완료")
     @ApiResponses({
