@@ -57,9 +57,9 @@ public class DiscussionController {
             }
         }
 
-        if (createDiscussionRequestDto.usePriority) {
-            // rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
-        }
+//        if (createDiscussionRequestDto.usePriority) {
+//             rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
+//        }
         Discussion discussion = discussionService.create(createDiscussionRequestDto, user);
         return DiscussionResponseDto.fromEntity(discussion);
     }
