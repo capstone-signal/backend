@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.entity;
 
+import io.jsonwebtoken.Claims;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,11 +26,20 @@ public class User extends BaseEntity {
     @Column(name = "point")
     private Long point;
 
+    @Transient
+    private String role;
+
     @Builder
     public User(Long id, String name, String email, String accessToken, String refreshToken, Long point) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.point = point;
+    }
+
+    public User(Claims claims) {
+        this.id = Long.valueOf(claims.get("userId").toString());
+        this.name = claims.get("name").toString();
+        this.role = claims.get("role").toString();
     }
 }
