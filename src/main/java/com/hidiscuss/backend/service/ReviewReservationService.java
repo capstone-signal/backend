@@ -46,7 +46,7 @@ public class ReviewReservationService {
     }
 
     public ReviewReservation create(
-            LocalDateTime startTime,
+            ZonedDateTime startTime,
             Discussion discussion,
             User reviewer
     ) {
@@ -63,8 +63,8 @@ public class ReviewReservationService {
         LiveReviewAvailableTimes liveReviewAvailableTimes = discussion.getLiveReviewAvailableTimes();
 
         boolean isAvailableInsert = liveReviewAvailableTimes.getTimes().stream().anyMatch(timeRange -> {
-          LocalDateTime start = timeRange.getStart();
-          LocalDateTime end = timeRange.getEnd();
+          ZonedDateTime start = timeRange.getStart();
+          ZonedDateTime end = timeRange.getEnd();
           return start.isBefore(startTime) && end.isAfter(startTime);
         });
 
@@ -91,10 +91,10 @@ public class ReviewReservationService {
         return "[Hidiscuss] 라이브 리뷰 예약 완료";
     }
 
-    private String getContent(LocalDateTime reviewStartTime) {
+    private String getContent(ZonedDateTime zonedDateTime) {
         StringBuilder sb = new StringBuilder();
         // utc to asia/seoul
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(reviewStartTime, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        //ZonedDateTime zonedDateTime = ZonedDateTime.of(reviewStartTime, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         String reviewStartTimeStr = zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH시 mm분"));
         sb.append("<h1>예약이 완료되었습니다.</h1>");
         sb.append("<p>예약이 완료되었습니다.</p>");
@@ -102,9 +102,9 @@ public class ReviewReservationService {
         return sb.toString();
     }
 
-    private boolean isDuplicatedReviewReservation(LocalDateTime startTime, ReviewReservation reviewReservation) {
-        LocalDateTime comparerStartTime = reviewReservation.getReviewStartDateTime();
-        LocalDateTime comparerEndTime = comparerStartTime.plusHours(REVIEW_SESSION_DURATION_IN_HOURS);
+    private boolean isDuplicatedReviewReservation(ZonedDateTime startTime, ReviewReservation reviewReservation) {
+        ZonedDateTime comparerStartTime = reviewReservation.getReviewStartDateTime();
+        ZonedDateTime comparerEndTime = comparerStartTime.plusHours(REVIEW_SESSION_DURATION_IN_HOURS);
         boolean isEqual = comparerStartTime.isEqual(startTime);
         boolean isBetween = comparerStartTime.isBefore(startTime) && comparerEndTime.isAfter(startTime);
         boolean isStartBeforeHour = startTime.isAfter(comparerStartTime.minusHours(REVIEW_SESSION_DURATION_IN_HOURS)) && startTime.isBefore(comparerStartTime);

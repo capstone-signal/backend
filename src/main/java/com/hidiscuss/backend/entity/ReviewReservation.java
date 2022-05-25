@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -33,7 +34,7 @@ public class ReviewReservation extends BaseEntity {
     private Discussion discussion;
 
     @Column(name = "review_start_date", nullable = false)
-    private LocalDateTime reviewStartDateTime;
+    private ZonedDateTime reviewStartDateTime;
 
     @Setter
     @Column(columnDefinition ="boolean default false", name = "reviewer_participated", nullable = false)
@@ -47,7 +48,7 @@ public class ReviewReservation extends BaseEntity {
     private Boolean isdone;
 
     @Builder
-    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, LocalDateTime reviewStartDateTime) {
+    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, ZonedDateTime reviewStartDateTime) {
         this.id = id;
         this.reviewer = reviewer;
         this.review = review;
@@ -60,6 +61,6 @@ public class ReviewReservation extends BaseEntity {
 
     public Boolean isCompletedReservation() {
         // TODO: isDone이 true인 것과 or연산
-        return reviewStartDateTime.plusHours(1).isBefore(LocalDateTime.now());
+        return reviewStartDateTime.plusHours(1).isBefore(ZonedDateTime.now());
     }
 }

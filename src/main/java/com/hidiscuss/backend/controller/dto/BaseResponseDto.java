@@ -3,12 +3,12 @@ package com.hidiscuss.backend.controller.dto;
 import com.hidiscuss.backend.entity.BaseEntity;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 public class BaseResponseDto {
-    private LocalDateTime createdAt;
-    private LocalDateTime lastModifiedAt;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime lastModifiedAt;
 
     public void setBaseResponse(BaseEntity entity) {
         this.createdAt = entity.getCreatedAt();

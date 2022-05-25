@@ -5,6 +5,7 @@ import com.hidiscuss.backend.entity.ReviewReservation;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class CreateReviewReservationRequestDto {
     @NotNull
@@ -12,6 +13,6 @@ public class CreateReviewReservationRequestDto {
 
     @NotNull
     @Future
-    public LocalDateTime reviewStartDateTime;
+    public ZonedDateTime reviewStartDateTime;
 
 }

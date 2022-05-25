@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @MappedSuperclass
 @EntityListeners(value = {AuditingEntityListener.class})
@@ -17,9 +18,9 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "last_modified_at", nullable = false)
-    private LocalDateTime lastModifiedAt;
+    private ZonedDateTime lastModifiedAt;
 }

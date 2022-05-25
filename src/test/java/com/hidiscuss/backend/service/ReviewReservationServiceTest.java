@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,12 +55,12 @@ public class ReviewReservationServiceTest {
 
     @Test
     void create_fail_when_already_reserved() {
-        LocalDateTime givenTime = getBasisTime();
+        ZonedDateTime givenTime = getBasisTime();
         ReviewReservation givenReviewReservation = ReviewReservation.builder().reviewStartDateTime(givenTime).build();
         User user = User.builder().id(2000L).build();
         Discussion discussion = getDiscussion(null);
-        LocalDateTime afterMinute = givenTime.plusMinutes(1);
-        LocalDateTime beforeMinute = givenTime.minusMinutes(1);
+        ZonedDateTime afterMinute = givenTime.plusMinutes(1);
+        ZonedDateTime beforeMinute = givenTime.minusMinutes(1);
 
         when(reviewReservationRepository.findByDiscussionId(discussion.getId())).thenReturn(List.of(givenReviewReservation));
 
@@ -68,7 +70,7 @@ public class ReviewReservationServiceTest {
 
     @Test
     void create_fail_not_available_times() {
-        LocalDateTime givenTime = getBasisTime();
+        ZonedDateTime givenTime = getBasisTime();
         User user = User.builder().id(2000L).build();
         LiveReviewAvailableTimes.LiveReviewAvailableTime givenAvailableTime = new LiveReviewAvailableTimes.LiveReviewAvailableTime();
         givenAvailableTime.setStart(givenTime.plusHours(1));
@@ -100,8 +102,8 @@ public class ReviewReservationServiceTest {
 //        verify(reviewReservationRepository, times(1)).save(Mockito.any(ReviewReservation.class));
 //    }
 
-    private LocalDateTime getBasisTime() {
-        return LocalDateTime.of(2022, 3, 1, 12, 0);
+    private ZonedDateTime getBasisTime() {
+        return ZonedDateTime.of(LocalDateTime.of(2022, 3, 1, 12, 0), ZoneId.of("JST"));
     }
 
     private Discussion getDiscussion(LiveReviewAvailableTimes liveReviewAvailableTimes) {

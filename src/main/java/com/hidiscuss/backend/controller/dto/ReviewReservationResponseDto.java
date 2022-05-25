@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -17,12 +18,12 @@ public class ReviewReservationResponseDto {
     //private ReviewResponseDto review;
     private DiscussionResponseDto discussion;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
-    private LocalDateTime reviewStartDateTime;
+    private ZonedDateTime reviewStartDateTime;
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;
     private Boolean isdone;
 
-    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone, User user) {
+    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, ZonedDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone, User user) {
         this.id = id;
         this.discussion = discussion;
         this.reviewStartDateTime = reviewStartDateTime;
