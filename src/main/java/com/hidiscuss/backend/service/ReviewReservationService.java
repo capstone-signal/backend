@@ -1,11 +1,7 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.CompleteLiveReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.SendEmailDto;
 import com.hidiscuss.backend.entity.*;
-import com.hidiscuss.backend.repository.DiscussionCodeRepository;
-import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
-import com.hidiscuss.backend.repository.ReviewRepository;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
 import com.hidiscuss.backend.entity.ReviewReservation;
@@ -22,7 +18,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -32,17 +27,19 @@ public class ReviewReservationService {
     public static int REVIEW_SESSION_DURATION_IN_HOURS = 1;
 
     private final ReviewReservationRepository reviewReservationRepository;
-    private final LiveReviewDiffRepository liveReviewDiffRepository;
     private final EmailService emailService;
-    private final ReviewRepository reviewRepository;
-    private final DiscussionCodeRepository discussionCodeRepository;
+    private final ReviewService reviewService;
 
     public List<ReviewReservation> findByDiscussionId(Long discussionId) {
         return reviewReservationRepository.findByDiscussionId(discussionId);
     }
 
-    public List<ReviewReservation> findByDiscussionIdAndUserId(Long userId) {
+    public List<ReviewReservation> findByUserId(Long userId) {
         return reviewReservationRepository.findByUserId(userId);
+    }
+
+    public ReviewReservation findByReservationId(Long resrvationId) {
+        return reviewReservationRepository.findByReservationId(resrvationId);
     }
 
     public ReviewReservation create(
@@ -78,12 +75,20 @@ public class ReviewReservationService {
                 .reviewer(reviewer)
                 .build();
 
+
+        Review review = reviewService.createLiveReivew(reviewReservation);
+
         String revieweeEmail = discussion.getUser().getEmail();
         String reviewerEmail = reviewReservation.getReviewer().getEmail();
 
         emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
         emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
+        reviewReservation.setReview(review);
+        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED))
+        {
+            discussion.setState(DiscussionState.REVIEWING);
+        }
         return reviewReservationRepository.save(reviewReservation);
     }
 
@@ -117,64 +122,12 @@ public class ReviewReservationService {
             return reviewReservationRepository.findById(reservationId).orElse(null);
     }
 
-    public void saveAll(CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
-        Set<String> ids = completeLiveReviewRequestDto.changeCode.keySet();
-
-        for(String id:ids){
-            Long parseId = Long.parseLong(id);
-            LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(parseId).orElse(null);
-            if(liveReviewDiff != null) {
-                liveReviewDiff.setCodeAfter(completeLiveReviewRequestDto.changeCode.get(id));
-                liveReviewDiffRepository.save(liveReviewDiff);
-            }
-        }
-    }
-
-
-    public ReviewReservation createNewLiveReviewAndDiffs(List<Long> discussionCodeIds, ReviewReservation reviewReservation) {
-
-        Review review = Review.builder()
-                .reviewer(reviewReservation.getReviewer())
-                .discussion(reviewReservation.getDiscussion())
-                .reviewType(ReviewType.LIVE)
-                .accepted(false)
-                .build();
-        reviewRepository.save(review);
-
-        List <LiveReviewDiff> liveReviewDiffList =  new ArrayList<>();
-
-        for (Long code : discussionCodeIds) {
-            discussionCodeRepository.findById(code).ifPresent(discussionCode -> liveReviewDiffList.add(
-                    LiveReviewDiff.builder()
-                            .review(review)
-                            .discussionCode(discussionCode)
-                            .codeAfter("null")
-                            .build()
-            ));
-        }
-
-        if(liveReviewDiffList.size() > 0)
-            liveReviewDiffRepository.saveAll(liveReviewDiffList);
-
-        review.setLiveDiffList(liveReviewDiffList);
-        reviewRepository.save(review);
-        reviewReservation.setReview(review);
-        reviewReservationRepository.save(reviewReservation);
-        return reviewReservation;
-    }
-
     public ReviewReservation checkUser(ReviewReservation reviewReservation,Long userId){
-        if(!Objects.equals(reviewReservation.getReviewer().getId(), userId) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), userId)){
-            throw  NoReviewerOrReviewee();
-        }
         if(reviewReservation.getReviewer().getId().equals(userId)){
             reviewReservation.setReviewerParticipated(true);
         } else{
             reviewReservation.setRevieweeParticipated(true);
         }
         return reviewReservation;
-    }
-    private RuntimeException NoReviewerOrReviewee() {
-        return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
 }

@@ -15,23 +15,22 @@ public class ReviewReservationResponseDto {
 
     private Long id;
     private UserResponseDto reviewer;
-    //private ReviewResponseDto review;
+    private ReviewDto review;
     private DiscussionResponseDto discussion;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
     private ZonedDateTime reviewStartDateTime;
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;
-    private Boolean isdone;
 
     private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, ZonedDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, Boolean isdone, User user) {
+
         this.id = id;
         this.discussion = discussion;
         this.reviewStartDateTime = reviewStartDateTime;
         this.reviewerParticipated = reviewerParticipated;
         this.revieweeParticipated = revieweeParticipated;
-        this.isdone = isdone;
         this.reviewer = UserResponseDto.fromEntity(user);
-        //this.review = review;
+        this.review = review;
     }
 
     public static ReviewReservationResponseDto fromEntity(ReviewReservation reviewReservation) {
@@ -41,8 +40,7 @@ public class ReviewReservationResponseDto {
                 reviewReservation.getReviewStartDateTime(),
                 reviewReservation.getReviewerParticipated(),
                 reviewReservation.getRevieweeParticipated(),
-                reviewReservation.getIsdone(),
-                reviewReservation.getReviewer()
-        );
+                reviewReservation.getReviewer(),
+                ReviewDto.fromEntity(reviewReservation.getReview()));
     }
 }

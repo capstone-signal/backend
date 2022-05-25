@@ -26,6 +26,13 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
     }
 
     @Override
+    public ReviewReservation findByReservationId(Long reservationId){
+        return queryFactory.selectFrom(qReviewReservation)
+                .join(qReviewReservation).fetchJoin()
+                .where(qReviewReservation.id.eq(reservationId)).fetchOne();
+    }
+
+    @Override
     public List<ReviewReservation> findByUserId(Long userId){
         ZonedDateTime now = ZonedDateTime.now();
         return queryFactory.selectFrom(qReviewReservation)
