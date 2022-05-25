@@ -1,10 +1,12 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.controller.dto.GetReviewDiffsResponseDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -29,5 +31,9 @@ public class LiveReviewDiffService {
     private RuntimeException NoReviewerOrReviewee() {return new IllegalArgumentException("You are not Reviewee Or Reviewer");}
     private RuntimeException NotFoundLiveDiff() {
         return new IllegalArgumentException("LiveDiff not found");
+    }
+
+    public List<LiveReviewDiff> findByReviewId(Long reviewId) {
+        return liveReviewDiffRepository.findByReviewId(reviewId);
     }
 }

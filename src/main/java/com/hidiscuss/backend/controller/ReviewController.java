@@ -3,6 +3,7 @@ package com.hidiscuss.backend.controller;
 import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
+import com.hidiscuss.backend.service.CommentReviewDiffService;
 import com.hidiscuss.backend.service.LiveReviewDiffService;
 import com.hidiscuss.backend.service.ReviewReservationService;
 import com.hidiscuss.backend.service.ReviewService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/review")
@@ -29,6 +31,7 @@ import javax.validation.Valid;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final CommentReviewDiffService commentReviewDiffService;
     private final LiveReviewDiffService liveReviewDiffService;
     private final ReviewReservationService reviewReservationService;
 
@@ -112,6 +115,19 @@ public class ReviewController {
         reviewReservationService.saveAll(completeLiveReviewRequestDto);
         return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
     }
-
-
+    @GetMapping("diff")
+    @ApiPageable
+    @ApiOperation(value="Diffs 가져오기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "diff들 조회 성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public List<GetReviewDiffsResponseDto> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
+        if (reviewType == ReviewType.COMMENT) {
+            return GetReviewDiffsResponseDto.fromEntityCommentDiffList(commentReviewDiffService.findByReviewId(reviewId));
+        }
+        else
+            return GetReviewDiffsResponseDto.fromEntityLiveDiffList(liveReviewDiffService.findByReviewId(reviewId));
+    }
 }
