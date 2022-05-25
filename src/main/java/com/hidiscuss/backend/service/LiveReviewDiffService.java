@@ -1,13 +1,11 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.dto.GetReviewDiffsResponseDto;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor

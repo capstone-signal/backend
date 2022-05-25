@@ -122,18 +122,19 @@ public class ReviewController {
     }
     @GetMapping("diff")
     @ApiPageable
+    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value="Diffs 가져오기")
     @ApiResponses({
             @ApiResponse(code = 200, message = "diff들 조회 성공"),
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public List<GetReviewDiffsResponseDto> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
+    public List<?> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
         if (reviewType == ReviewType.COMMENT) {
-            return GetReviewDiffsResponseDto.fromEntityCommentDiffList(commentReviewDiffService.findByReviewId(reviewId));
+            return CommentReviewDiffResponseDto.fromEntityList(commentReviewDiffService.findByReviewId(reviewId));
         }
         else
-            return GetReviewDiffsResponseDto.fromEntityLiveDiffList(liveReviewDiffService.findByReviewId(reviewId));
+            return LiveReviewDiffResponseDto.fromEntityList(liveReviewDiffService.findByReviewId(reviewId));
     }
 
     private RuntimeException NoReviewerOrReviewee() {
