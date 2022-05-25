@@ -9,26 +9,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-
 @Service
 @AllArgsConstructor
 public class LiveReviewDiffService {
 
     private final LiveReviewDiffRepository liveReviewDiffRepository;
 
-    public LiveReviewDiff findByIdAndUpdateByCodeAfter(Long diffId, String codeAfter, Long userId) {
+    public LiveReviewDiff findByIdAndUpdateByCodeAfter(Long diffId, String codeAfter) {
 
-        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElse(null);
+        LiveReviewDiff liveReviewDiff = liveReviewDiffRepository.findById(diffId).orElseThrow(this::NotFoundLiveDiff);
         if(liveReviewDiff == null) throw NotFoundLiveDiff();
-        if(!Objects.equals(liveReviewDiff.getReview().getReviewer().getId(), userId) && !Objects.equals(
-                liveReviewDiff.getReview().getDiscussion().getUser().getId(), userId)){
-            throw  NoReviewerOrReviewee();
-        }
         liveReviewDiff.setCodeAfter(codeAfter);
         liveReviewDiffRepository.save(liveReviewDiff);
         return liveReviewDiff;
     }
-    private RuntimeException NoReviewerOrReviewee() {return new IllegalArgumentException("You are not Reviewee Or Reviewer");}
     private RuntimeException NotFoundLiveDiff() {
         return new IllegalArgumentException("LiveDiff not found");
     }

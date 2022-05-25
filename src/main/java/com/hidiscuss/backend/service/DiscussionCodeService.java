@@ -3,6 +3,8 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionCodeRequestDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionCode;
+import com.hidiscuss.backend.entity.LiveReviewDiff;
+import com.hidiscuss.backend.entity.Review;
 import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import lombok.AllArgsConstructor;
@@ -96,6 +98,10 @@ public class DiscussionCodeService {
 
     public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
         return discussionCodeRepository.findByDiscussion(discussion);
+    }
+
+    public List<DiscussionCode> findDiscussionCocde(Discussion discussion) {
+        return  discussionCodeRepository.findByDiscussion(discussion);
     }
 }
 

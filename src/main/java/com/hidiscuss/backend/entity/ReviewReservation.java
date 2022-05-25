@@ -43,9 +43,6 @@ public class ReviewReservation extends BaseEntity {
     @Column(columnDefinition ="boolean default false", name = "reviewee_participated", nullable = false)
     private Boolean revieweeParticipated;
 
-    @Column(columnDefinition ="boolean default false", name = "isdone", nullable = false)
-    private Boolean isdone;
-
     @Builder
     public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, LocalDateTime reviewStartDateTime) {
         this.id = id;
@@ -55,7 +52,6 @@ public class ReviewReservation extends BaseEntity {
         this.reviewStartDateTime = reviewStartDateTime;
         this.reviewerParticipated = false;
         this.revieweeParticipated = false;
-        this.isdone = false;
     }
 
     public Boolean isCompletedReservation() {
