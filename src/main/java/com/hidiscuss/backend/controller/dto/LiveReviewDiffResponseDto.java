@@ -8,7 +8,7 @@ public class LiveReviewDiffResponseDto extends ReviewDiffResponseDto {
     public static LiveReviewDiffResponseDto fromEntity(LiveReviewDiff entity) {
         LiveReviewDiffResponseDto dto = new LiveReviewDiffResponseDto();
         dto.id = entity.getId();
-        dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
+        dto.discussionCode = entity.getDiscussionCode().getId();
         dto.codeAfter = entity.getCodeAfter();
         return dto;
     }
