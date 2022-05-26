@@ -13,6 +13,12 @@ import org.kohsuke.github.GHPullRequestFileDetail;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +55,13 @@ public class DiscussionCodeService {
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(file.getPatch())
+                        .content(getContentFromUrl(file.getRawUrl()))
                         .language(getLanguageFromName(file.getFilename()));
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(file.getPatch())
+                        .content(getContentFromUrl(file.getRawUrl()))
                         .language(getLanguageFromName(file.getFileName()));
             } else {
                 throw new IllegalArgumentException("Unknown file type");
@@ -102,6 +108,24 @@ public class DiscussionCodeService {
 
     public List<DiscussionCode> findDiscussionCocde(Discussion discussion) {
         return  discussionCodeRepository.findByDiscussion(discussion);
+    }
+
+    String getContentFromUrl(URL url) {
+        StringBuffer response = new StringBuffer();
+        try {
+            String line;
+            URLConnection conn = url.openConnection();
+            InputStream is = conn.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            while((line = br.readLine()) != null) {
+                response.append(line);
+                response.append('\n');
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response.toString();
     }
 }
 
