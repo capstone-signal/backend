@@ -16,68 +16,53 @@ import java.util.stream.Collectors;
 public class StyleReviewService {
 
     public List<CreateCommentReviewDiffDto> createStyleReviewDto(List<DiscussionCode> codes) {
-        List<CreateCommentReviewDiffDto> dto = new ArrayList<>();
+        List<CreateCommentReviewDiffDto> dtos = new ArrayList<>();
 
-        // 파일 생성
-        for(int i = 0; i < codes.size(); i++) {
-            createFile(codes.get(i).getContent());
-            StringBuilder sb = executeLint();
-            dto.addAll(createDiffs(sb));
-        }
-
-        return dto.stream()
-                .map((i) -> CreateCommentReviewDiffDto
+        for(DiscussionCode code : codes) {
+            List<String> diffs = executeLint(code.getContent());
+            for(String diff : diffs) {
+                CreateCommentReviewDiffDto dto = CreateCommentReviewDiffDto
                         .builder()
-                        .discussionCode(DiscussionCodeDto.fromEntity(i))
-                        .comment("pypy")
-                        .codeAfter("afaf")
-                        .codeLocate("lolo")
-                        .build()
-                ).collect(Collectors.toList());
-    }
-
-    private void createFile(String code) {
-        try {
-            // 1. 파일 객체 생성
-            File file = new File("src/main/python/test.py");
-            // 2. 파일 존재여부 체크 및 생성
-            if (!file.exists()) {
-                file.createNewFile();
+                        .discussionCode(DiscussionCodeDto.fromEntity(code))
+                        .comment(diff)
+                        .codeAfter("")
+                        .codeLocate("")
+                        .build();
+                dtos.add(dto);
             }
-            // 3. Buffer를 사용해서 File에 write할 수 있는 BufferedWriter 생성
-            FileWriter fw = new FileWriter(file);
-            BufferedWriter writer = new BufferedWriter(fw);
-            // 4. 파일에 쓰기
-            writer.write(code);
-            // 5. BufferedWriter close
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        return dtos;
     }
 
-    private StringBuilder executeLint() {
-        // 린트 수행
-        StringBuilder output = new StringBuilder();
+    private List<String> executeLint(String content) {
+        List<String> output = new ArrayList<>();
+        content = "import requests\n" +
+                "from selenium import webdriver\n" +
+                "import pandas as pd\n" +
+                "import time\n" +
+                "\n" +
+                "options = webdriver.ChromeOptions()\n" +
+                "options.add_experimental_option(\"excludeSwitches\", [\"enable-logging\"])\n" +
+                "\n" +
+                "chromedriver_dir ='C://Blahablah//chromedriver.exe'\n" +
+                "driver = webdriver.Chrome(chromedriver_dir, options = options)\n" +
+                "\n" +
+                "# move to webtoon page\n" +
+                "url = 'https://www.naver.com/'\n" +
+                "driver.get(url)\n" +
+                "time.sleep(0.5)";
         try {
-            // 1. Run script
-            Process process = Runtime.getRuntime().exec("pylint src/main/python/test.py");
-            // 2. Read output
+            Process process = Runtime.getRuntime().exec("echo '"+content+"' | pylint --from-stdin hidiscuss --msg-template='% {line}번째 줄 {column}번째 위치에 {msg} 문제가 발생했습니다. ({msg_id}: {symbol})'");
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
-            // 3. 저장
             String line;
             while ((line = reader.readLine()) != null) {
-                output.append(line);
+                if (line.charAt(0) == '%')
+                    output.add(line);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // 4. 테스트용 출력
         return output;
-    }
-
-    private List<CreateCommentReviewDiffDto> createDiffs(StringBuilder sb) {
-        // string으로 dto 생성 로직
     }
 }

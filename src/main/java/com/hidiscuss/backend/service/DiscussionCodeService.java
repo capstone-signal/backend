@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 @Service
 @AllArgsConstructor
@@ -46,12 +49,14 @@ public class DiscussionCodeService {
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(file.getPatch());
+                        .content(file.getPatch())
+                        .language(getLanguageFromName(file.getFilename()));
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(file.getPatch());
+                        .content(file.getPatch())
+                        .language(getLanguageFromName(file.getFileName()));
             } else {
                 throw new IllegalArgumentException("Unknown file type");
             }
@@ -68,6 +73,31 @@ public class DiscussionCodeService {
 
     public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
         return discussionCodeRepository.findByDiscussion(discussion);
+    }
+
+    private String getLanguageFromName(String filename) {
+        Map<String, String> extLangMap = Map.ofEntries(
+                entry("js", "JavaScript"),
+                entry("ts", "TypeScript"),
+                entry("java", "Java"),
+                entry("py", "Python"),
+                entry("c", "C"),
+                entry("cs", "C#"),
+                entry("cpp", "C++"),
+                entry("html", "HTML"),
+                entry("xml", "XML"),
+                entry("php", "PHP"),
+                entry("json", "JSON"),
+                entry("md", "Markdown"),
+                entry("ps1", "Powershell"),
+                entry("rb", "Ruby"),
+                entry("css", "CSS"),
+                entry("scss", "SCSS"),
+                entry("sass", "SASS"),
+                entry("r", "R")
+        );
+        String language = extLangMap.get(filename.substring(filename.lastIndexOf(".") + 1));
+        return (language == null) ? "etc" : language;
     }
 }
 
