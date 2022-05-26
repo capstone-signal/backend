@@ -22,7 +22,7 @@ public class ReviewReservationResponseDto {
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;
 
-    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, ZonedDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, User user, ReviewResponseDto review ) {
+    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, User user, ReviewResponseDto review ) {
         this.id = id;
         this.discussion = discussion;
         this.reviewStartDateTime = reviewStartDateTime;
