@@ -118,7 +118,7 @@ public class ReviewController {
     })
     public Boolean completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        if(!CheckUser(user.getId(), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+        if(!CheckUser(Long.parseLong(userId), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
             throw NoReviewerOrReviewee();
         reviewService.changeCompleteStates(reviewReservation);
         return true;
