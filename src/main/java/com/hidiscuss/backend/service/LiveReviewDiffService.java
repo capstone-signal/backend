@@ -28,9 +28,8 @@ public class LiveReviewDiffService {
     }
 
     public List<LiveReviewDiff> findByReviewId(Long reviewId) {
-        List<LiveReviewDiff> tmp = new ArrayList<>();
         List<LiveReviewDiff> diffList = liveReviewDiffRepository.findByReviewId(reviewId);
-        if(Objects.equals(diffList, tmp))
+        if(diffList.size() == 0)
             throw NoReviewOrReviewDiff();
         return diffList;
     }

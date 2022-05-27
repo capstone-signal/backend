@@ -50,9 +50,8 @@ public class CommentReviewDiffService {
     }
 
     public List<CommentReviewDiff> findByReviewId(Long reviewId) {
-        List<CommentReviewDiff> tmp = new ArrayList<>();
         List<CommentReviewDiff> diffList = commentReviewDiffRepository.findByReviewId(reviewId);
-        if (Objects.equals(diffList, tmp))
+        if (diffList.size() == 0)
             throw NoReviewOrReviewDiff();
         return diffList;
     }

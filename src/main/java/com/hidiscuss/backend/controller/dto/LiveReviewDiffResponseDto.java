@@ -15,17 +15,4 @@ public class LiveReviewDiffResponseDto extends ReviewDiffResponseDto {
         dto.codeAfter = entity.getCodeAfter();
         return dto;
     }
-
-    public static List<LiveReviewDiffResponseDto> fromEntityList(List<LiveReviewDiff> entityList) {
-        List<LiveReviewDiffResponseDto> dtos = new ArrayList<>();
-
-        for (LiveReviewDiff entity : entityList){
-            LiveReviewDiffResponseDto dto = new LiveReviewDiffResponseDto();
-            dto.id = entity.getId();
-            dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
-            dto.codeAfter = entity.getCodeAfter();
-            dtos.add(dto);
-        }
-        return dtos;
-    }
 }

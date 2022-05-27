@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/review")
@@ -132,18 +133,19 @@ public class ReviewController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public List<? extends ReviewDiffResponseDto> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
-        if (reviewType == ReviewType.COMMENT)
-            return CommentReviewDiffResponseDto.fromEntityList(commentReviewDiffService.findByReviewId(reviewId));
-        else
-           return LiveReviewDiffResponseDto.fromEntityList(liveReviewDiffService.findByReviewId(reviewId));
-
+        if (reviewType == ReviewType.COMMENT){
+            List<CommentReviewDiff> commentReviewDiff = commentReviewDiffService.findByReviewId(reviewId);
+            return commentReviewDiff.stream().map(CommentReviewDiffResponseDto::fromEntity).collect(Collectors.toList());
+        }
+        else{
+            List<LiveReviewDiff> liveReviewDiff = liveReviewDiffService.findByReviewId(reviewId);
+            return liveReviewDiff.stream().map(LiveReviewDiffResponseDto::fromEntity).collect(Collectors.toList());
+        }
     }
 
     private RuntimeException NoReviewerOrReviewee() {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
-
-
 
     private Boolean CheckUser(String userId, User reviewer, Discussion discussion){
         if(!Objects.equals(reviewer.getId(), Long.parseLong(userId)) && !Objects.equals(discussion.getUser().getId(), Long.parseLong(userId))){
