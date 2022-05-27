@@ -5,7 +5,9 @@ import com.hidiscuss.backend.repository.LiveReviewDiffRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +28,14 @@ public class LiveReviewDiffService {
     }
 
     public List<LiveReviewDiff> findByReviewId(Long reviewId) {
-        return liveReviewDiffRepository.findByReviewId(reviewId);
+        List<LiveReviewDiff> tmp = new ArrayList<>();
+        List<LiveReviewDiff> diffList = liveReviewDiffRepository.findByReviewId(reviewId);
+        if(Objects.equals(diffList, tmp))
+            throw NoReviewOrReviewDiff();
+        return diffList;
+    }
+
+    private RuntimeException NoReviewOrReviewDiff() {
+        return new IllegalArgumentException("Wrong ReivewId Or No ReviewDiff");
     }
 }

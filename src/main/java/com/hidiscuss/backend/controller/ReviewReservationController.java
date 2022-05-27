@@ -31,7 +31,6 @@ public class ReviewReservationController {
     private final UserService userService;
 
     @GetMapping("")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "discussion Id를 받아 이미 예약된 리뷰들 반환")
     @ApiResponses({
             @ApiResponse(code = 200, message = "예약된 리뷰들 반환 (없는 경우 포함)"),
@@ -93,7 +92,7 @@ public class ReviewReservationController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal String userId, @RequestBody EnterLiveReivewReservationRequestDto enterLiveReivewReservationRequestDto) {
+    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal String userId) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if (reviewReservation == null) {
             throw NotFoundReservaiton();

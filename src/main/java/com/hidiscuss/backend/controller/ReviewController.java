@@ -26,6 +26,8 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.persistence.Id;
 import javax.swing.text.StyledEditorKit;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -129,17 +131,19 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public List<?> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
-        if (reviewType == ReviewType.COMMENT) {
+    public List<? extends ReviewDiffResponseDto> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
+        if (reviewType == ReviewType.COMMENT)
             return CommentReviewDiffResponseDto.fromEntityList(commentReviewDiffService.findByReviewId(reviewId));
-        }
         else
-            return LiveReviewDiffResponseDto.fromEntityList(liveReviewDiffService.findByReviewId(reviewId));
+           return LiveReviewDiffResponseDto.fromEntityList(liveReviewDiffService.findByReviewId(reviewId));
+
     }
 
     private RuntimeException NoReviewerOrReviewee() {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
+
+
 
     private Boolean CheckUser(String userId, User reviewer, Discussion discussion){
         if(!Objects.equals(reviewer.getId(), Long.parseLong(userId)) && !Objects.equals(discussion.getUser().getId(), Long.parseLong(userId))){

@@ -76,7 +76,7 @@ public class ReviewService {
                     LiveReviewDiff.builder()
                             .review(review)
                             .discussionCode(code)
-                            .codeAfter("Not Reviewed")
+                            .codeAfter(code.getContent())
                             .build()
             );
         }
