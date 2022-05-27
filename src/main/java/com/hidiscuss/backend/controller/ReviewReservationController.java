@@ -28,7 +28,6 @@ public class ReviewReservationController {
 
     private final DiscussionService discussionService;
     private final ReviewReservationService reviewReservationService;
-    private final UserService userService;
 
     @GetMapping("")
     @ApiOperation(value = "discussion Id를 받아 이미 예약된 리뷰들 반환")
@@ -108,7 +107,6 @@ public class ReviewReservationController {
     }
 
     @ApiOperation(value = "ReservaionId로 찾은 Reservaiton 반환")
-    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
             @ApiResponse(code = 200, message = "ReservationId에 맞는 Reservation 반환"),
             @ApiResponse(code = 400, message = "ReservaiotnId가 null 또는 Reservation이 존재하지 않음."),
