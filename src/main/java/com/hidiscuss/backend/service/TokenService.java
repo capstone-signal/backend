@@ -69,7 +69,6 @@ public class TokenService {
     }
 
     public Claims parseJwtToken(String authorizationHeader) {
-
         return Jwts.parser()
                 .setSigningKey(secretKey) // (3)
                 .parseClaimsJws(authorizationHeader) // (4)
