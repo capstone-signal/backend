@@ -1,9 +1,7 @@
 package com.hidiscuss.backend.service;
 
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
-import com.hidiscuss.backend.entity.CommentReviewDiff;
-import com.hidiscuss.backend.entity.DiscussionCode;
-import com.hidiscuss.backend.entity.Review;
+import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.repository.CommentReviewDiffRepository;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -48,5 +47,16 @@ public class CommentReviewDiffService {
         if (list.size() != diffList.size() || codeList.size() == 0)
             throw new EmptyDiscussionCodeException("Some discussion code is missing");
         return commentReviewDiffRepository.saveAll(diffList);
+    }
+
+    public List<CommentReviewDiff> findByReviewId(Long reviewId) {
+        List<CommentReviewDiff> diffList = commentReviewDiffRepository.findByReviewId(reviewId);
+        if (diffList.size() == 0)
+            throw NoReviewOrReviewDiff();
+        return diffList;
+    }
+
+    private RuntimeException NoReviewOrReviewDiff() {
+        return new IllegalArgumentException("Wrong ReivewId Or No ReviewDiff");
     }
 }

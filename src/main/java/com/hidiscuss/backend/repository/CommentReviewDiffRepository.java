@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CommentReviewDiffRepository extends JpaRepository<CommentReviewDiff, Long>, CommentReviewDiffRepositoryCustom{
-    List<CommentReviewDiff> findByReviewId(Long id);
 }

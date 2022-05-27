@@ -28,7 +28,6 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
     @Override
     public ReviewReservation findByReservationId(Long reservationId){
         return queryFactory.selectFrom(qReviewReservation)
-                .join(qReviewReservation).fetchJoin()
                 .where(qReviewReservation.id.eq(reservationId)).fetchOne();
     }
 
