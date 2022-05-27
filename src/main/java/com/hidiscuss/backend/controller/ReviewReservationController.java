@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -79,12 +80,11 @@ public class ReviewReservationController {
     })
     @GetMapping("my")
     public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal User user) {
-        List<ReviewReservation> reviewReservationList = reviewReservationService.findByDiscussionIdAndUserId(user.getId());
+        List<ReviewReservation> reviewReservationList = reviewReservationService.findByUserId(user.getId());
         return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
 
     @PostMapping("participate/{reservationId}")
-    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "User가 참여 버튼을 누르면 discussion, Particioate 상태 변경 후 Review가 없으면 만들어서 반환")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiResponses({
@@ -99,17 +99,34 @@ public class ReviewReservationController {
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
         }
-        reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
-        if (reviewReservation.getReview() == null){
-          reviewReservation = reviewReservationService.createNewLiveReviewAndDiffs(enterLiveReivewReservationRequestDto.discussionCodeIdList,reviewReservation);
+        if(!Objects.equals(reviewReservation.getReviewer().getId(), user.getId()) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), user.getId())){
+            throw  NoReviewerOrReviewee();
         }
+        reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 
     private RuntimeException NotFoundReservaiton() {
         return new IllegalArgumentException("Reservation not found");
     }
+
+    @ApiOperation(value = "ReservaionId로 찾은 Reservaiton 반환")
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ReservationId에 맞는 Reservation 반환"),
+            @ApiResponse(code = 400, message = "ReservaiotnId가 null 또는 Reservation이 존재하지 않음."),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @GetMapping("/{reservationId}")
+    public ReviewReservationResponseDto getReservation(@PathVariable("reservationId") Long reservationId) {
+        ReviewReservation reviewReservation = reviewReservationService.findByReservationId(reservationId);
+        return ReviewReservationResponseDto.fromEntity(reviewReservation);
+    }
+
     private RuntimeException NotFoundDiscussion() {
         return new IllegalArgumentException("Discussion not found");
+    }
+    private RuntimeException NoReviewerOrReviewee() {
+        return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
 }

@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.hibernate.engine.internal.CacheHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,7 +22,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.Id;
+import javax.swing.text.StyledEditorKit;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/review")
@@ -73,11 +78,11 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId
+    public Page<ReviewResponseDto> getReviews(@RequestParam("discussionId") Long discussionId
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
-        return entityPage.map(ReviewDto::fromEntity);
+        return entityPage.map(ReviewResponseDto::fromEntity);
     }
 
     @PutMapping("livediff/{diffId}")
@@ -89,14 +94,16 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "해당 LiveDiff가 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public LiveReviewDiffResponseDto updateFocusedDiff(@PathVariable("diffId") Long diffId
-            , @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto
-            , @AuthenticationPrincipal User user) {
-        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId, updateFocusedDiffRequestDto.codeAfter, user.getId());
-        return LiveReviewDiffResponseDto.fromEntity(liveReviewDiff);
+    public Boolean updateFocusedDiff(@PathVariable("diffId") Long diffId
+                                     , @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto
+                                     , @AuthenticationPrincipal User user) {
+        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter);
+        if (!CheckUser(user.getId(), liveReviewDiff.getReview().getReviewer(), liveReviewDiff.getReview().getDiscussion()))
+            throw NoReviewerOrReviewee();
+        return true;
     }
 
-    @PutMapping("review/complete/{reviewReservationId}")
+    @PutMapping("complete/{reviewReservationId}")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "라이브리뷰 완료")
     @ApiResponses({
@@ -105,14 +112,34 @@ public class ReviewController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId
-            , @RequestBody CompleteLiveReviewRequestDto completeLiveReviewRequestDto) {
+                                                            , @AuthenticationPrincipal User user) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
-            reviewReservation.getDiscussion().complete();
-        }
-        reviewReservationService.saveAll(completeLiveReviewRequestDto);
+        if(!CheckUser(user.getId(), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+            throw NoReviewerOrReviewee();
+        reviewService.changeCompleteStates(reviewReservation);
         return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
     }
 
+//    @GetMapping("diff")
+//    @ApiPageable
+//    @ApiOperation(value=".")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "review page 조회 성공"),
+//            @ApiResponse(code = 400, message = "잘못된 요청"),
+//            @ApiResponse(code = 500, message = "서버 오류")
+//    })
+//    public List<LiveReviewDiff> getDiff(@RequestParam("reviewId") Long reviewId) {
+//
+//    }
 
+    private RuntimeException NoReviewerOrReviewee() {
+        return new IllegalArgumentException("You are not Reviewee Or Reviewer");
+    }
+
+    private Boolean CheckUser(String userId, User reviewer, Discussion discussion){
+        if(!Objects.equals(reviewer.getId(), Long.parseLong(userId)) && !Objects.equals(discussion.getUser().getId(), Long.parseLong(userId))){
+            return false;
+        }
+        return true;
+    }
 }

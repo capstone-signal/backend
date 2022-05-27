@@ -33,7 +33,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     @Override
     public Page<Review> findAllByDiscussionIdFetch(Long discussionId, Pageable pageable) {
         List<Review> result = queryFactory.selectFrom(qReview)
-                .where(qReview.discussion.id.eq(discussionId))
+                .where(qReview.discussion.id.eq(discussionId).and(qReview.isdone.eq(true)))
                 .join(qReview.reviewer).fetchJoin()
 //                .join(qReview.commentDiffList).fetchJoin()
 //                .join(qReview.liveDiffList).fetchJoin()
@@ -44,7 +44,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch();
 
         long totalSize = queryFactory.selectFrom(qReview)
-                .where(qReview.discussion.id.eq(discussionId))
+                .where(qReview.discussion.id.eq(discussionId).and(qReview.isdone.eq(true)))
                 .fetch().size();
 
         return new PageImpl<>(result, pageable, totalSize);

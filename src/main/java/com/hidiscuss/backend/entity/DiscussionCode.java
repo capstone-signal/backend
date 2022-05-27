@@ -3,6 +3,8 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -18,6 +20,7 @@ public class DiscussionCode extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "discussion_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Discussion discussion;
 
     @Column(name = "filename", nullable = false)

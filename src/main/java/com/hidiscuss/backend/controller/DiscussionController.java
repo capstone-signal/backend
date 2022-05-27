@@ -55,9 +55,9 @@ public class DiscussionController {
             }
         }
 
-        if (createDiscussionRequestDto.usePriority) {
-            // rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
-        }
+//        if (createDiscussionRequestDto.usePriority) {
+//             rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
+//        }
         Discussion discussion = discussionService.create(createDiscussionRequestDto, user);
         return DiscussionResponseDto.fromEntity(discussion);
     }
@@ -109,7 +109,7 @@ public class DiscussionController {
         return discussionService.delete(discussion, user);
     }
 
-    @PutMapping("/{discussionId}")
+    @PutMapping("/{discussionId}/complete")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 완료")
     @ApiResponses({

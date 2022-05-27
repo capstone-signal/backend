@@ -24,6 +24,8 @@ public class ReviewService {
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
     private final CommentReviewDiffService commentReviewDiffService;
+    private final DiscussionCodeService discussionCodeService;
+    private final LiveReviewDiffRepository liveReviewDiffRepository;
 
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
@@ -31,7 +33,6 @@ public class ReviewService {
                 .findByIdFetchOrNull(dto.discussionId);
         if (discussion == null)
             throw new NoSuchElementException("Discussion not found");
-
         if (discussion.getUser().getId().equals(user.getId()))
             throw new UserAuthorityException("Cannot review your own code");
         Review review = Review.builder()
@@ -40,11 +41,52 @@ public class ReviewService {
                 .commentDiffList(new ArrayList<>())
                 .reviewType(reviewType)
                 .accepted(false)
+                .isdone(true)
                 .build();
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
+//        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED)) {
+            discussion.reviewing();
+//        }
         return review;
+    }
+
+    @Transactional
+    public Review createLiveReivew (ReviewReservation reviewReservation)
+    {
+        Review review = Review.builder()
+                .reviewer(reviewReservation.getReviewer())
+                .discussion(reviewReservation.getDiscussion())
+                .liveDiffList(new ArrayList<>())
+                .reviewType(ReviewType.LIVE)
+                .threadList(new ArrayList<>())
+                .isdone(false)
+                .accepted(false)
+                .build();
+        reviewRepository.save(review);
+
+        List <DiscussionCode> discussionCodeList = discussionCodeService.findDiscussionCocde(reviewReservation.getDiscussion());
+
+        List<LiveReviewDiff> liveReviewDiffList = new ArrayList<>();
+
+        for (DiscussionCode code : discussionCodeList) {
+            liveReviewDiffList.add(
+                    LiveReviewDiff.builder()
+                            .review(review)
+                            .discussionCode(code)
+                            .codeAfter("Not Reviewed")
+                            .build()
+            );
+        }
+
+        if(liveReviewDiffList.size() > 0)
+            liveReviewDiffRepository.saveAll(liveReviewDiffList);
+        review.setLiveDiffList(liveReviewDiffList);
+        reviewRepository.save(review);
+
+        return review;
+
     }
 
     public ReviewThread createThread(User user, CreateThreadRequestDto dto, Review review) {
@@ -65,5 +107,12 @@ public class ReviewService {
 
     public Page<Review> findAllByDiscussionIdFetch(Long id, PageRequest pageable) {
         return reviewRepository.findAllByDiscussionIdFetch(id, pageable);
+    }
+
+    public void changeCompleteStates(ReviewReservation reviewReservation) {
+        if(reviewReservation.getDiscussion().getState() == DiscussionState.NOT_REVIEWED) {
+            reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
+        }
+        reviewReservation.getReview().setIsdone(Boolean.TRUE);
     }
 }
