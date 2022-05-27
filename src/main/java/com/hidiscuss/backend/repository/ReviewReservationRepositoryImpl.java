@@ -34,7 +34,7 @@ public class ReviewReservationRepositoryImpl implements ReviewReservationReposit
 
     @Override
     public List<ReviewReservation> findByUserId(Long userId){
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         return queryFactory.selectFrom(qReviewReservation)
                 .join(qReviewReservation.discussion).fetchJoin()
                 .join(qReviewReservation.reviewer).fetchJoin()
