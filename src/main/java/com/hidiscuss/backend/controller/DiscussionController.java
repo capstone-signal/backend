@@ -29,7 +29,7 @@ public class DiscussionController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured(SecurityConfig.DEFAULT_ROLE)
+//    @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 생성")
     @ApiResponses({
             @ApiResponse(code = 201, message = "새로운 Discussion 생성 성공"),

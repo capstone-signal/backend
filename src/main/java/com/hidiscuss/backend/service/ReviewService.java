@@ -54,7 +54,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review createLiveReivew (ReviewReservation reviewReservation)
+    public Review createLiveReview (ReviewReservation reviewReservation)
     {
         Review review = Review.builder()
                 .reviewer(reviewReservation.getReviewer())
@@ -67,8 +67,7 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        List <DiscussionCode> discussionCodeList = discussionCodeService.findDiscussionCocde(reviewReservation.getDiscussion());
-
+        List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(reviewReservation.getDiscussion());
         List<LiveReviewDiff> liveReviewDiffList = new ArrayList<>();
 
         for (DiscussionCode code : discussionCodeList) {

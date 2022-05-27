@@ -76,7 +76,7 @@ public class ReviewReservationService {
                 .build();
 
 
-        Review review = reviewService.createLiveReivew(reviewReservation);
+        Review review = reviewService.createLiveReview(reviewReservation);
 
         String revieweeEmail = discussion.getUser().getEmail();
         String reviewerEmail = reviewReservation.getReviewer().getEmail();

@@ -1,5 +1,8 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.controller.ReviewController;
+import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
+import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
 import com.hidiscuss.backend.entity.*;
@@ -12,15 +15,16 @@ import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestFileDetail;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import java.util.Optional;
 
 @Service
@@ -34,6 +38,8 @@ public class DiscussionService {
     private final DiscussionCodeService discussionCodeService;
     private final DiscussionTagService discussionTagService;
     private final ReviewReservationService reviewReservationService;
+    private final ReviewService reviewService;
+    private final StyleReviewService styleReviewService;
 
     public Discussion create(
             CreateDiscussionRequestDto dto,
@@ -41,6 +47,8 @@ public class DiscussionService {
     ) {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
         discussion = discussionRepository.save(discussion);
+        List<DiscussionCode> codes = new ArrayList<>();
+        User autoBot = User.builder().id(9999L).build();
 
         // Processing Tag
         discussion.setTags(discussionTagService.create(discussion, dto.tagIds));
@@ -49,16 +57,23 @@ public class DiscussionService {
             case "PR":
                 GHPullRequest pr = githubService.getPullRequestById(Long.parseLong(dto.gitRepositoryId), Integer.parseInt(dto.gitNodeId));
                 List<GHPullRequestFileDetail> prFiles = githubService.getFilesByPullRequest(pr);
-                discussionCodeService.createFromFiles(discussion, prFiles);
+                codes = discussionCodeService.createFromFiles(discussion, prFiles);
                 break;
             case "COMMIT":
                 GHCommit commit = githubService.getCommitById(Long.parseLong(dto.gitRepositoryId), dto.gitNodeId);
                 List<GHCommit.File> commitFiles = githubService.getFilesByCommit(commit);
-                discussionCodeService.createFromFiles(discussion, commitFiles);
+                codes = discussionCodeService.createFromFiles(discussion, commitFiles);
                 break;
             case "DIRECT":
-                discussionCodeService.createFromDirect(discussion, dto.codes);
+                codes = discussionCodeService.createFromDirect(discussion, dto.codes);
                 break;
+        }
+
+        List<DiscussionCode> pyCodes = codes.stream().filter(code -> code.getLanguage().equals("Python")).collect(Collectors.toList());
+        if (!pyCodes.isEmpty()) {
+            List<CreateCommentReviewDiffDto> diffList = styleReviewService.createStyleReviewDto(pyCodes);
+            CreateCommentReviewRequestDto styleReviewDto = new CreateCommentReviewRequestDto(discussion.getId(), diffList);
+            reviewService.createCommentReview(autoBot, styleReviewDto, ReviewType.COMMENT);
         }
         return discussion;
     }
