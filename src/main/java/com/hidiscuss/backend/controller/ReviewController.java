@@ -136,8 +136,8 @@ public class ReviewController {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
 
-    private Boolean CheckUser(String userId, User reviewer, Discussion discussion){
-        if(!Objects.equals(reviewer.getId(), Long.parseLong(userId)) && !Objects.equals(discussion.getUser().getId(), Long.parseLong(userId))){
+    private Boolean CheckUser(Long userId, User reviewer, Discussion discussion){
+        if(!Objects.equals(reviewer.getId(), userId) && !Objects.equals(discussion.getUser().getId(), userId)){
             return false;
         }
         return true;
