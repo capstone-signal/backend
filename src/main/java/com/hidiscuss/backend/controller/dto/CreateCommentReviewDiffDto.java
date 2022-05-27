@@ -4,6 +4,7 @@ import com.hidiscuss.backend.entity.CommentReviewDiff;
 import com.hidiscuss.backend.entity.DiscussionCode;
 import com.hidiscuss.backend.entity.Review;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCommentReviewDiffDto {

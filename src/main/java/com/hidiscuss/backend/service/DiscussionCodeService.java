@@ -3,8 +3,6 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionCodeRequestDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionCode;
-import com.hidiscuss.backend.entity.LiveReviewDiff;
-import com.hidiscuss.backend.entity.Review;
 import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import lombok.AllArgsConstructor;
@@ -16,12 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +41,7 @@ public class DiscussionCodeService {
         if (codes.size() == 0) {
            throw new EmptyDiscussionCodeException("No codes found");
         }
-        return discussionCodeRepository.saveAll(codes); // TEST TODO : bulk save
+        return discussionCodeRepository.saveAll(codes);
     }
 
     public List<DiscussionCode> createFromFiles(Discussion discussion, List<?> files) {
@@ -107,10 +100,6 @@ public class DiscussionCodeService {
 
     public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
         return discussionCodeRepository.findByDiscussion(discussion);
-    }
-
-    public List<DiscussionCode> findDiscussionCocde(Discussion discussion) {
-        return  discussionCodeRepository.findByDiscussion(discussion);
     }
 
     String getContentFromUrl(URL url) {

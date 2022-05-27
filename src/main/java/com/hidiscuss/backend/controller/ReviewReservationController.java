@@ -100,7 +100,7 @@ public class ReviewReservationController {
             throw NotFoundReservaiton();
         }
         if(!Objects.equals(reviewReservation.getReviewer().getId(), user.getId()) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), user.getId())){
-            throw  NoReviewerOrReviewee();
+            throw NoReviewerOrReviewee();
         }
         reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
@@ -126,6 +126,7 @@ public class ReviewReservationController {
     private RuntimeException NotFoundDiscussion() {
         return new IllegalArgumentException("Discussion not found");
     }
+
     private RuntimeException NoReviewerOrReviewee() {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
