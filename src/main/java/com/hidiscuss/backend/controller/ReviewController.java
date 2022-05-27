@@ -53,8 +53,7 @@ public class ReviewController {
     })
     public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType
             , @RequestBody @Valid CreateCommentReviewRequestDto requestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+            , @AuthenticationPrincipal User user) {
         Review review = reviewService.createCommentReview(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
     }
@@ -70,8 +69,7 @@ public class ReviewController {
     })
     public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId
             , @RequestBody @Valid CreateThreadRequestDto requestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+            , @AuthenticationPrincipal User user) {
         Review review = reviewService.findByIdFetchOrNull(reviewId);
         ReviewThread reviewThread = reviewService.createThread(user, requestDto, review);
         return ThreadResponseDto.fromEntity(reviewThread);
@@ -101,9 +99,11 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "해당 LiveDiff가 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public Boolean updateFocusedDiff(@PathVariable("diffId") Long diffId, @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto, @AuthenticationPrincipal String userId) {
+    public Boolean updateFocusedDiff(@PathVariable("diffId") Long diffId
+                                     , @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto
+                                     , @AuthenticationPrincipal User user) {
         LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter);
-        if (!CheckUser(userId, liveReviewDiff.getReview().getReviewer(), liveReviewDiff.getReview().getDiscussion()))
+        if (!CheckUser(user.getId(), liveReviewDiff.getReview().getReviewer(), liveReviewDiff.getReview().getDiscussion()))
             throw NoReviewerOrReviewee();
         return true;
     }
@@ -118,7 +118,7 @@ public class ReviewController {
     })
     public Boolean completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        if(!CheckUser(userId, reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+        if(!CheckUser(user.getId(), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
             throw NoReviewerOrReviewee();
         reviewService.changeCompleteStates(reviewReservation);
         return true;
@@ -147,8 +147,8 @@ public class ReviewController {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
 
-    private Boolean CheckUser(String userId, User reviewer, Discussion discussion){
-        if(!Objects.equals(reviewer.getId(), Long.parseLong(userId)) && !Objects.equals(discussion.getUser().getId(), Long.parseLong(userId))){
+    private Boolean CheckUser(Long userId, User reviewer, Discussion discussion){
+        if(!Objects.equals(reviewer.getId(), userId) && !Objects.equals(discussion.getUser().getId(), userId)){
             return false;
         }
         return true;
