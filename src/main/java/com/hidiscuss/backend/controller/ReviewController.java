@@ -148,9 +148,6 @@ public class ReviewController {
     }
 
     private Boolean CheckUser(Long userId, User reviewer, Discussion discussion){
-        if(!Objects.equals(reviewer.getId(), userId) && !Objects.equals(discussion.getUser().getId(), userId)){
-            return false;
-        }
-        return true;
+        return Objects.equals(reviewer.getId(), userId) || Objects.equals(discussion.getUser().getId(), userId);
     }
 }
