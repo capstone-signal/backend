@@ -50,7 +50,7 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
             userRepository.save(user);
             newUser = user;
         }
-        Token token = tokenService.generateToken(oAuth2User.getName(),gitaccessToken, newUser.getId());
+        Token token = tokenService.generateToken(oAuth2User.getName(),gitaccessToken, String.valueOf(newUser.getId()));
 
         Cookie accessToken = new Cookie("accessToken", token.getToken());
         Cookie refreshToken = new Cookie("refreshToken", token.getRefreshToken());
