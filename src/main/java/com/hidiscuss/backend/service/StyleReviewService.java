@@ -3,12 +3,16 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
 import com.hidiscuss.backend.controller.dto.DiscussionCodeDto;
 import com.hidiscuss.backend.entity.DiscussionCode;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,16 +21,17 @@ public class StyleReviewService {
 
     public List<CreateCommentReviewDiffDto> createStyleReviewDto(List<DiscussionCode> codes) {
         List<CreateCommentReviewDiffDto> dtos = new ArrayList<>();
-
         for(DiscussionCode code : codes) {
-            List<String> diffs = executeLint(code.getContent());
-            for(String diff : diffs) {
+            List<Map<String, String>> diffs = executeLint(code.getContent());
+            for(Map<String, String> diff : diffs) {
+                String comment = diff.get("line") + "번째 줄 " + diff.get("column") + "번째 위치에 " + diff.get("msg") + " 문제가 발생했습니다. (" + diff.get("msg_id") + " : " + diff.get("symbol") + ")";
+                String codeLocate = getCodeLocate(code.getContent(), diff);
                 CreateCommentReviewDiffDto dto = CreateCommentReviewDiffDto
                         .builder()
                         .discussionCode(DiscussionCodeDto.fromEntity(code))
-                        .comment(diff)
+                        .comment(comment)
                         .codeAfter("")
-                        .codeLocate("")
+                        .codeLocate(codeLocate)
                         .build();
                 dtos.add(dto);
             }
@@ -34,33 +39,40 @@ public class StyleReviewService {
         return dtos;
     }
 
-    private List<String> executeLint(String content) {
-        List<String> output = new ArrayList<>();
-        content = "import requests\n" +
-                "from selenium import webdriver\n" +
-                "import pandas as pd\n" +
-                "import time\n" +
-                "\n" +
-                "options = webdriver.ChromeOptions()\n" +
-                "options.add_experimental_option(\"excludeSwitches\", [\"enable-logging\"])\n" +
-                "\n" +
-                "chromedriver_dir ='C://Blahablah//chromedriver.exe'\n" +
-                "driver = webdriver.Chrome(chromedriver_dir, options = options)\n" +
-                "\n" +
-                "# move to webtoon page\n" +
-                "url = 'https://www.naver.com/'\n" +
-                "driver.get(url)\n" +
-                "time.sleep(0.5)";
+    private String getCodeLocate(String code, Map<String, String> diff) {
+        Integer line = Integer.parseInt(diff.get("line"));
+        Integer column = Integer.parseInt(diff.get("column"));
+        Integer sum = 0;
+        
+        String byLine[] = code.split("\n");
+        for (int i = 0; i < line - 1; i++) {
+            sum += byLine[i].length() + 1;
+        }
+        sum += column;
+        
+        return sum + "," + (sum + 1);
+    }
+
+    private List<Map<String, String>> executeLint(String content) {
+        List<Map<String, String>> output = new ArrayList<>();
         try {
-            Process process = Runtime.getRuntime().exec("echo '"+content+"' | pylint --from-stdin hidiscuss --msg-template='% {line}번째 줄 {column}번째 위치에 {msg} 문제가 발생했습니다. ({msg_id}: {symbol})'");
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+            ProcessBuilder source = new ProcessBuilder("bash", "-c", "echo \"" + content + "\" | pylint --from-stdin hidiscuss --msg-template='%:{line}:{column}:{msg}:{msg_id}:{symbol}'");
+            Process p = source.start();
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.charAt(0) == '%')
-                    output.add(line);
+            while ((line = stdout.readLine()) != null) {
+                if (line.length() != 0 && line.charAt(0) == '%') {
+                    String getStr[] = line.split(":");
+                    Map<String, String> map = new HashMap<>();
+                    map.put("line", getStr[1]);
+                    map.put("column", getStr[2]);
+                    map.put("msg", getStr[3]);
+                    map.put("msg_id", getStr[4]);
+                    map.put("symbol", getStr[5]);
+                    output.add(map);
+                }
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
         return output;
