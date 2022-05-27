@@ -61,6 +61,6 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
         response.addCookie(accessToken);
         response.addCookie(refreshToken);
 
-        getRedirectStrategy().sendRedirect(request, response, homeurl );
+        getRedirectStrategy().sendRedirect(request, response, homeurl);
     }
 }

@@ -44,7 +44,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch();
 
         long totalSize = queryFactory.selectFrom(qReview)
-                .where(qReview.discussion.id.eq(discussionId))
+                .where(qReview.discussion.id.eq(discussionId).and(qReview.isdone.eq(true)))
                 .fetch().size();
 
         return new PageImpl<>(result, pageable, totalSize);

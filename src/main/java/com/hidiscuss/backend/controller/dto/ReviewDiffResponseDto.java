@@ -11,7 +11,7 @@ public class ReviewDiffResponseDto extends BaseResponseDto {
     public Long id;
 
     @NotNull
-    public DiscussionCodeDto discussionCode;
+    public Long discussionCode;
 
     @NotNull
     public String codeAfter;

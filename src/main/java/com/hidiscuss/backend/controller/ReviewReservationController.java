@@ -57,10 +57,9 @@ public class ReviewReservationController {
     })
     public ReviewReservationResponseDto addReviewReservation(
             @RequestBody @Valid CreateReviewReservationRequestDto createReviewReservationRequestDto
-            , @AuthenticationPrincipal String userId
+            , @AuthenticationPrincipal User user
     ) {
         Discussion discussion = discussionService.findByIdOrNull(createReviewReservationRequestDto.discussionId);
-        User user = userService.findById(Long.parseLong(userId));
         if (discussion == null) { // 존재하지 않는 Discussion
             throw NotFoundDiscussion();
         }
@@ -79,8 +78,8 @@ public class ReviewReservationController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("my")
-    public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal String userId) {
-        List<ReviewReservation> reviewReservationList = reviewReservationService.findByUserId(Long.parseLong(userId));
+    public List<ReviewReservationResponseDto> getMyReservedReservaiton(@AuthenticationPrincipal User user) {
+        List<ReviewReservation> reviewReservationList = reviewReservationService.findByUserId(user.getId());
         return reviewReservationList.stream().map(ReviewReservationResponseDto::fromEntity).collect(Collectors.toList());
     }
 
@@ -97,10 +96,10 @@ public class ReviewReservationController {
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
         }
-        if(!Objects.equals(reviewReservation.getReviewer().getId(), Long.parseLong(userId)) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), Long.parseLong(userId))){
+        if(!Objects.equals(reviewReservation.getReviewer().getId(), user.getId()) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), user.getId())){
             throw  NoReviewerOrReviewee();
         }
-        reviewReservation = reviewReservationService.checkUser(reviewReservation,Long.parseLong(userId));
+        reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 

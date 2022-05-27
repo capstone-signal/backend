@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,10 +34,8 @@ public class LiveReviewAvailableTimes {
     @Getter
     @Setter
     public static class LiveReviewAvailableTime {
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
-        private LocalDateTime start;
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
-        private LocalDateTime end;
+        private ZonedDateTime start;
+        private ZonedDateTime end;
 
         @Override
         public boolean equals(Object o) {
