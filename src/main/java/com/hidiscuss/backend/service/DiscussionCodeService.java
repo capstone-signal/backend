@@ -10,7 +10,10 @@ import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequestFileDetail;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -111,21 +114,12 @@ public class DiscussionCodeService {
     }
 
     String getContentFromUrl(URL url) {
-        StringBuffer response = new StringBuffer();
-        try {
-            String line;
-            URLConnection conn = url.openConnection();
-            InputStream is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            while((line = br.readLine()) != null) {
-                response.append(line);
-                response.append('\n');
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response.toString();
+        RestTemplate restTemplate = new RestTemplate();
+        String urlStr = url.toString();
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(urlStr, String.class);
+        if (responseEntity.getStatusCode() != HttpStatus.OK)
+            throw new RuntimeException();
+        return responseEntity.getBody();
     }
 }
 
