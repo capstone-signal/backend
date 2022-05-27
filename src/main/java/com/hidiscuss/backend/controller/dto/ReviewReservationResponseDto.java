@@ -14,14 +14,14 @@ public class ReviewReservationResponseDto {
 
     private Long id;
     private UserResponseDto reviewer;
-    private ReviewDto review;
+    private ReviewResponseDto review;
     private DiscussionResponseDto discussion;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
     private LocalDateTime reviewStartDateTime;
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;
 
-    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, User user, ReviewDto review ) {
+    private ReviewReservationResponseDto(Long id, DiscussionResponseDto discussion, LocalDateTime reviewStartDateTime, Boolean reviewerParticipated, Boolean revieweeParticipated, User user, ReviewResponseDto review ) {
         this.id = id;
         this.discussion = discussion;
         this.reviewStartDateTime = reviewStartDateTime;
@@ -39,6 +39,6 @@ public class ReviewReservationResponseDto {
                 reviewReservation.getReviewerParticipated(),
                 reviewReservation.getRevieweeParticipated(),
                 reviewReservation.getReviewer(),
-                ReviewDto.fromEntity(reviewReservation.getReview()));
+                ReviewResponseDto.fromEntity(reviewReservation.getReview()));
     }
 }
