@@ -39,10 +39,4 @@ public class User extends BaseEntity {
         this.email = email;
         this.point = point;
     }
-
-    public User(Claims claims) {
-        this.id = Long.valueOf(claims.get("userId").toString());
-        this.name = claims.get("sub").toString();
-        this.role = claims.get("role").toString();
-    }
 }
