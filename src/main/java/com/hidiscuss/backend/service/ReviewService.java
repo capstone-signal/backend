@@ -26,6 +26,7 @@ public class ReviewService {
     private final CommentReviewDiffService commentReviewDiffService;
     private final DiscussionCodeService discussionCodeService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
+    private final ReviewReservationRepository reviewReservationRepository;
 
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
@@ -114,5 +115,7 @@ public class ReviewService {
             reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
         }
         reviewReservation.getReview().setIsdone(Boolean.TRUE);
+        discussionRepository.save(reviewReservation.getDiscussion());
+        reviewReservationRepository.save(reviewReservation);
     }
 }

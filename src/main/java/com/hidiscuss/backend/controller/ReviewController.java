@@ -113,12 +113,12 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
+    public Boolean completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if(!CheckUser(userId, reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
             throw NoReviewerOrReviewee();
         reviewService.changeCompleteStates(reviewReservation);
-        return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
+        return true;
     }
     @GetMapping("diff")
     @ApiPageable
