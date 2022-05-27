@@ -17,7 +17,6 @@ public class ReviewReservationResponseDto {
     private UserResponseDto reviewer;
     private ReviewResponseDto review;
     private DiscussionResponseDto discussion;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="Asia/Seoul")
     private ZonedDateTime reviewStartDateTime;
     private Boolean reviewerParticipated;
     private Boolean revieweeParticipated;

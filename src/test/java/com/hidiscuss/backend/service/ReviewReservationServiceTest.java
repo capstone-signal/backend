@@ -103,7 +103,7 @@ public class ReviewReservationServiceTest {
 //    }
 
     private ZonedDateTime getBasisTime() {
-        return ZonedDateTime.of(LocalDateTime.of(2022, 3, 1, 12, 0), ZoneId.of("JST"));
+        return ZonedDateTime.of(LocalDateTime.of(2022, 3, 1, 12, 0), ZoneId.of("KST"));
     }
 
     private Discussion getDiscussion(LiveReviewAvailableTimes liveReviewAvailableTimes) {
