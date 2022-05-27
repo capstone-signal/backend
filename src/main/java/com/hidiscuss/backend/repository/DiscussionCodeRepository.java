@@ -14,4 +14,6 @@ import java.util.Optional;
 public interface DiscussionCodeRepository extends JpaRepository<DiscussionCode, Long>, DiscussionCodeRepositoryCustom {
 
     List<DiscussionCode> findByDiscussion(Discussion discussion);
+
+    void deleteByDiscussion(Discussion discussion);
 }

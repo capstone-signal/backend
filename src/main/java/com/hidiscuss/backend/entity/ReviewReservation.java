@@ -3,9 +3,12 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +25,8 @@ public class ReviewReservation extends BaseEntity {
     private User reviewer;
 
     @ManyToOne
-    @JoinColumn(name = "review_id", nullable = true)
+    @Setter
+    @JoinColumn(name = "review_id")
     private Review review;
 
     @ManyToOne
@@ -30,19 +34,18 @@ public class ReviewReservation extends BaseEntity {
     private Discussion discussion;
 
     @Column(name = "review_start_date", nullable = false)
-    private LocalDateTime reviewStartDateTime;
+    private ZonedDateTime reviewStartDateTime;
 
+    @Setter
     @Column(columnDefinition ="boolean default false", name = "reviewer_participated", nullable = false)
     private Boolean reviewerParticipated;
 
+    @Setter
     @Column(columnDefinition ="boolean default false", name = "reviewee_participated", nullable = false)
     private Boolean revieweeParticipated;
 
-    @Column(columnDefinition ="boolean default false", name = "isdone", nullable = false)
-    private Boolean isdone;
-
     @Builder
-    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, LocalDateTime reviewStartDateTime) {
+    public ReviewReservation(Long id, User reviewer, Review review, Discussion discussion, ZonedDateTime reviewStartDateTime) {
         this.id = id;
         this.reviewer = reviewer;
         this.review = review;
@@ -50,6 +53,10 @@ public class ReviewReservation extends BaseEntity {
         this.reviewStartDateTime = reviewStartDateTime;
         this.reviewerParticipated = false;
         this.revieweeParticipated = false;
-        this.isdone = false;
+    }
+
+    public Boolean isCompletedReservation() {
+        // TODO: isDone이 true인 것과 or연산
+        return reviewStartDateTime.plusHours(1).isBefore(ZonedDateTime.now());
     }
 }

@@ -37,7 +37,7 @@ public class CommentReviewDiffService {
                                         .review(review)
                                         .discussionCode(codeList.get(j))
                                         .codeAfter(tmpDto.getCodeAfter())
-                                        .codeLocate(tmpDto.getCodeLocate())
+                                        .codeLocate(CreateCommentReviewDiffDto.getCodeLocateString(tmpDto.getCodeLocate()))
                                         .comment(tmpDto.getComment())
                                         .build());
                         break;

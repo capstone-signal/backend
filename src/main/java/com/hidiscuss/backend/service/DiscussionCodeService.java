@@ -3,16 +3,18 @@ package com.hidiscuss.backend.service;
 import com.hidiscuss.backend.controller.dto.CreateDiscussionCodeRequestDto;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.DiscussionCode;
-import com.hidiscuss.backend.entity.Status;
 import com.hidiscuss.backend.exception.EmptyDiscussionCodeException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
-import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestFileDetail;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +51,13 @@ public class DiscussionCodeService {
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(file.getPatch())
+                        .content(getContentFromUrl(file.getRawUrl()))
                         .language(getLanguageFromName(file.getFilename()));
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(file.getPatch())
+                        .content(getContentFromUrl(file.getRawUrl()))
                         .language(getLanguageFromName(file.getFileName()));
             } else {
                 throw new IllegalArgumentException("Unknown file type");
@@ -69,10 +71,6 @@ public class DiscussionCodeService {
             throw new EmptyDiscussionCodeException("No codes found");
         }
         return discussionCodeRepository.saveAll(codes);
-    }
-
-    public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
-        return discussionCodeRepository.findByDiscussion(discussion);
     }
 
     private String getLanguageFromName(String filename) {
@@ -98,6 +96,19 @@ public class DiscussionCodeService {
         );
         String language = extLangMap.get(filename.substring(filename.lastIndexOf(".") + 1));
         return (language == null) ? "etc" : language;
+    }
+
+    public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
+        return discussionCodeRepository.findByDiscussion(discussion);
+    }
+
+    String getContentFromUrl(URL url) {
+        RestTemplate restTemplate = new RestTemplate();
+        String urlStr = url.toString();
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(urlStr, String.class);
+        if (responseEntity.getStatusCode() != HttpStatus.OK)
+            throw new RuntimeException();
+        return responseEntity.getBody();
     }
 }
 

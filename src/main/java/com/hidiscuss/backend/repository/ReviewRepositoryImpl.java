@@ -1,17 +1,15 @@
 package com.hidiscuss.backend.repository;
 
-import com.hidiscuss.backend.entity.QDiscussion;
-import com.hidiscuss.backend.entity.QDiscussionCode;
 import com.hidiscuss.backend.entity.QReview;
 import com.hidiscuss.backend.entity.Review;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
@@ -35,7 +33,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     @Override
     public Page<Review> findAllByDiscussionIdFetch(Long discussionId, Pageable pageable) {
         List<Review> result = queryFactory.selectFrom(qReview)
-                .where(qReview.discussion.id.eq(discussionId))
+                .where(qReview.discussion.id.eq(discussionId).and(qReview.isdone.eq(true)))
                 .join(qReview.reviewer).fetchJoin()
 //                .join(qReview.commentDiffList).fetchJoin()
 //                .join(qReview.liveDiffList).fetchJoin()
@@ -46,9 +44,16 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch();
 
         long totalSize = queryFactory.selectFrom(qReview)
-                .where(qReview.discussion.id.eq(discussionId))
+                .where(qReview.discussion.id.eq(discussionId).and(qReview.isdone.eq(true)))
                 .fetch().size();
 
         return new PageImpl<>(result, pageable, totalSize);
+    }
+
+    @Override
+    public Optional<Review> findByReviewerId(Long userId) {
+        return Optional.ofNullable(queryFactory.selectFrom(qReview)
+                .where(qReview.reviewer.id.eq(userId))
+                .fetchOne());
     }
 }

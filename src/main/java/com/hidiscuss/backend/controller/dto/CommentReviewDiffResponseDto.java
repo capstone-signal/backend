@@ -4,10 +4,11 @@ import com.hidiscuss.backend.entity.CommentReviewDiff;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class CommentReviewDiffResponseDto extends ReviewDiffResponseDto {
     @NotNull
-    public String codeLocate;
+    public List<Long> codeLocate;
 
     @Nullable
     public String comment;
@@ -16,9 +17,10 @@ public class CommentReviewDiffResponseDto extends ReviewDiffResponseDto {
         CommentReviewDiffResponseDto dto = new CommentReviewDiffResponseDto();
         dto.setBaseResponse(entity);
         dto.id = entity.getId();
-        dto.discussionCode = DiscussionCodeDto.fromEntity(entity.getDiscussionCode());
+        dto.discussionCode = entity.getDiscussionCode().getId();
         dto.codeAfter = entity.getCodeAfter();
-        dto.codeLocate = entity.getCodeLocate();
+        String[] locate = entity.getCodeLocate().split(",");
+        dto.codeLocate = List.of(Long.parseLong(locate[0]), Long.parseLong(locate[1]));
         dto.comment = entity.getComment();
         return dto;
     }

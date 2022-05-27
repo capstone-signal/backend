@@ -1,9 +1,6 @@
 package com.hidiscuss.backend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -22,9 +19,11 @@ public abstract class ReviewDiff extends BaseEntity {
     Review review;
 
     @ManyToOne
+    @Setter
     @JoinColumn(name = "discussion_code_id", nullable = false)
     private DiscussionCode discussionCode;
 
+    @Setter
     @Column(columnDefinition = "mediumtext", name = "code_after", nullable = false)
     private String codeAfter;
 

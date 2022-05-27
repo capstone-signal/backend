@@ -3,6 +3,7 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,13 +31,13 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "discussion_id", nullable = false)
     private Discussion discussion;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentReviewDiff> commentDiffList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LiveReviewDiff> liveDiffList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewThread> threadList = new ArrayList<>();
 
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
@@ -46,8 +47,12 @@ public class Review extends BaseEntity {
     @Column(name = "review_type", nullable = false)
     private ReviewType reviewType;
 
+    @Setter
+    @Column(columnDefinition ="boolean default false", name = "isdone", nullable = false)
+    private Boolean isdone;
+
     @Builder
-    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> commentDiffList, List<LiveReviewDiff> liveDiffList, List<ReviewThread> threadList, Boolean accepted, ReviewType reviewType) {
+    public Review(Long id, User reviewer, Discussion discussion, List<CommentReviewDiff> commentDiffList, List<LiveReviewDiff> liveDiffList, List<ReviewThread> threadList, Boolean accepted, ReviewType reviewType, Boolean isdone) {
         this.id = id;
         this.reviewer = reviewer;
         this.discussion = discussion;
@@ -56,6 +61,7 @@ public class Review extends BaseEntity {
         this.threadList = threadList;
         this.accepted = accepted;
         this.reviewType = reviewType;
+        this.isdone = isdone;
     }
 
     @Override
@@ -69,10 +75,15 @@ public class Review extends BaseEntity {
                 ", threadList=" + threadList +
                 ", accepted=" + accepted +
                 ", reviewType=" + reviewType +
+                ", isDone=" + isdone +
                 '}';
     }
 
     public void setCommentDiffList(List<CommentReviewDiff> commentDiffList) {
         this.commentDiffList = commentDiffList;
+    }
+
+    public void setLiveDiffList(List<LiveReviewDiff> liveDiffList) {
+        this.liveDiffList = liveDiffList;
     }
 }

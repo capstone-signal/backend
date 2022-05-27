@@ -1,6 +1,7 @@
 package com.hidiscuss.backend.service;
 
 import com.hidiscuss.backend.controller.dto.SendEmailDto;
+import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.LiveReviewAvailableTimes;
 import com.hidiscuss.backend.entity.ReviewReservation;
@@ -15,7 +16,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -25,14 +28,22 @@ public class ReviewReservationService {
 
     private final ReviewReservationRepository reviewReservationRepository;
     private final EmailService emailService;
+    private final ReviewService reviewService;
 
     public List<ReviewReservation> findByDiscussionId(Long discussionId) {
         return reviewReservationRepository.findByDiscussionId(discussionId);
     }
 
+    public List<ReviewReservation> findByUserId(Long userId) {
+        return reviewReservationRepository.findByUserId(userId);
+    }
+
+    public ReviewReservation findByReservationId(Long resrvationId) {
+        return reviewReservationRepository.findByReservationId(resrvationId);
+    }
 
     public ReviewReservation create(
-            LocalDateTime startTime,
+            ZonedDateTime startTime,
             Discussion discussion,
             User reviewer
     ) {
@@ -49,8 +60,8 @@ public class ReviewReservationService {
         LiveReviewAvailableTimes liveReviewAvailableTimes = discussion.getLiveReviewAvailableTimes();
 
         boolean isAvailableInsert = liveReviewAvailableTimes.getTimes().stream().anyMatch(timeRange -> {
-          LocalDateTime start = timeRange.getStart();
-          LocalDateTime end = timeRange.getEnd();
+          ZonedDateTime start = timeRange.getStart();
+          ZonedDateTime end = timeRange.getEnd();
           return start.isBefore(startTime) && end.isAfter(startTime);
         });
 
@@ -64,12 +75,20 @@ public class ReviewReservationService {
                 .reviewer(reviewer)
                 .build();
 
+
+        Review review = reviewService.createLiveReivew(reviewReservation);
+
         String revieweeEmail = discussion.getUser().getEmail();
         String reviewerEmail = reviewReservation.getReviewer().getEmail();
 
         emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
         emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
+        reviewReservation.setReview(review);
+        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED))
+        {
+            discussion.setState(DiscussionState.REVIEWING);
+        }
         return reviewReservationRepository.save(reviewReservation);
     }
 
@@ -77,10 +96,10 @@ public class ReviewReservationService {
         return "[Hidiscuss] 라이브 리뷰 예약 완료";
     }
 
-    private String getContent(LocalDateTime reviewStartTime) {
+    private String getContent(ZonedDateTime zonedDateTime) {
         StringBuilder sb = new StringBuilder();
         // utc to asia/seoul
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(reviewStartTime, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        //ZonedDateTime zonedDateTime = ZonedDateTime.of(reviewStartTime, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         String reviewStartTimeStr = zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH시 mm분"));
         sb.append("<h1>예약이 완료되었습니다.</h1>");
         sb.append("<p>예약이 완료되었습니다.</p>");
@@ -88,12 +107,27 @@ public class ReviewReservationService {
         return sb.toString();
     }
 
-    private boolean isDuplicatedReviewReservation(LocalDateTime startTime, ReviewReservation reviewReservation) {
-        LocalDateTime comparerStartTime = reviewReservation.getReviewStartDateTime();
-        LocalDateTime comparerEndTime = comparerStartTime.plusHours(REVIEW_SESSION_DURATION_IN_HOURS);
+    private boolean isDuplicatedReviewReservation(ZonedDateTime startTime, ReviewReservation reviewReservation) {
+        ZonedDateTime comparerStartTime = reviewReservation.getReviewStartDateTime();
+        ZonedDateTime comparerEndTime = comparerStartTime.plusHours(REVIEW_SESSION_DURATION_IN_HOURS);
         boolean isEqual = comparerStartTime.isEqual(startTime);
         boolean isBetween = comparerStartTime.isBefore(startTime) && comparerEndTime.isAfter(startTime);
         boolean isStartBeforeHour = startTime.isAfter(comparerStartTime.minusHours(REVIEW_SESSION_DURATION_IN_HOURS)) && startTime.isBefore(comparerStartTime);
         return isEqual || isBetween || isStartBeforeHour;
+    }
+
+
+
+    public ReviewReservation findByIdOrNull(Long reservationId) {
+            return reviewReservationRepository.findById(reservationId).orElse(null);
+    }
+
+    public ReviewReservation checkUser(ReviewReservation reviewReservation,Long userId){
+        if(reviewReservation.getReviewer().getId().equals(userId)){
+            reviewReservation.setReviewerParticipated(true);
+        } else{
+            reviewReservation.setRevieweeParticipated(true);
+        }
+        return reviewReservation;
     }
 }

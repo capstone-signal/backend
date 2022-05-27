@@ -26,7 +26,6 @@ import java.util.List;
 public class DiscussionController {
     private final DiscussionService discussionService;
     private final DiscussionCodeService discussionCodeService;
-    private final UserService userService;
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -39,8 +38,7 @@ public class DiscussionController {
     })
     public DiscussionResponseDto createDiscussion(
             @RequestBody CreateDiscussionRequestDto createDiscussionRequestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = userService.findById(Long.parseLong("7001"));
+            , @AuthenticationPrincipal User user) {
         if (createDiscussionRequestDto.isDirectDiscussion()) {
             if (createDiscussionRequestDto.codes == null) {
                 throw new IllegalArgumentException("코드가 없습니다.");
@@ -57,9 +55,9 @@ public class DiscussionController {
             }
         }
 
-        if (createDiscussionRequestDto.usePriority) {
-            // rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
-        }
+//        if (createDiscussionRequestDto.usePriority) {
+//             rewardService.checkReward(createDiscussionRequestDto.rewardId) Transaction
+//        }
         Discussion discussion = discussionService.create(createDiscussionRequestDto, user);
         return DiscussionResponseDto.fromEntity(discussion);
     }
@@ -88,10 +86,10 @@ public class DiscussionController {
     })
     public Page<DiscussionResponseDto> getDiscussions(@Valid GetDiscussionsDto dto
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable
-            , @AuthenticationPrincipal String userId) {
+            , @AuthenticationPrincipal User user) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         if (dto.getOnlyMine())
-            dto.setUserId(Long.parseLong(userId));
+            dto.setUserId(user.getId());
         Page<Discussion> entities = discussionService.getDiscussionsFiltered(dto, pageRequest.of());
 
         return entities.map(DiscussionResponseDto::fromEntity);
@@ -106,10 +104,23 @@ public class DiscussionController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public Long deleteDiscussion(@PathVariable("discussionId") Long discussionId
-            , @AuthenticationPrincipal String userId) {
-        User user = userService.findById(Long.parseLong(userId));
+            , @AuthenticationPrincipal User user) {
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
         return discussionService.delete(discussion, user);
+    }
+
+    @PutMapping("/{discussionId}/complete")
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "Discussion 완료")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Discussion 완료"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public Long completeDiscussion(@PathVariable("discussionId") Long discussionId
+            , @AuthenticationPrincipal User user) {
+        Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
+        return discussionService.complete(discussion, user);
     }
 }
 

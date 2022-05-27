@@ -3,6 +3,7 @@ package com.hidiscuss.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Discussion extends BaseEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     @Column(columnDefinition = "enum('NOT_REVIEWED', 'REVIEWING', 'COMPLETED') default 'NOT_REVIEWED'", name = "state", nullable = false)
     private DiscussionState state;
 
@@ -29,7 +31,7 @@ public class Discussion extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "question", nullable = false)
+    @Column(columnDefinition = "varchar(10000) default ''", name = "question", nullable = false)
     private String question;
 
     @Column(columnDefinition = "boolean default false", name = "live_review_required", nullable = false)
@@ -42,7 +44,7 @@ public class Discussion extends BaseEntity {
     @Column(columnDefinition = "bigint default 0", name = "priority", nullable = false)
     private Long priority;
 
-    @OneToMany(mappedBy = "discussion")
+    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiscussionTag> tags = new ArrayList<>();
 
     @Builder
@@ -62,4 +64,8 @@ public class Discussion extends BaseEntity {
     }
 
     public void setTags(List<DiscussionTag> tags) { this.tags = tags; }
+
+    public void complete() { this.state = DiscussionState.COMPLETED; }
+
+    public void reviewing() { this.state = DiscussionState.REVIEWING; }
 }

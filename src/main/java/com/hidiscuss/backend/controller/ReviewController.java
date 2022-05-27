@@ -3,15 +3,18 @@ package com.hidiscuss.backend.controller;
 import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
+import com.hidiscuss.backend.service.LiveReviewDiffService;
+import com.hidiscuss.backend.service.ReviewReservationService;
 import com.hidiscuss.backend.service.ReviewService;
 import com.hidiscuss.backend.utils.ApiPageable;
 import com.hidiscuss.backend.utils.PageRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.AllArgsConstructor;
+import org.hibernate.engine.internal.CacheHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -19,18 +22,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.Id;
+import javax.swing.text.StyledEditorKit;
 import javax.validation.Valid;
-import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/review")
+@AllArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
-
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
+    private final LiveReviewDiffService liveReviewDiffService;
+    private final ReviewReservationService reviewReservationService;
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,8 +48,7 @@ public class ReviewController {
     })
     public CommentReviewResponseDto saveCommentReview(@RequestParam("type") ReviewType reviewType
             , @RequestBody @Valid CreateCommentReviewRequestDto requestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+            , @AuthenticationPrincipal User user) {
         Review review = reviewService.createCommentReview(user, requestDto, reviewType);
         return CommentReviewResponseDto.fromEntity(review);
     }
@@ -60,8 +64,7 @@ public class ReviewController {
     })
     public ThreadResponseDto saveThread(@PathVariable("reviewId") Long reviewId
             , @RequestBody @Valid CreateThreadRequestDto requestDto
-            , @AuthenticationPrincipal String userId) {
-        User user = User.builder().id(Long.parseLong(userId)).build();
+            , @AuthenticationPrincipal User user) {
         Review review = reviewService.findByIdFetchOrNull(reviewId);
         ReviewThread reviewThread = reviewService.createThread(user, requestDto, review);
         return ThreadResponseDto.fromEntity(reviewThread);
@@ -75,10 +78,68 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public Page<ReviewDto> getReviews(@RequestParam("discussionId") Long discussionId
+    public Page<ReviewResponseDto> getReviews(@RequestParam("discussionId") Long discussionId
             , @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable) {
         PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
         Page<Review> entityPage = reviewService.findAllByDiscussionIdFetch(discussionId, pageRequest.of());
-        return entityPage.map(ReviewDto::fromEntity);
+        return entityPage.map(ReviewResponseDto::fromEntity);
+    }
+
+    @PutMapping("livediff/{diffId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "N분마다 포커싱 되어 있는 파일 업데이트")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "N분마다 포커싱 되어있는 파일에 대한 liveReviewdiff를 업데이트 한다."),
+            @ApiResponse(code = 400, message = "해당 LiveDiff가 존재하지 않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    public Boolean updateFocusedDiff(@PathVariable("diffId") Long diffId
+                                     , @RequestBody UpdateFocusedDiffRequestDto updateFocusedDiffRequestDto
+                                     , @AuthenticationPrincipal User user) {
+        LiveReviewDiff liveReviewDiff = liveReviewDiffService.findByIdAndUpdateByCodeAfter(diffId,updateFocusedDiffRequestDto.codeAfter);
+        if (!CheckUser(user.getId(), liveReviewDiff.getReview().getReviewer(), liveReviewDiff.getReview().getDiscussion()))
+            throw NoReviewerOrReviewee();
+        return true;
+    }
+
+    @PutMapping("complete/{reviewReservationId}")
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value = "라이브리뷰 완료")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "리뷰완료 버튼을 누르거나 한시간이 되면 완료시키는 Api"),
+            @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId
+                                                            , @AuthenticationPrincipal User user) {
+        ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
+        if(!CheckUser(user.getId(), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+            throw NoReviewerOrReviewee();
+        reviewService.changeCompleteStates(reviewReservation);
+        return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
+    }
+
+//    @GetMapping("diff")
+//    @ApiPageable
+//    @ApiOperation(value=".")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "review page 조회 성공"),
+//            @ApiResponse(code = 400, message = "잘못된 요청"),
+//            @ApiResponse(code = 500, message = "서버 오류")
+//    })
+//    public List<LiveReviewDiff> getDiff(@RequestParam("reviewId") Long reviewId) {
+//
+//    }
+
+    private RuntimeException NoReviewerOrReviewee() {
+        return new IllegalArgumentException("You are not Reviewee Or Reviewer");
+    }
+
+    private Boolean CheckUser(Long userId, User reviewer, Discussion discussion){
+        if(!Objects.equals(reviewer.getId(), userId) && !Objects.equals(discussion.getUser().getId(), userId)){
+            return false;
+        }
+        return true;
     }
 }
