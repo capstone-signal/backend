@@ -95,6 +95,22 @@ public class DiscussionController {
         return entities.map(DiscussionResponseDto::fromEntity);
     }
 
+    @GetMapping("/myReview")
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiPageable
+    @ApiOperation(value = "내가 작성한 Review가 포함된 Discussion 목록 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "내가 작성한 Review가 포함된 Discussion 목록 조회"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public Page<DiscussionResponseDto> getDiscussionsWithMyReview(
+            @ApiIgnore @PageableDefault(sort = "createdAt") Pageable pageable
+            , @AuthenticationPrincipal User user) {
+        PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getSort());
+        return discussionService.getDiscussionsIReviewed(user, pageRequest.of());
+    }
+
     @DeleteMapping("/{discussionId}")
     @Secured(SecurityConfig.DEFAULT_ROLE)
     @ApiOperation(value = "Discussion 삭제")

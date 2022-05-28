@@ -23,6 +23,7 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
     private final QDiscussion qDiscussion = QDiscussion.discussion;
     private final QDiscussionTag qDiscussionTag = QDiscussionTag.discussionTag;
     private final QUser qUser = QUser.user;
+    private final QReview qReview = QReview.review;
 
     public DiscussionRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -59,15 +60,33 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
             query.where(qDiscussion.user.id.eq(userId.get()));
 
         long totalSize = query.fetch().size();
+        query = paging(pageable, query);
 
+        return new PageImpl<>(query.fetch(), pageable, totalSize);
+    }
+
+    @Override
+    public Page<Discussion> findAllGroupByUser(User user, Pageable pageable) {
+        JPAQuery<Discussion> query = queryFactory
+                .select(qDiscussion)
+                .from(qDiscussion, qReview)
+                .where(qReview.reviewer.id.eq(user.getId()))
+                .groupBy(qDiscussion);
+
+        long totalSize = query.fetch().size();
+        query = paging(pageable, query);
+
+        return new PageImpl<>(query.fetch(), pageable, totalSize);
+    }
+
+    private JPAQuery<Discussion> paging(Pageable pageable, JPAQuery<Discussion> query) {
         query.offset(pageable.getOffset()).limit(pageable.getPageSize());
-
         for (Sort.Order o : pageable.getSort()) {
             PathBuilder pathBuilder = new PathBuilder(qDiscussion.getType(), qDiscussion.getMetadata());
             OrderSpecifier orderSpecifier = new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                     pathBuilder.get(o.getProperty()));
             query.orderBy(orderSpecifier);
         }
-        return new PageImpl<>(query.fetch(), pageable, totalSize);
+        return query;
     }
 }
