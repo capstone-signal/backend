@@ -24,6 +24,7 @@ public class ReviewService {
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
     private final CommentReviewDiffService commentReviewDiffService;
+    private final UserService userService;
     private final DiscussionCodeService discussionCodeService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
     private final ReviewReservationRepository reviewReservationRepository;
@@ -47,6 +48,7 @@ public class ReviewService {
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
+        user = userService.findById(user.getId());
         if (!user.getName().equals(UserService.AUTOBOT_NAME)) {
             discussion.reviewing();
         }
