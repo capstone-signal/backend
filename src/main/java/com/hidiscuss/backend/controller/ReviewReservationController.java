@@ -90,15 +90,15 @@ public class ReviewReservationController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal String userId) {
+    public ReviewReservationResponseDto enterLiveReviewReservation(@PathVariable("reservationId") Long reservationId, @AuthenticationPrincipal User user) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
         }
-        if(!Objects.equals(reviewReservation.getReviewer().getId(),Long.parseLong(userId)) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), Long.parseLong(userId))){
+        if(!Objects.equals(reviewReservation.getReviewer().getId(), user.getId()) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(),user.getId())){
             throw NoReviewerOrReviewee();
         }
-        reviewReservation = reviewReservationService.checkUser(reviewReservation, Long.parseLong(userId));
+        reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
         return ReviewReservationResponseDto.fromEntity(reviewReservation);
     }
 
