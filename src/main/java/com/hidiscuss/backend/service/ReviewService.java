@@ -66,7 +66,7 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        List <DiscussionCode> discussionCodeList = discussionCodeService.findDiscussionCocde(reviewReservation.getDiscussion());
+        List <DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(reviewReservation.getDiscussion());
 
         List<LiveReviewDiff> liveReviewDiffList = new ArrayList<>();
 
