@@ -26,6 +26,7 @@ public class ReviewService {
     private final CommentReviewDiffService commentReviewDiffService;
     private final DiscussionCodeService discussionCodeService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
+    private final ReviewReservationRepository reviewReservationRepository;
 
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
@@ -53,7 +54,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review createLiveReivew (ReviewReservation reviewReservation)
+    public Review createLiveReview (ReviewReservation reviewReservation)
     {
         Review review = Review.builder()
                 .reviewer(reviewReservation.getReviewer())
@@ -66,8 +67,7 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        List <DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(reviewReservation.getDiscussion());
-
+        List<DiscussionCode> discussionCodeList = discussionCodeService.getDiscussionCode(reviewReservation.getDiscussion());
         List<LiveReviewDiff> liveReviewDiffList = new ArrayList<>();
 
         for (DiscussionCode code : discussionCodeList) {
@@ -75,7 +75,7 @@ public class ReviewService {
                     LiveReviewDiff.builder()
                             .review(review)
                             .discussionCode(code)
-                            .codeAfter("Not Reviewed")
+                            .codeAfter(code.getContent())
                             .build()
             );
         }
@@ -114,5 +114,7 @@ public class ReviewService {
             reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
         }
         reviewReservation.getReview().setIsdone(Boolean.TRUE);
+        discussionRepository.save(reviewReservation.getDiscussion());
+        reviewReservationRepository.save(reviewReservation);
     }
 }

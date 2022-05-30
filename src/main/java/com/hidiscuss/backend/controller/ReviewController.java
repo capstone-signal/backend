@@ -3,6 +3,7 @@ package com.hidiscuss.backend.controller;
 import com.hidiscuss.backend.config.SecurityConfig;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
+import com.hidiscuss.backend.service.CommentReviewDiffService;
 import com.hidiscuss.backend.service.LiveReviewDiffService;
 import com.hidiscuss.backend.service.ReviewReservationService;
 import com.hidiscuss.backend.service.ReviewService;
@@ -25,8 +26,11 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.persistence.Id;
 import javax.swing.text.StyledEditorKit;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/review")
@@ -34,6 +38,7 @@ import java.util.Objects;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final CommentReviewDiffService commentReviewDiffService;
     private final LiveReviewDiffService liveReviewDiffService;
     private final ReviewReservationService reviewReservationService;
 
@@ -111,35 +116,38 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public CompleteLiveReviewResponseDto completeLiveReview(@PathVariable("reviewReservationId") Long reservationId
-                                                            , @AuthenticationPrincipal User user) {
+    public Boolean completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        if(!CheckUser(user.getId(), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+        if(!CheckUser(Long.parseLong(userId), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
             throw NoReviewerOrReviewee();
         reviewService.changeCompleteStates(reviewReservation);
-        return CompleteLiveReviewResponseDto.fromIds(reviewReservation.getDiscussion().getId(),reviewReservation.getId());
+        return true;
     }
-
-//    @GetMapping("diff")
-//    @ApiPageable
-//    @ApiOperation(value=".")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "review page 조회 성공"),
-//            @ApiResponse(code = 400, message = "잘못된 요청"),
-//            @ApiResponse(code = 500, message = "서버 오류")
-//    })
-//    public List<LiveReviewDiff> getDiff(@RequestParam("reviewId") Long reviewId) {
-//
-//    }
+    @GetMapping("diff")
+    @ApiPageable
+    @Secured(SecurityConfig.DEFAULT_ROLE)
+    @ApiOperation(value="Diffs 가져오기")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "diff들 조회 성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public List<? extends ReviewDiffResponseDto> getDiffs(@RequestParam("reviewType") ReviewType reviewType, @RequestParam("reviewId") Long reviewId) {
+        if (reviewType == ReviewType.COMMENT){
+            List<CommentReviewDiff> commentReviewDiff = commentReviewDiffService.findByReviewId(reviewId);
+            return commentReviewDiff.stream().map(CommentReviewDiffResponseDto::fromEntity).collect(Collectors.toList());
+        }
+        else{
+            List<LiveReviewDiff> liveReviewDiff = liveReviewDiffService.findByReviewId(reviewId);
+            return liveReviewDiff.stream().map(LiveReviewDiffResponseDto::fromEntity).collect(Collectors.toList());
+        }
+    }
 
     private RuntimeException NoReviewerOrReviewee() {
         return new IllegalArgumentException("You are not Reviewee Or Reviewer");
     }
 
     private Boolean CheckUser(Long userId, User reviewer, Discussion discussion){
-        if(!Objects.equals(reviewer.getId(), userId) && !Objects.equals(discussion.getUser().getId(), userId)){
-            return false;
-        }
-        return true;
+        return Objects.equals(reviewer.getId(), userId) || Objects.equals(discussion.getUser().getId(), userId);
     }
 }

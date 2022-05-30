@@ -4,6 +4,7 @@ import com.hidiscuss.backend.entity.CommentReviewDiff;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentReviewDiffResponseDto extends ReviewDiffResponseDto {
