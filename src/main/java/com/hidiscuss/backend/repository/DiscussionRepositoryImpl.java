@@ -66,7 +66,7 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
     }
 
     @Override
-    public Page<Discussion> findAllGroupByUser(User user, Pageable pageable) {
+    public Page<Discussion> findByReviewedUserDistinct(User user, Pageable pageable) {
         JPAQuery<Discussion> query = queryFactory
                 .selectFrom(qDiscussion)
                 .distinct()

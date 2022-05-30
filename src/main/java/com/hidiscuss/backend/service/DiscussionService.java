@@ -1,6 +1,5 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.ReviewController;
 import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.exception.UserAuthorityException;
@@ -12,7 +11,6 @@ import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestFileDetail;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -127,7 +125,7 @@ public class DiscussionService {
     }
 
     public Page<DiscussionResponseDto> getDiscussionsIReviewed(User user, Pageable pageable) {
-        Page<Discussion> entities = discussionRepository.findAllGroupByUser(user, pageable);
+        Page<Discussion> entities = discussionRepository.findByReviewedUserDistinct(user, pageable);
         return entities.map(DiscussionResponseDto::fromEntity);
     }
 }
