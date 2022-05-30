@@ -95,7 +95,7 @@ public class ReviewReservationController {
         if (reviewReservation == null) {
             throw NotFoundReservaiton();
         }
-        if(!Objects.equals(reviewReservation.getReviewer().getId(), user.getId()) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(),user.getId())){
+        if(!Objects.equals(reviewReservation.getReviewer().getId(), user.getId()) && !Objects.equals(reviewReservation.getDiscussion().getUser().getId(), user.getId())){
             throw NoReviewerOrReviewee();
         }
         reviewReservation = reviewReservationService.checkUser(reviewReservation, user.getId());
