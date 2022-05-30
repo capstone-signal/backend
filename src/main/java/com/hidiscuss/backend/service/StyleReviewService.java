@@ -38,8 +38,8 @@ public class StyleReviewService {
 
     private List<Long> getCodeLocate(String code, Map<String, String> diff) throws IOException {
         BufferedReader bf = new BufferedReader(new StringReader(code));
-        String tmpLine = "";
-        long offset = 0;
+        String tmpLine;
+        long offset;
         long line = Long.parseLong(diff.get("line"));
         long sum = 0L;
         try {
