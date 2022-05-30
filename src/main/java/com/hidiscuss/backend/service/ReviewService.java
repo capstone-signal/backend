@@ -114,6 +114,7 @@ public class ReviewService {
             reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
         }
         reviewReservation.getReview().setIsdone(Boolean.TRUE);
+        reviewRepository.save(reviewReservation.getReview());
         discussionRepository.save(reviewReservation.getDiscussion());
         reviewReservationRepository.save(reviewReservation);
     }
