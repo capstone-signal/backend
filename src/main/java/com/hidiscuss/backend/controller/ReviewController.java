@@ -116,9 +116,9 @@ public class ReviewController {
             @ApiResponse(code = 400, message = "ReviewReservationID가 null 또는 reviewreservation이 존재하지 않음"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    public Boolean completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal String userId) {
+    public Boolean completeLiveReview(@PathVariable("reviewReservationId") Long reservationId, @AuthenticationPrincipal  User user) {
         ReviewReservation reviewReservation = reviewReservationService.findByIdOrNull(reservationId);
-        if(!CheckUser(Long.parseLong(userId), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
+        if(!CheckUser(user.getId(), reviewReservation.getReviewer(), reviewReservation.getDiscussion()))
             throw NoReviewerOrReviewee();
         reviewService.changeCompleteStates(reviewReservation);
         return true;
