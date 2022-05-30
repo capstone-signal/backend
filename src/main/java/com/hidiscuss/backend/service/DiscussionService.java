@@ -1,10 +1,6 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.ReviewController;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
-import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
-import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
+import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
@@ -128,5 +124,10 @@ public class DiscussionService {
         discussion.complete();
         discussionRepository.save(discussion);
         return discussion.getId();
+    }
+
+    public Page<DiscussionResponseDto> getDiscussionsIReviewed(User user, Pageable pageable) {
+        Page<Discussion> entities = discussionRepository.findByReviewedUserDistinct(user, pageable);
+        return entities.map(DiscussionResponseDto::fromEntity);
     }
 }

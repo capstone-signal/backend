@@ -2,9 +2,7 @@ package com.hidiscuss.backend.repository;
 
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
 import com.hidiscuss.backend.entity.*;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.hidiscuss.backend.utils.JPAUtil;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.QDiscussion;
@@ -13,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,7 +19,9 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private final QDiscussion qDiscussion = QDiscussion.discussion;
     private final QDiscussionTag qDiscussionTag = QDiscussionTag.discussionTag;
+    private final QTag qTag = QTag.tag;
     private final QUser qUser = QUser.user;
+    private final QReview qReview = QReview.review;
 
     public DiscussionRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -59,15 +58,25 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
             query.where(qDiscussion.user.id.eq(userId.get()));
 
         long totalSize = query.fetch().size();
+        query = JPAUtil.paging(pageable, query, qDiscussion);
 
-        query.offset(pageable.getOffset()).limit(pageable.getPageSize());
-
-        for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(qDiscussion.getType(), qDiscussion.getMetadata());
-            OrderSpecifier orderSpecifier = new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(o.getProperty()));
-            query.orderBy(orderSpecifier);
-        }
         return new PageImpl<>(query.fetch(), pageable, totalSize);
     }
+
+    @Override
+    public Page<Discussion> findByReviewedUserDistinct(User user, Pageable pageable) {
+        JPAQuery<Discussion> query = queryFactory
+                .selectFrom(qDiscussion)
+                .distinct()
+                .innerJoin(qReview).on(qDiscussion.id.eq(qReview.discussion.id))
+                .join(qDiscussionTag).on(qDiscussion.eq(qDiscussionTag.discussion)).fetchJoin()
+                .join(qTag).on(qDiscussionTag.tag.eq(qTag))
+                .where(qReview.reviewer.id.eq(user.getId()));
+        long totalSize = query.fetch().size();
+        query = JPAUtil.paging(pageable, query, qDiscussion);
+        // TODO: tag 쿼리 최적화
+        return new PageImpl<>(query.fetch(), pageable, totalSize);
+    }
+
+
 }
