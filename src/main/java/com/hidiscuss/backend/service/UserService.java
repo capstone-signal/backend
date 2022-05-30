@@ -5,7 +5,6 @@ import com.hidiscuss.backend.repository.UserRepository;
 import com.hidiscuss.backend.utils.DbInitilization;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
