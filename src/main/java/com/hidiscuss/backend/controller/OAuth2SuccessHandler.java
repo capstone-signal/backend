@@ -42,7 +42,7 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
         String gitaccessToken = oAuth2User.getAttribute("accessToken");
         // 최초 로그인이라면 회원가입 처리를 한다.
-        User newUser = userRepository.findByName(oAuth2User.getName());
+        User newUser = userRepository.findByName(oAuth2User.getName()).get();
         if (newUser == null) {
             GitHub gitHub = GitHub.connectUsingOAuth(gitaccessToken);
             List<GHEmail>  ghEmails2 = gitHub.getMyself().getEmails2();

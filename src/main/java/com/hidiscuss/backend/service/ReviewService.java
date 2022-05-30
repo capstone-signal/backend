@@ -47,7 +47,7 @@ public class ReviewService {
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
-        if (!user.getId().equals(9999L)) {
+        if (!user.getName().equals(UserService.AUTOBOT_NAME)) {
             discussion.reviewing();
         }
         return review;
