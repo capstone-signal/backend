@@ -78,12 +78,8 @@ def getGitHash = { ->
 jib {
 	// 도커 베이스 이미지
 	from {
-		image = "gcr.io/distroless/java11-debian11"
+		image = "075730933478.dkr.ecr.ap-northeast-2.amazonaws.com/java11-pylint"
 		platforms {
-			platform {
-				architecture = "arm64"
-				os = "linux"
-			}
 			platform {
 				architecture = 'amd64'
 				os = 'linux'
@@ -96,7 +92,7 @@ jib {
 	}
 	container {
 		appRoot = "/app"
-		jvmFlags = ["-Xms128m", "-Xmx128m", "-Dspring.profiles.active=prod"]
+		jvmFlags = ["-Xms256m", "-Xmx512m", "-Dspring.profiles.active=prod"]
 		creationTime = "USE_CURRENT_TIMESTAMP"
 		ports = ['8080']
 	}
