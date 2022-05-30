@@ -19,6 +19,7 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     private final QDiscussion qDiscussion = QDiscussion.discussion;
     private final QDiscussionTag qDiscussionTag = QDiscussionTag.discussionTag;
+    private final QTag qTag = QTag.tag;
     private final QUser qUser = QUser.user;
     private final QReview qReview = QReview.review;
 
@@ -68,10 +69,12 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
                 .selectFrom(qDiscussion)
                 .distinct()
                 .innerJoin(qReview).on(qDiscussion.id.eq(qReview.discussion.id))
+                .join(qDiscussionTag).on(qDiscussion.eq(qDiscussionTag.discussion)).fetchJoin()
+                .join(qTag).on(qDiscussionTag.tag.eq(qTag))
                 .where(qReview.reviewer.id.eq(user.getId()));
         long totalSize = query.fetch().size();
         query = JPAUtil.paging(pageable, query, qDiscussion);
-
+        // TODO: tag 쿼리 최적화
         return new PageImpl<>(query.fetch(), pageable, totalSize);
     }
 
