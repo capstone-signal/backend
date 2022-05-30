@@ -2,9 +2,7 @@ package com.hidiscuss.backend.repository;
 
 import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
 import com.hidiscuss.backend.entity.*;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.hidiscuss.backend.utils.JPAUtil;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.entity.QDiscussion;
@@ -13,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,7 +57,7 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
             query.where(qDiscussion.user.id.eq(userId.get()));
 
         long totalSize = query.fetch().size();
-        query = paging(pageable, query);
+        query = JPAUtil.paging(pageable, query, qDiscussion);
 
         return new PageImpl<>(query.fetch(), pageable, totalSize);
     }
@@ -73,19 +70,10 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
                 .innerJoin(qReview).on(qDiscussion.id.eq(qReview.discussion.id))
                 .where(qReview.reviewer.id.eq(user.getId()));
         long totalSize = query.fetch().size();
-        query = paging(pageable, query);
+        query = JPAUtil.paging(pageable, query, qDiscussion);
 
         return new PageImpl<>(query.fetch(), pageable, totalSize);
     }
 
-    private JPAQuery<Discussion> paging(Pageable pageable, JPAQuery<Discussion> query) {
-        query.offset(pageable.getOffset()).limit(pageable.getPageSize());
-        for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(qDiscussion.getType(), qDiscussion.getMetadata());
-            OrderSpecifier orderSpecifier = new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(o.getProperty()));
-            query.orderBy(orderSpecifier);
-        }
-        return query;
-    }
+
 }
