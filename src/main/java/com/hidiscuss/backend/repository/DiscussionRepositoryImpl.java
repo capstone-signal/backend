@@ -68,11 +68,10 @@ public class DiscussionRepositoryImpl implements DiscussionRepositoryCustom{
     @Override
     public Page<Discussion> findAllGroupByUser(User user, Pageable pageable) {
         JPAQuery<Discussion> query = queryFactory
-                .select(qDiscussion)
-                .from(qDiscussion, qReview)
-                .where(qReview.reviewer.id.eq(user.getId()))
-                .groupBy(qDiscussion);
-
+                .selectFrom(qDiscussion)
+                .distinct()
+                .innerJoin(qReview).on(qDiscussion.id.eq(qReview.discussion.id))
+                .where(qReview.reviewer.id.eq(user.getId()));
         long totalSize = query.fetch().size();
         query = paging(pageable, query);
 
