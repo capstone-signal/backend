@@ -45,9 +45,9 @@ public class StyleReviewService {
         try {
             while (((tmpLine = bf.readLine()) != null) && (line-- > 1))
                 sum += tmpLine.length() + 1;
-            offset = tmpLine.length();
+            offset = (tmpLine == null) ? 0 : tmpLine.length();
         } catch (Exception e) {
-            throw new IllegalArgumentException("this code cannot be read");
+            throw new IllegalArgumentException("There was a problem creating style review");
         }
 
         return List.of(sum, sum + offset);
