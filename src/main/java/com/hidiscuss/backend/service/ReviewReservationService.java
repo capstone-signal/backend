@@ -70,7 +70,7 @@ public class ReviewReservationService {
         }
 
         ReviewReservation reviewReservation = ReviewReservation.builder()
-                .reviewStartDateTime(startTime)
+                .reviewStartDateTime(startTime.minusSeconds(1))
                 .discussion(discussion)
                 .reviewer(reviewer)
                 .build();
