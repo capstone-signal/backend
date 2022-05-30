@@ -36,7 +36,7 @@ public class StyleReviewService {
         return dtos;
     }
 
-    private List<Long> getCodeLocate(String code, Map<String, String> diff) throws IOException {
+    private List<Long> getCodeLocate(String code, Map<String, String> diff) {
         BufferedReader bf = new BufferedReader(new StringReader(code));
         String tmpLine;
         long offset;
@@ -47,7 +47,7 @@ public class StyleReviewService {
                 sum += tmpLine.length() + 1;
             offset = tmpLine.length();
         } catch (Exception e) {
-            throw new IOException("this code cannot be read");
+            throw new IllegalArgumentException("this code cannot be read");
         }
 
         return List.of(sum, sum + offset);
