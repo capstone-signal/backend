@@ -1,6 +1,8 @@
 package com.hidiscuss.backend.utils;
 
 import com.hidiscuss.backend.entity.Tag;
+import com.hidiscuss.backend.entity.User;
+import com.hidiscuss.backend.service.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,5 +38,12 @@ public class DbInitilization {
                 "nosql"
         );
         return tagNames.stream().map(tag -> Tag.builder().name(tag).build()).collect(Collectors.toList());
+    }
+
+    public static User getInitialAutobot() {
+        return User.builder()
+                .name(UserService.AUTOBOT_NAME)
+                .email("hidiscuss-capstone@gmail.com")
+                .build();
     }
 }

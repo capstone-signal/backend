@@ -10,6 +10,7 @@ import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import com.hidiscuss.backend.repository.ReviewRepository;
+import com.hidiscuss.backend.utils.DbInitilization;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class DiscussionService {
     private final DiscussionCodeRepository discussionCodeRepository;
     private final ReviewRepository reviewRepository;
     private final GithubService githubService;
+    private final UserService userService;
     private final DiscussionCodeService discussionCodeService;
     private final DiscussionTagService discussionTagService;
     private final ReviewReservationService reviewReservationService;
@@ -48,7 +51,6 @@ public class DiscussionService {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
         discussion = discussionRepository.save(discussion);
         List<DiscussionCode> codes = new ArrayList<>();
-        User autoBot = User.builder().id(9999L).build();
 
         // Processing Tag
         discussion.setTags(discussionTagService.create(discussion, dto.tagIds));
@@ -73,7 +75,7 @@ public class DiscussionService {
         if (!pyCodes.isEmpty()) {
             List<CreateCommentReviewDiffDto> diffList = styleReviewService.createStyleReviewDto(pyCodes);
             CreateCommentReviewRequestDto styleReviewDto = new CreateCommentReviewRequestDto(discussion.getId(), diffList);
-            reviewService.createCommentReview(autoBot, styleReviewDto, ReviewType.COMMENT);
+            reviewService.createCommentReview(userService.getAutobot(), styleReviewDto, ReviewType.COMMENT);
         }
         return discussion;
     }

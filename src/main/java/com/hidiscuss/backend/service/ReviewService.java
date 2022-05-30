@@ -47,9 +47,9 @@ public class ReviewService {
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
-//        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED)) {
+        if (!user.getName().equals(UserService.AUTOBOT_NAME)) {
             discussion.reviewing();
-//        }
+        }
         return review;
     }
 
