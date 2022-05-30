@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -29,6 +30,11 @@ public class UserService {
         log.info("Initializing Autobot service");
         autobot = DbInitilization.getInitialAutobot();
         userRepository.save(autobot);
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("No such user"));
     }
 
     public User getAutobot() {
