@@ -83,11 +83,11 @@ public class ReviewReservationService {
 
         Review review = reviewService.createLiveReview(reviewReservation);
 
-        String revieweeEmail = discussion.getUser().getEmail();
-        String reviewerEmail = reviewReservation.getReviewer().getEmail();
-
-        emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
-        emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
+//        String revieweeEmail = discussion.getUser().getEmail();
+//        String reviewerEmail = reviewReservation.getReviewer().getEmail();
+//
+//        emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
+//        emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
         reviewReservation.setReview(review);
         if (discussion.getState().equals(DiscussionState.NOT_REVIEWED))
