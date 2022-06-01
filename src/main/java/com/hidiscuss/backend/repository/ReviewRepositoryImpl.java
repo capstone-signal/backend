@@ -51,4 +51,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .where(qReview.reviewer.id.eq(userId))
                 .fetchOne());
     }
+
+    @Override
+    public List<Review> findByIds(List<Long> ids) {
+        return queryFactory.selectFrom(qReview)
+                .where(qReview.id.in(ids))
+                .fetch();
+    }
 }
