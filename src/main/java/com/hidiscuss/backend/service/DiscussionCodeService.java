@@ -51,13 +51,13 @@ public class DiscussionCodeService {
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(getContentFromUrl(file.getRawUrl()))
+                        .content(getContentFromUrl(file.getBlobUrl()))
                         .language(getLanguageFromName(file.getFilename()));
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(getContentFromUrl(file.getRawUrl()))
+                        .content(getContentFromUrl(file.getBlobUrl()))
                         .language(getLanguageFromName(file.getFileName()));
             } else {
                 throw new IllegalArgumentException("Unknown file type");
@@ -108,6 +108,7 @@ public class DiscussionCodeService {
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(urlStr, String.class);
         if (responseEntity.getStatusCode() != HttpStatus.OK)
             throw new RuntimeException();
+        responseEntity.//jsoup으로 테이블을 가져와야 할 판...
         return responseEntity.getBody();
     }
 }
