@@ -11,8 +11,7 @@ import java.util.List;
 
 @Service
 public class GithubService {
-
-    private GitHub getGitHub() {
+    public GitHub getGitHub() {
         return GithubContext.getInstance();
     }
 
