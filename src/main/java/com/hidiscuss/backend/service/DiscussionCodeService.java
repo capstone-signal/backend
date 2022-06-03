@@ -75,6 +75,8 @@ public class DiscussionCodeService {
         Map<String, String> extLangMap = Map.ofEntries(
                 entry("js", "JavaScript"),
                 entry("ts", "TypeScript"),
+                entry("jsx", "JavaScript"),
+                entry("tsx", "TypeScript"),
                 entry("java", "Java"),
                 entry("py", "Python"),
                 entry("c", "C"),
