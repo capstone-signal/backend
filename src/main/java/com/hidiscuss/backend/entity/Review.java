@@ -40,6 +40,7 @@ public class Review extends BaseEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewThread> threadList = new ArrayList<>();
 
+    @Setter
     @Column(columnDefinition ="boolean default false", name = "accepted", nullable = false)
     private Boolean accepted;
 

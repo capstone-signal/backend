@@ -134,9 +134,14 @@ public class DiscussionController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public Long completeDiscussion(@PathVariable("discussionId") Long discussionId
+            , @RequestBody @Valid CompleteDiscussionRequestDto completeDiscussionRequestDto
             , @AuthenticationPrincipal User user) {
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
-        return discussionService.complete(discussion, user);
+        if (discussion == null) {
+            throw new IllegalArgumentException("존재하지 않는 Discussion입니다.");
+        }
+
+        return discussionService.complete(discussion, completeDiscussionRequestDto.reviewIds, user);
     }
 }
 

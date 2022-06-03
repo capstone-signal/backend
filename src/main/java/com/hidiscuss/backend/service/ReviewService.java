@@ -120,4 +120,12 @@ public class ReviewService {
         discussionRepository.save(reviewReservation.getDiscussion());
         reviewReservationRepository.save(reviewReservation);
     }
+
+    public List<Review> acceptReviews(List<Long> selectedReviewIds) {
+        List<Review> reviews = reviewRepository.findByIds(selectedReviewIds);
+        reviews.forEach(review -> {
+            review.setAccepted(true);
+        });
+        return reviewRepository.saveAll(reviews);
+    }
 }

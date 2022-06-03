@@ -31,7 +31,7 @@ import java.util.Optional;
 public class DiscussionService {
     private final DiscussionRepository discussionRepository;
     private final DiscussionCodeRepository discussionCodeRepository;
-    private final ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository; // TODO: reviewService로 변경
     private final GithubService githubService;
     private final UserService userService;
     private final DiscussionCodeService discussionCodeService;
@@ -111,7 +111,10 @@ public class DiscussionService {
         return discussion.getId();
     }
 
-    public Long complete(Discussion discussion, User user) {
+    public Long complete(
+            Discussion discussion,
+            List<Long> selectedReviewIds,
+            User user) {
         List<ReviewReservation> reservations = reviewReservationService.findByDiscussionId(discussion.getId());
         // 하나라도 지금 이후라면
         Boolean hasNotCompletedReservation = reservations.stream().anyMatch((reservation) -> !reservation.isCompletedReservation());
@@ -122,6 +125,7 @@ public class DiscussionService {
             throw new IllegalArgumentException("Only discussions that do not have reservations can be completed");
 
         discussion.complete();
+        reviewService.acceptReviews(selectedReviewIds);
         discussionRepository.save(discussion);
         return discussion.getId();
     }
