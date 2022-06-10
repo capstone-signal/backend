@@ -113,10 +113,13 @@ public class DiscussionService {
         return discussion.getId();
     }
 
-    public Long complete(Discussion discussion, User user) {
+    public Long complete(Discussion discussion, User user, Long reviewId) {
         List<ReviewReservation> reservations = reviewReservationService.findByDiscussionId(discussion.getId());
         // 하나라도 지금 이후라면
         Boolean hasNotCompletedReservation = reservations.stream().anyMatch((reservation) -> !reservation.isCompletedReservation());
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        if (review == null)
+            throw new IllegalArgumentException("Review not found");
 
         if (!discussion.getUser().getId().equals(user.getId()))
             throw new UserAuthorityException("You can only complete discussions you have created");
@@ -124,6 +127,10 @@ public class DiscussionService {
             throw new IllegalArgumentException("Only discussions that do not have reservations can be completed");
 
         discussion.complete();
+        review.setAccepted(true);
+        Long nowPoint = review.getReviewer().getPoint();
+        review.getReviewer().setPoint(nowPoint + 10);
+        reviewRepository.save(review);
         discussionRepository.save(discussion);
         return discussion.getId();
     }

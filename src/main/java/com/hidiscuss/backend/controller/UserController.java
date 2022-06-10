@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.controller;
 
+import com.hidiscuss.backend.controller.dto.UserRankResponseDto;
 import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @Secured({"ROLE_USER"})
 @RestController
@@ -33,5 +35,15 @@ public class UserController {
     @GetMapping("/userlist")
     public ResponseEntity<List<User>> getUserList() {
         return new ResponseEntity<>(userService.getUserList(), HttpStatus.OK);
+    }
+
+    @ApiOperation(value="유저 랭크 반환", notes="이 api는 포인트순으로 정렬된 유저 5명을 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "API 정상 작동"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @GetMapping("/rank")
+    public List<UserRankResponseDto> getUserRank() {
+        return userService.getUserRank();
     }
 }

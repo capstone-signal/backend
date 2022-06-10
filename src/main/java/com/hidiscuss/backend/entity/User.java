@@ -1,9 +1,11 @@
 package com.hidiscuss.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.jsonwebtoken.Claims;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -23,6 +25,7 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Setter
     @Column(name = "point")
     private Long point;
 

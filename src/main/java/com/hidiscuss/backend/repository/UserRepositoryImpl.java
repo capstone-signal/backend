@@ -2,6 +2,8 @@ package com.hidiscuss.backend.repository;
 
 import com.hidiscuss.backend.entity.QUser;
 import com.hidiscuss.backend.entity.User;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 

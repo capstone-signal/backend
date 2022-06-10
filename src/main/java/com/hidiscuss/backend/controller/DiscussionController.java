@@ -118,9 +118,9 @@ public class DiscussionController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public Long completeDiscussion(@PathVariable("discussionId") Long discussionId
-            , @AuthenticationPrincipal User user) {
+            , @AuthenticationPrincipal User user, @RequestParam Long reviewId) {
         Discussion discussion = discussionService.findByIdFetchOrNull(discussionId);
-        return discussionService.complete(discussion, user);
+        return discussionService.complete(discussion, user, reviewId);
     }
 }
 
