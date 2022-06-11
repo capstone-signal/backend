@@ -119,9 +119,6 @@ public class DiscussionService {
         List<ReviewReservation> reservations = reviewReservationService.findByDiscussionId(discussion.getId());
         // 하나라도 지금 이후라면
         Boolean hasNotCompletedReservation = reservations.stream().anyMatch((reservation) -> !reservation.isCompletedReservation());
-        Review review = reviewRepository.findById(reviewId).orElse(null);
-        if (review == null)
-            throw new IllegalArgumentException("Review not found");
 
         if (!discussion.getUser().getId().equals(user.getId()))
             throw new UserAuthorityException("You can only complete discussions you have created");

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -47,7 +46,7 @@ public class UserService {
         List<UserRankResponseDto> rList = new ArrayList<>();
         List<User> userList = userRepository.findAllByOrderByPointDesc();
         int size = Math.min(userList.size(), 5);
-        for (int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             UserRankResponseDto dto = UserRankResponseDto.builder()
                     .username(userList.get(i).getName())
                     .point(userList.get(i).getPoint())
@@ -55,9 +54,9 @@ public class UserService {
             rList.add(dto);
         }
         return rList;
+    }
 
     public User getAutobot() {
         return userRepository.findByName(AUTOBOT_NAME).orElse(null);
-
     }
 }
