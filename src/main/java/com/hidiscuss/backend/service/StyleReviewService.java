@@ -37,16 +37,20 @@ public class StyleReviewService {
     }
 
     private List<Long> getCodeLocate(String code, Map<String, String> diff) {
+        BufferedReader bf = new BufferedReader(new StringReader(code));
+        String tmpLine;
+        long offset;
         long line = Long.parseLong(diff.get("line"));
-        long column = Long.parseLong(diff.get("column"));
         long sum = 0L;
-        
-        String[] byLine = code.split("\n");
-        for (int i = 0; i < line - 1; i++) {
-            sum += byLine[i].length() + 1;
+        try {
+            while (((tmpLine = bf.readLine()) != null) && (line-- > 1))
+                sum += tmpLine.length() + 1;
+            offset = (tmpLine == null) ? 0 : tmpLine.length();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("There was a problem creating style review");
         }
-        sum += column;
-        return List.of(sum, sum + 1);
+
+        return List.of(sum, sum + offset);
     }
 
     private List<Map<String, String>> executeLint(String content) {

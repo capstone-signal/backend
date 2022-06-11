@@ -1,15 +1,12 @@
 package com.hidiscuss.backend.service;
 
-import com.hidiscuss.backend.controller.ReviewController;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewDiffDto;
-import com.hidiscuss.backend.controller.dto.CreateCommentReviewRequestDto;
-import com.hidiscuss.backend.controller.dto.CreateDiscussionRequestDto;
-import com.hidiscuss.backend.controller.dto.GetDiscussionsDto;
+import com.hidiscuss.backend.controller.dto.*;
 import com.hidiscuss.backend.entity.*;
 import com.hidiscuss.backend.exception.UserAuthorityException;
 import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import com.hidiscuss.backend.repository.DiscussionRepository;
 import com.hidiscuss.backend.repository.ReviewRepository;
+import com.hidiscuss.backend.utils.DbInitilization;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequest;
@@ -18,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -33,8 +31,9 @@ import java.util.Optional;
 public class DiscussionService {
     private final DiscussionRepository discussionRepository;
     private final DiscussionCodeRepository discussionCodeRepository;
-    private final ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository; // TODO: reviewService로 변경
     private final GithubService githubService;
+    private final UserService userService;
     private final DiscussionCodeService discussionCodeService;
     private final DiscussionTagService discussionTagService;
     private final ReviewReservationService reviewReservationService;
@@ -48,7 +47,6 @@ public class DiscussionService {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
         discussion = discussionRepository.save(discussion);
         List<DiscussionCode> codes = new ArrayList<>();
-        User autoBot = User.builder().id(9999L).build();
 
         // Processing Tag
         discussion.setTags(discussionTagService.create(discussion, dto.tagIds));
@@ -73,7 +71,7 @@ public class DiscussionService {
         if (!pyCodes.isEmpty()) {
             List<CreateCommentReviewDiffDto> diffList = styleReviewService.createStyleReviewDto(pyCodes);
             CreateCommentReviewRequestDto styleReviewDto = new CreateCommentReviewRequestDto(discussion.getId(), diffList);
-            reviewService.createCommentReview(autoBot, styleReviewDto, ReviewType.COMMENT);
+            reviewService.createCommentReview(userService.getAutobot(), styleReviewDto, ReviewType.COMMENT);
         }
         return discussion;
     }
@@ -113,7 +111,11 @@ public class DiscussionService {
         return discussion.getId();
     }
 
-    public Long complete(Discussion discussion, User user, Long reviewId) {
+
+    public Long complete(
+            Discussion discussion,
+            List<Long> selectedReviewIds,
+            User user) {
         List<ReviewReservation> reservations = reviewReservationService.findByDiscussionId(discussion.getId());
         // 하나라도 지금 이후라면
         Boolean hasNotCompletedReservation = reservations.stream().anyMatch((reservation) -> !reservation.isCompletedReservation());
@@ -127,11 +129,14 @@ public class DiscussionService {
             throw new IllegalArgumentException("Only discussions that do not have reservations can be completed");
 
         discussion.complete();
-        review.setAccepted(true);
-        Long nowPoint = review.getReviewer().getPoint();
-        review.getReviewer().setPoint(nowPoint + 10);
-        reviewRepository.save(review);
+
+        reviewService.acceptReviews(selectedReviewIds);
         discussionRepository.save(discussion);
         return discussion.getId();
+    }
+
+    public Page<DiscussionResponseDto> getDiscussionsIReviewed(User user, Pageable pageable) {
+        Page<Discussion> entities = discussionRepository.findByReviewedUserDistinct(user, pageable);
+        return entities.map(DiscussionResponseDto::fromEntity);
     }
 }

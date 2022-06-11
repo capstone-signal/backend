@@ -92,6 +92,6 @@ public class CommentReviewDiffServiceTest {
 
     private CreateCommentReviewDiffDto getCommentReviewDiffDto(DiscussionCode discussionCode) {
         DiscussionCodeDto dto = DiscussionCodeDto.fromEntity(discussionCode);
-        return new CreateCommentReviewDiffDto(dto, "codeAfter", "codeLocate", "comment");
+        return new CreateCommentReviewDiffDto(dto, "codeAfter", List.of(1L, 1L), "comment");
     }
 }

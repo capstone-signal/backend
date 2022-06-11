@@ -9,8 +9,10 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
-    User findByName(String name);
     Optional<User> findById(Long userId);
 
     List<User> findAllByOrderByPointDesc();
+
+    Optional<User> findByName(String autobotName);
+
 }

@@ -24,6 +24,7 @@ public class ReviewService {
     private final ReviewThreadRepository reviewThreadRepository;
     private final DiscussionRepository discussionRepository;
     private final CommentReviewDiffService commentReviewDiffService;
+    private final UserService userService;
     private final DiscussionCodeService discussionCodeService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
     private final ReviewReservationRepository reviewReservationRepository;
@@ -47,9 +48,10 @@ public class ReviewService {
         review = reviewRepository.save(review);
         List<CommentReviewDiff> diffList = commentReviewDiffService.createCommentReviewDiff(review, dto.getDiffList());
         review.setCommentDiffList(diffList);
-//        if (discussion.getState().equals(DiscussionState.NOT_REVIEWED)) {
+        user = userService.findById(user.getId());
+        if (!user.getName().equals(UserService.AUTOBOT_NAME)) {
             discussion.reviewing();
-//        }
+        }
         return review;
     }
 
@@ -114,7 +116,16 @@ public class ReviewService {
             reviewReservation.getDiscussion().setState(DiscussionState.REVIEWING);
         }
         reviewReservation.getReview().setIsdone(Boolean.TRUE);
+        reviewRepository.save(reviewReservation.getReview());
         discussionRepository.save(reviewReservation.getDiscussion());
         reviewReservationRepository.save(reviewReservation);
+    }
+
+    public List<Review> acceptReviews(List<Long> selectedReviewIds) {
+        List<Review> reviews = reviewRepository.findByIds(selectedReviewIds);
+        reviews.forEach(review -> {
+            review.setAccepted(true);
+        });
+        return reviewRepository.saveAll(reviews);
     }
 }

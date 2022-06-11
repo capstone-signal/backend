@@ -27,16 +27,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ApiOperation(value="테스트 사용자 호출", notes="이 api는 테스트 api입니다. 여기에 api 동작 설명을 작성해주세요.")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "API 정상 작동"),
-            @ApiResponse(code = 500, message = "서버 에러")
-    })
-    @GetMapping("/userlist")
-    public ResponseEntity<List<User>> getUserList() {
-        return new ResponseEntity<>(userService.getUserList(), HttpStatus.OK);
-    }
-
     @ApiOperation(value="유저 랭크 반환", notes="이 api는 포인트순으로 정렬된 유저 5명을 반환합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "API 정상 작동"),

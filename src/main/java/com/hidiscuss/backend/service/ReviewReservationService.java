@@ -29,6 +29,7 @@ public class ReviewReservationService {
     private final ReviewReservationRepository reviewReservationRepository;
     private final EmailService emailService;
     private final ReviewService reviewService;
+    private final UserService userService;
 
     public List<ReviewReservation> findByDiscussionId(Long discussionId) {
         return reviewReservationRepository.findByDiscussionId(discussionId);
@@ -62,15 +63,19 @@ public class ReviewReservationService {
         boolean isAvailableInsert = liveReviewAvailableTimes.getTimes().stream().anyMatch(timeRange -> {
           ZonedDateTime start = timeRange.getStart();
           ZonedDateTime end = timeRange.getEnd();
-          return start.isBefore(startTime) && end.isAfter(startTime);
+          return start.isBefore(startTime) && end.isAfter(startTime) || start.isEqual(startTime);
         });
 
         if(!isAvailableInsert) {
             throw new IllegalArgumentException("예약 가능한 시간이 아닙니다.");
         }
 
+        // TODO : reviewer 가 같은 시간에 예약 하는지 체크
+
+        reviewer = userService.findById(reviewer.getId()); // 이메일 전송에 사용하기 위해서 업데이트
+
         ReviewReservation reviewReservation = ReviewReservation.builder()
-                .reviewStartDateTime(startTime)
+                .reviewStartDateTime(startTime.minusSeconds(1))
                 .discussion(discussion)
                 .reviewer(reviewer)
                 .build();
@@ -78,11 +83,11 @@ public class ReviewReservationService {
 
         Review review = reviewService.createLiveReview(reviewReservation);
 
-        String revieweeEmail = discussion.getUser().getEmail();
-        String reviewerEmail = reviewReservation.getReviewer().getEmail();
-
-        emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
-        emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
+//        String revieweeEmail = discussion.getUser().getEmail();
+//        String reviewerEmail = reviewReservation.getReviewer().getEmail();
+//
+//        emailService.send(new SendEmailDto(revieweeEmail, getSubject(), getContent(startTime)));
+//        emailService.send(new SendEmailDto(reviewerEmail, getSubject(), getContent(startTime)));
 
         reviewReservation.setReview(review);
         if (discussion.getState().equals(DiscussionState.NOT_REVIEWED))
