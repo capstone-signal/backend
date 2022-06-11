@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.entity.Discussion;
 import com.hidiscuss.backend.exception.GithubException;
 import com.hidiscuss.backend.utils.GithubContext;
 import org.kohsuke.github.*;
@@ -70,6 +71,14 @@ public class GithubService {
             return pr.listFiles().toList();
         } catch (IOException e) {
             throw new GithubException("Failed to get files", e);
+        }
+    }
+
+    public void setRepositoryLink(Discussion discussion, Long repoId) {
+        try {
+            discussion.setRepoLink(getGitHub().getRepositoryById(repoId).getHtmlUrl().toString());
+        } catch (IOException e) {
+            throw new GithubException("Failed to get repository link", e);
         }
     }
 }

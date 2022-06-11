@@ -47,8 +47,11 @@ public class Discussion extends BaseEntity {
     @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiscussionTag> tags = new ArrayList<>();
 
+    @Column(name = "repoLink", nullable = true)
+    private String repoLink;
+
     @Builder
-    public Discussion(Long id, User user, String question, String title, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority) {
+    public Discussion(Long id, User user, String question, String title, Boolean liveReviewRequired, LiveReviewAvailableTimes liveReviewAvailableTimes, Long priority, String repoLink) {
         this.id = id;
         this.state = DiscussionState.NOT_REVIEWED;
         this.user = user;
@@ -57,6 +60,7 @@ public class Discussion extends BaseEntity {
         this.liveReviewRequired = liveReviewRequired;
         this.liveReviewAvailableTimes = liveReviewAvailableTimes;
         this.priority = priority;
+        this.repoLink = repoLink;
     }
 
     public void setUser(User user) {
@@ -64,6 +68,8 @@ public class Discussion extends BaseEntity {
     }
 
     public void setTags(List<DiscussionTag> tags) { this.tags = tags; }
+
+    public void setRepoLink(String repoLink) { this.repoLink = repoLink; }
 
     public void complete() { this.state = DiscussionState.COMPLETED; }
 
