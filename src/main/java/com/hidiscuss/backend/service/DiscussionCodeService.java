@@ -49,13 +49,13 @@ public class DiscussionCodeService {
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(getContent(file.getFilename(), repoId, file.getBlobUrl()))
+                        .content(githubService.getContent(file.getFilename(), file.getBlobUrl().toString(), repoId))
                         .language(getLanguageFromName(file.getFilename()));
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(getContent(file.getFileName(), repoId, file.getRawUrl()))
+                        .content(githubService.getContent(file.getFileName(), file.getBlobUrl().toString(), repoId))
                         .language(getLanguageFromName(file.getFileName()));
             } else {
                 throw new IllegalArgumentException("Unknown file type");
@@ -100,15 +100,6 @@ public class DiscussionCodeService {
 
     public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
         return discussionCodeRepository.findByDiscussion(discussion);
-    }
-
-    String getContent(String fileName, Long repoId, URL url) {
-        String parse[] = url.toString().split("/");
-        try {
-            return githubService.getGitHub().getRepositoryById(repoId).getFileContent(fileName, parse[6]).getContent();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
 
