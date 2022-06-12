@@ -8,10 +8,7 @@ import com.hidiscuss.backend.repository.DiscussionCodeRepository;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHPullRequestFileDetail;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.net.URL;
@@ -26,6 +23,7 @@ import static java.util.Map.entry;
 @Transactional
 public class DiscussionCodeService {
     private final DiscussionCodeRepository discussionCodeRepository;
+    private final GithubService githubService;
 
     public List<DiscussionCode> createFromDirect(Discussion discussion, List<CreateDiscussionCodeRequestDto> dto) {
         List<DiscussionCode> codes = new ArrayList<>();
@@ -44,20 +42,20 @@ public class DiscussionCodeService {
         return discussionCodeRepository.saveAll(codes);
     }
 
-    public List<DiscussionCode> createFromFiles(Discussion discussion, List<?> files) {
+    public List<DiscussionCode> createFromFiles(Discussion discussion, List<?> files, Long repoId) {
         List<DiscussionCode> codes = new ArrayList<>();
         files.forEach(f -> {
             DiscussionCode.DiscussionCodeBuilder builder = DiscussionCode.builder().discussion(discussion);
             if (f instanceof GHPullRequestFileDetail) {
                 GHPullRequestFileDetail file = (GHPullRequestFileDetail) f;
                 builder.filename(file.getFilename())
-                        .content(getContentFromUrl(file.getRawUrl()))
+                        .content(githubService.getContent(file.getFilename(), file.getBlobUrl().toString(), repoId))
                         .language(getLanguageFromName(file.getFilename()));
 
             } else if (f instanceof GHCommit.File) {
                 GHCommit.File file = (GHCommit.File) f;
                 builder.filename(file.getFileName())
-                        .content(getContentFromUrl(file.getRawUrl()))
+                        .content(githubService.getContent(file.getFileName(), file.getBlobUrl().toString(), repoId))
                         .language(getLanguageFromName(file.getFileName()));
             } else {
                 throw new IllegalArgumentException("Unknown file type");
@@ -77,6 +75,8 @@ public class DiscussionCodeService {
         Map<String, String> extLangMap = Map.ofEntries(
                 entry("js", "JavaScript"),
                 entry("ts", "TypeScript"),
+                entry("jsx", "JavaScript"),
+                entry("tsx", "TypeScript"),
                 entry("java", "Java"),
                 entry("py", "Python"),
                 entry("c", "C"),
@@ -100,15 +100,6 @@ public class DiscussionCodeService {
 
     public List<DiscussionCode> getDiscussionCode(Discussion discussion) {
         return discussionCodeRepository.findByDiscussion(discussion);
-    }
-
-    String getContentFromUrl(URL url) {
-        RestTemplate restTemplate = new RestTemplate();
-        String urlStr = url.toString();
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(urlStr, String.class);
-        if (responseEntity.getStatusCode() != HttpStatus.OK)
-            throw new RuntimeException();
-        return responseEntity.getBody();
     }
 }
 
