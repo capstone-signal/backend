@@ -113,6 +113,7 @@ public class DiscussionService {
         return discussion.getId();
     }
 
+
     public Long complete(
             Discussion discussion,
             List<Long> selectedReviewIds,
@@ -127,6 +128,7 @@ public class DiscussionService {
             throw new IllegalArgumentException("Only discussions that do not have reservations can be completed");
 
         discussion.complete();
+
         reviewService.acceptReviews(selectedReviewIds);
         discussionRepository.save(discussion);
         return discussion.getId();

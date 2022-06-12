@@ -1,5 +1,6 @@
 package com.hidiscuss.backend.service;
 
+import com.hidiscuss.backend.controller.dto.UserRankResponseDto;
 import com.hidiscuss.backend.entity.User;
 import com.hidiscuss.backend.repository.UserRepository;
 import com.hidiscuss.backend.utils.DbInitilization;
@@ -7,8 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+
 import java.util.NoSuchElementException;
 
 @Service
@@ -34,6 +39,18 @@ public class UserService {
     public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("No such user"));
+    }
+
+
+    public List<UserRankResponseDto> getTopFiveUser() {
+        List<UserRankResponseDto> rList = new ArrayList<>();
+        List<User> userList = userRepository.findTop5ByOrderByPointDesc();
+        int size = Math.min(userList.size(), 5);
+        for (int i = 0; i < size; i++) {
+            UserRankResponseDto dto = UserRankResponseDto.toEntity(userList.get(i));
+            rList.add(dto);
+        }
+        return rList;
     }
 
     public User getAutobot() {

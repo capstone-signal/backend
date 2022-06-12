@@ -28,6 +28,7 @@ public class ReviewService {
     private final DiscussionCodeService discussionCodeService;
     private final LiveReviewDiffRepository liveReviewDiffRepository;
     private final ReviewReservationRepository reviewReservationRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Review createCommentReview(User user, CreateCommentReviewRequestDto dto, ReviewType reviewType) {
@@ -125,7 +126,11 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findByIds(selectedReviewIds);
         reviews.forEach(review -> {
             review.setAccepted(true);
+            Long prePoint = review.getReviewer().getPoint();
+            review.getReviewer().setPoint(prePoint + 10);
+            userRepository.save(review.getReviewer());
         });
+
         return reviewRepository.saveAll(reviews);
     }
 }

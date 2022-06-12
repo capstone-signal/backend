@@ -140,7 +140,6 @@ public class DiscussionController {
         if (discussion == null) {
             throw new IllegalArgumentException("존재하지 않는 Discussion입니다.");
         }
-
         return discussionService.complete(discussion, completeDiscussionRequestDto.reviewIds, user);
     }
 }
