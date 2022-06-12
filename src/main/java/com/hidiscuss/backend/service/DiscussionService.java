@@ -55,12 +55,12 @@ public class DiscussionService {
             case "PR":
                 GHPullRequest pr = githubService.getPullRequestById(Long.parseLong(dto.gitRepositoryId), Integer.parseInt(dto.gitNodeId));
                 List<GHPullRequestFileDetail> prFiles = githubService.getFilesByPullRequest(pr);
-                codes = discussionCodeService.createFromFiles(discussion, prFiles);
+                codes = discussionCodeService.createFromFiles(discussion, prFiles, Long.parseLong(dto.gitRepositoryId));
                 break;
             case "COMMIT":
                 GHCommit commit = githubService.getCommitById(Long.parseLong(dto.gitRepositoryId), dto.gitNodeId);
                 List<GHCommit.File> commitFiles = githubService.getFilesByCommit(commit);
-                codes = discussionCodeService.createFromFiles(discussion, commitFiles);
+                codes = discussionCodeService.createFromFiles(discussion, commitFiles, Long.parseLong(dto.gitRepositoryId));
                 break;
             case "DIRECT":
                 codes = discussionCodeService.createFromDirect(discussion, dto.codes);
@@ -94,7 +94,7 @@ public class DiscussionService {
         Boolean notReviewed = discussion.getState().equals(DiscussionState.NOT_REVIEWED);
         List<ReviewReservation> reservations = reviewReservationService.findByDiscussionId(discussion.getId());
         Boolean hasNotCompletedReservation = reservations.stream().anyMatch((reservation) -> !reservation.isCompletedReservation());
-        Optional<Review> styleReview = reviewRepository.findByReviewerId(9999L);
+        Optional<Review> styleReview = reviewRepository.findByReviewerId(userService.getAutobot().getId());
 
         if (!discussion.getUser().getId().equals(user.getId())) // TODO: getUser, getReviewer 등으로 변경
             throw new UserAuthorityException("You can only delete discussions you have created");

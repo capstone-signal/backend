@@ -11,11 +11,10 @@ import java.util.List;
 
 @Service
 public class GithubService {
-
-    private GitHub getGitHub() {
+    public GitHub getGitHub() {
         return GithubContext.getInstance();
     }
-
+    static final int gitNodeIdx = 6;
     public Collection<GHRepository> getRepositories() {
         try {
             return getGitHub().getMyself().getRepositories().values(); // TODO : get user from session
@@ -70,6 +69,15 @@ public class GithubService {
             return pr.listFiles().toList();
         } catch (IOException e) {
             throw new GithubException("Failed to get files", e);
+        }
+    }
+
+    public String getContent(String fileName, String url, Long repoId) {
+        String parse[] = url.split("/");
+        try {
+            return getGitHub().getRepositoryById(repoId).getFileContent(fileName, parse[gitNodeIdx]).getContent();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
