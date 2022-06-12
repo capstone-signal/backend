@@ -28,7 +28,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("/ranking")
-    public List<UserRankResponseDto> getTopFiveUSer() {
+    public List<UserRankResponseDto> getTopFiveUser() {
         return userService.getTopFiveUser();
     }
 }
