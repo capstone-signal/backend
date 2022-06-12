@@ -11,8 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
     Optional<User> findById(Long userId);
 
-    List<User> findAllByOrderByPointDesc();
-
     Optional<User> findByName(String autobotName);
 
+    List<User> findTop5ByOrderByPointDesc();
 }

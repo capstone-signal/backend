@@ -42,15 +42,12 @@ public class UserService {
     }
 
 
-    public List<UserRankResponseDto> getUserRank() {
+    public List<UserRankResponseDto> getTopFiveUSer() {
         List<UserRankResponseDto> rList = new ArrayList<>();
-        List<User> userList = userRepository.findAllByOrderByPointDesc();
+        List<User> userList = userRepository.findTop5ByOrderByPointDesc();
         int size = Math.min(userList.size(), 5);
         for (int i = 0; i < size; i++) {
-            UserRankResponseDto dto = UserRankResponseDto.builder()
-                    .username(userList.get(i).getName())
-                    .point(userList.get(i).getPoint())
-                    .build();
+            UserRankResponseDto dto = UserRankResponseDto.toEntity(userList.get(i).getName(), userList.get(i).getPoint());
             rList.add(dto);
         }
         return rList;

@@ -1,7 +1,5 @@
 package com.hidiscuss.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import io.jsonwebtoken.Claims;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
