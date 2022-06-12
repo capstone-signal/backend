@@ -18,6 +18,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
     private int state;
     private UserResponseDto user;
     private List<DiscussionTagDto> tags;
+    private String repoLink;
     public static DiscussionResponseDto fromEntity(Discussion entity) {
         DiscussionResponseDto dto = new DiscussionResponseDto();
         dto.setBaseResponse(entity);
@@ -30,6 +31,7 @@ public class DiscussionResponseDto extends BaseResponseDto {
         dto.state = entity.getState().getId();
         dto.tags = entity.getTags().stream().map(DiscussionTagDto::fromEntity).collect(Collectors.toList());
         dto.user = UserResponseDto.fromEntity(entity.getUser());
+        dto.repoLink = entity.getRepoLink();
         return dto;
     }
 }

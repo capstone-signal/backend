@@ -45,6 +45,8 @@ public class DiscussionService {
             @NotNull User user
     ) {
         Discussion discussion = CreateDiscussionRequestDto.toEntity(dto, user);
+        if (!dto.gitRepositoryId.isBlank())
+            githubService.setRepositoryLink(discussion, Long.parseLong(dto.gitRepositoryId));
         discussion = discussionRepository.save(discussion);
         List<DiscussionCode> codes = new ArrayList<>();
 
