@@ -78,6 +78,8 @@ public class GithubService {
             discussion.setRepoLink(getGitHub().getRepositoryById(repoId).getHtmlUrl().toString());
         } catch (IOException e) {
             throw new GithubException("Failed to get repository link", e);
+        }
+    }
 
     public String getContent(String fileName, String url, Long repoId) {
         String parse[] = url.split("/");
